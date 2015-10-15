@@ -13,7 +13,7 @@
 
       <script>
         $(function() {
-          setupLanguages(["dart"]);
+          setupLanguages(["dart","java"]);
         });
       </script>
   </head>
@@ -29,6 +29,7 @@
       <img src="images/logo.png" />
         <div class="lang-selector">
               <a href="#" data-language-name="dart">Dart</a>
+              <a href="#" data-language-name="java">Java</a>
         </div>
         <div class="search">
           <input type="text" class="search" id="input-search" placeholder="Search">
@@ -47,7 +48,7 @@
         <h1 id="introduction">Introduction</h1>
 
 <p>So you have some data that you would like to be able to send to a DGLux server
-or DSA Broker, but you&rsquo;re not sure how to accomplish that? This guide will
+or DSA Broker, but you’re not sure how to accomplish that? This guide will
 introduce you to the basics of communicating with a Broker using the DSLink SDK.
 We&rsquo;ll learn how to send data to a Broker as well as how to subscribe to data
 to get updates when other, or even our, data is changed.</p>
@@ -62,8 +63,12 @@ to get updates when other, or even our, data is changed.</p>
   <span class="nl">dslink:</span>
     <span class="nl">git:</span> <span class="nl">git:</span><span class="c1">//github.com/IOT-DSA/sdk-dslink-dart.git</span>
 
+
 <span class="c1">// run.dart</span>
+
 <span class="kn">import</span> <span class="s">'package:dslink/dslink.dart'</span><span class="o">;</span>
+</code></pre>
+<pre class="highlight java"><code><span class="c1">// TODO</span>
 </code></pre>
 
 <p>By using the Git repository, we ensure that we have the most up-to-date version
@@ -77,9 +82,25 @@ a <em>Responder</em>. The Responder will provide data on demand. It will only se
 data when it&rsquo;s requested, eg it Responds.</p>
 
 <aside class="notice">
-The other types of Links are Requestor
-and a hybrid Responder and Requestor. We&rsquo;ll look at those types later.
+The other types of Links are Requester
+and a hybrid Responder and Requester. We&rsquo;ll look at those types later.
 </aside>
+
+<h2 id="link">Link</h2>
+
+<p>In order to create any type of connection (Responder or Requester), we first
+need to establish a link to the DSA Broker. In this example we will only
+establish the bare minimum link. There are a number of configuration options
+to further extend the capabilities. Refer to the documentation for the SDK
+of the language of your choice.</p>
+<pre class="highlight dart"><code><span class="c1">// run.dart</span>
+
+<span class="n">main</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+  <span class="kd">var</span> <span class="n">link</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinkProvider</span><span class="o">(</span><span class="n">args</span><span class="o">,</span> <span class="s">'Example-'</span><span class="o">);</span>
+  <span class="n">link</span><span class="o">.</span><span class="na">connect</span><span class="o">();</span>
+  <span class="c1">// ...</span>
+<span class="o">}</span>
+</code></pre>
 
 <h2 id="nodes">Nodes</h2>
 
@@ -149,6 +170,7 @@ from a server. Each link may also have children nodes.</p>
       <div class="dark-box">
           <div class="lang-selector">
                 <a href="#" data-language-name="dart">Dart</a>
+                <a href="#" data-language-name="java">Java</a>
           </div>
       </div>
     </div>
