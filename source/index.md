@@ -4,6 +4,11 @@ title: API Reference
 language_tabs:
   - dart: Dart
   - java: Java
+  - node: Node.js
+  - javascript: Javascript
+  - python: Python
+  - ruby: Ruby
+  - c: C
 
 toc_footers:
   - <a href='#'>Sign Up for a Developer Key</a>
