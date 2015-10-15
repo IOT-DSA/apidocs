@@ -2,9 +2,7 @@
 title: API Reference
 
 language_tabs:
-  - shell
-  - ruby
-  - python
+  - dart: Dart
 
 toc_footers:
   - <a href='#'>Sign Up for a Developer Key</a>
@@ -18,151 +16,43 @@ search: true
 
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+So you have some data that you would like to be able to send to a DGLux server
+or DSA Broker, but you’re not sure how to accomplish that? This guide will
+introduce you to the basics of communicating with a Broker using the DSLink SDK.
+We'll learn how to send data to a Broker as well as how to subscribe to data
+to get updates when other, or even our, data is changed.
 
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+# Importing
 
-This example API documentation page was created with [Slate](http://github.com/tripit/slate). Feel free to edit it and use it as a base for your own API's documentation.
+> Use the following to import the SDK.
 
-# Authentication
+```dart
+// pubspec.yaml
+dependencies:
+  dslink:
+    git: git://github.com/IOT-DSA/sdk-dslink-dart.git
 
-> To authorize, use this code:
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
+// run.dart
+import 'package:dslink/dslink.dart';
 ```
 
-```python
-import kittn
+By using the Git repository, we ensure that we have the most up-to-date version
+of the DSLink SDK. In the future, the SDK may be made available through common
+package managers for each language.
 
-api = kittn.authorize('meowmeowmeow')
-```
+# Responder
 
-```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
-```
-
-> Make sure to replace `meowmeowmeow` with your API key.
-
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
-
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
+There are several types of DSLinks we can create. The first of which is called
+a *Responder*. The Responder will provide data on demand. It will only send the
+data when it's requested, eg it Responds.
 
 <aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
+The other types of Links are Requestor
+and a hybrid Responder and Requestor. We'll look at those types later.
 </aside>
 
-# Kittens
+## Nodes
 
-## Get All Kittens
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
-
-```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
-```
-
-> The above command returns JSON structured like this:
-
-```json
-[
-  {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Isis",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
-  }
-]
-```
-
-This endpoint retrieves all kittens.
-
-### HTTP Request
-
-`GET http://example.com/api/kittens`
-
-### Query Parameters
-
-Parameter | Default | Description
---------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
-
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
-
-## Get a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/2"
-  -H "Authorization: meowmeowmeow"
-```
-
-> The above command returns JSON structured like this:
-
-```json
-{
-  "id": 2,
-  "name": "Isis",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
-}
-```
-
-This endpoint retrieves a specific kitten.
-
-<aside class="warning">If you're not using an administrator API key, note that some kittens will return 403 Forbidden if they are hidden for admins only.</aside>
-
-### HTTP Request
-
-`GET http://example.com/kittens/<ID>`
-
-### URL Parameters
-
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to retrieve
-
+Within the DSA Broker, all of our data is broken into a collection of nodes.
+A node may be a link to a separate device, or it may be multiple links running
+from a server. Each link may also have children nodes.
