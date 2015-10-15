@@ -3,6 +3,7 @@ title: API Reference
 
 language_tabs:
   - dart: Dart
+  - java: Java
 
 toc_footers:
   - <a href='#'>Sign Up for a Developer Key</a>
@@ -32,8 +33,14 @@ dependencies:
   dslink:
     git: git://github.com/IOT-DSA/sdk-dslink-dart.git
 
+
 // run.dart
+
 import 'package:dslink/dslink.dart';
+```
+
+```java
+// TODO
 ```
 
 By using the Git repository, we ensure that we have the most up-to-date version
@@ -47,9 +54,27 @@ a *Responder*. The Responder will provide data on demand. It will only send the
 data when it's requested, eg it Responds.
 
 <aside class="notice">
-The other types of Links are Requestor
-and a hybrid Responder and Requestor. We'll look at those types later.
+The other types of Links are Requester
+and a hybrid Responder and Requester. We'll look at those types later.
 </aside>
+
+## Link
+
+In order to create any type of connection (Responder or Requester), we first
+need to establish a link to the DSA Broker. In this example we will only
+establish the bare minimum link. There are a number of configuration options
+to further extend the capabilities. Refer to the documentation for the SDK
+of the language of your choice.
+
+```dart
+// run.dart
+
+main(List<String> args) {
+  var link = new LinkProvider(args, 'Example-');
+  link.connect();
+  // ...
+}
+```
 
 ## Nodes
 
