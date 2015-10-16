@@ -87,8 +87,8 @@ a <em>Responder</em>. The Responder will provide data on demand. It will only se
 data when it&rsquo;s requested, eg it Responds.</p>
 
 <aside class="notice">
-The other types of Links are Requester
-and a hybrid Responder and Requester. We&rsquo;ll look at those types later.
+The other types of Links are a <em>Requester</em> and a hybrid <em>Responder</em>
+and <em>Requester</em>. We&rsquo;ll look at those types later.
 </aside>
 
 <h2 id="link">Link</h2>
@@ -203,7 +203,6 @@ see if the node has a subscriber.</p>
 </blockquote>
 <pre class="highlight dart"><code><span class="n">myNum</span> <span class="o">=</span> <span class="n">numGen</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="mi">50</span><span class="o">);</span>
 <span class="n">myNode</span><span class="o">.</span><span class="na">updateValue</span><span class="o">(</span><span class="n">myNum</span><span class="o">);</span>
-<span class="n">link</span><span class="o">.</span><span class="na">save</span><span class="o">();</span>
 </code></pre>
 
 <p>Once we are sure someone is subscribed to changes in our node, we generate a
