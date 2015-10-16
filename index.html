@@ -93,11 +93,9 @@ and a hybrid Responder and Requester. We&rsquo;ll look at those types later.
 
 <h2 id="link">Link</h2>
 
-<p>In order to create any type of connection (Responder or Requester), we first
-need to establish a link to the DSA Broker. In this example we will only
-establish the bare minimum link. There are a number of configuration options
-to further extend the capabilities. Refer to the documentation for the SDK
-of the language of your choice.</p>
+<blockquote>
+<p>Note that we pass the application startup arguments to the link creation.</p>
+</blockquote>
 <pre class="highlight dart"><code><span class="c1">// run.dart</span>
 
 <span class="n">main</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
@@ -107,69 +105,109 @@ of the language of your choice.</p>
 <span class="o">}</span>
 </code></pre>
 
+<p>In order to create any type of connection (Responder or Requester), we first
+need to establish a link to the DSA Broker. In this example we will only
+establish the bare minimum link. There are a number of configuration options
+to further extend the capabilities. Refer to the documentation for the SDK
+of the language of your choice.</p>
+
+<p>The most basic Link will accept command line arguments passed the application
+as well as a name for the Link. The ending hyphen is not optional, and will not
+appear in the link. The name supplied here is what will show up under your
+downstream connections (by default).</p>
+
 <h2 id="nodes">Nodes</h2>
 
 <p>Within the DSA Broker, all of our data is broken into a collection of nodes.
 A node may be a link to a separate device, or it may be multiple links running
 from a server. Each link may also have children nodes.</p>
 
-          <h1 id="errors">Errors</h1>
+<p>A node structure can be through of like a file directory tree on your computer
+or a website&rsquo;s address/path. A Responder link will only have access to the nodes
+it contains. As we will see later, a Requester can access any node that it has
+permission to access.</p>
 
-<aside class="notice">This error section is stored in a separate file in `includes/_errors.md`. Slate allows you to optionally separate out your docs into many files&hellip;just save them to the `includes` folder and add them to the top of your `index.md`&rsquo;s frontmatter. Files are included in the order listed.</aside>
+<h3 id="generate-a-random-number">Generate a Random Number</h3>
 
-<p>The Kittn API uses the following error codes:</p>
+<blockquote>
+<p>Generate a random number</p>
+</blockquote>
+<pre class="highlight dart"><code><span class="c1">// At the top of the file add the import for the Math library.</span>
+<span class="kn">import</span> <span class="s">'dart:math'</span><span class="o">;</span>
+<span class="c1">// ...</span>
 
-<table><thead>
-<tr>
-<th>Error Code</th>
-<th>Meaning</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>400</td>
-<td>Bad Request &ndash; Your request sucks</td>
-</tr>
-<tr>
-<td>401</td>
-<td>Unauthorized &ndash; Your API key is wrong</td>
-</tr>
-<tr>
-<td>403</td>
-<td>Forbidden &ndash; The kitten requested is hidden for administrators only</td>
-</tr>
-<tr>
-<td>404</td>
-<td>Not Found &ndash; The specified kitten could not be found</td>
-</tr>
-<tr>
-<td>405</td>
-<td>Method Not Allowed &ndash; You tried to access a kitten with an invalid method</td>
-</tr>
-<tr>
-<td>406</td>
-<td>Not Acceptable &ndash; You requested a format that isn&rsquo;t json</td>
-</tr>
-<tr>
-<td>410</td>
-<td>Gone &ndash; The kitten requested has been removed from our servers</td>
-</tr>
-<tr>
-<td>418</td>
-<td>I&rsquo;m a teapot</td>
-</tr>
-<tr>
-<td>429</td>
-<td>Too Many Requests &ndash; You&rsquo;re requesting too many kittens! Slow down!</td>
-</tr>
-<tr>
-<td>500</td>
-<td>Internal Server Error &ndash; We had a problem with our server. Try again later.</td>
-</tr>
-<tr>
-<td>503</td>
-<td>Service Unavailable &ndash; We&rsquo;re temporarially offline for maintanance. Please try again later.</td>
-</tr>
-</tbody></table>
+<span class="kd">var</span> <span class="n">numGen</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Random</span><span class="o">();</span>
+<span class="kd">var</span> <span class="n">myNum</span> <span class="o">=</span> <span class="n">numGen</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="mi">50</span><span class="o">);</span>
+</code></pre>
+
+<p>Before we add the new, lets create a value that we can pass, and send updates
+for. In this case we&rsquo;ll just generate a random number between 0 and 50.</p>
+
+<h3 id="add-node">Add node</h3>
+
+<blockquote>
+<p>Add the node to our responder link.</p>
+</blockquote>
+<pre class="highlight dart"><code><span class="kd">var</span> <span class="n">myNode</span> <span class="o">=</span> <span class="n">link</span><span class="o">.</span><span class="na">addNode</span><span class="o">(</span><span class="s">'/MyNum'</span><span class="o">,</span>
+<span class="c1">// Note the raw strings, the $ must be passed as well.</span>
+  <span class="o">{</span> <span class="sx">r'$name'</span><span class="o">:</span> <span class="s">'My Number'</span><span class="o">,</span>
+    <span class="sx">r'$type'</span> <span class="o">:</span> <span class="s">'int'</span><span class="o">,</span>
+    <span class="s">'?value'</span> <span class="o">:</span> <span class="n">myNum</span><span class="o">});</span>
+</code></pre>
+
+<p>Next we add our node to the Link. In this case we pass the node name, <code class="prettyprint">/MyNum</code>
+and the configuration. The node name begins with a forward-slash (<code class="prettyprint">/</code>)
+which indicate it is appended to the root of our DSLink.</p>
+
+<p>In our node configuration, we provide a user friendly display name for our link,
+this name will only appear in the the Link information, but does not affect the
+name or path used when trying to access the value. Additionally we provide the
+type of value that this node will provide, and the value itself, which is our
+random number that we generated. For information on additional configuration
+options for a node please refer to
+<a href="https://github.com/IOT-DSA/docs/wiki/Configs">Node Configs</a></p>
+
+<p>When we add the node, it will return a local copy of the node for us to work
+with directly. Alternatively we can also perform many of the same operations
+directly with link itself.</p>
+
+<h2 id="updating-a-node">Updating a node</h2>
+<pre class="highlight dart"><code><span class="k">new</span> <span class="n">Timer</span><span class="o">.</span><span class="na">periodic</span><span class="o">(</span><span class="kd">const</span> <span class="n">Duration</span><span class="o">(</span><span class="nl">seconds:</span> <span class="mi">5</span><span class="o">),</span> <span class="o">(</span><span class="n">_</span><span class="o">)</span> <span class="o">{</span>
+<span class="c1">// To be filled in soon.</span>
+<span class="o">});</span>
+</code></pre>
+
+<p>A node is of limited value if it only provides the initial request and nothing
+further. We want to provide updates to the value as things change. For our
+demonstration, we will setup a timer which updates our number once ever five
+seconds.</p>
+
+<h2 id="checking-for-a-subscription">Checking for a subscription</h2>
+
+<blockquote>
+<p>Add this to the timer function.</p>
+</blockquote>
+<pre class="highlight dart"><code><span class="k">if</span><span class="o">(</span><span class="n">myNode</span><span class="o">.</span><span class="na">hasSubscriber</span><span class="o">)</span> <span class="o">{</span>
+  <span class="c1">// To be filled in soon</span>
+<span class="o">}</span>
+</code></pre>
+
+<p>Generally, if there is no one actively listening, or <em>subscribing</em> to our node
+there is not a lot of reason to update the value. So first, we will check to
+see if the node has a subscriber.</p>
+
+<h2 id="updating-the-value">Updating the value</h2>
+
+<blockquote>
+<p>Update the random number then update our value.</p>
+</blockquote>
+<pre class="highlight dart"><code><span class="n">myNum</span> <span class="o">=</span> <span class="n">numGen</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="mi">50</span><span class="o">);</span>
+<span class="n">myNode</span><span class="o">.</span><span class="na">updateValue</span><span class="o">(</span><span class="n">myNum</span><span class="o">);</span>
+<span class="n">link</span><span class="o">.</span><span class="na">save</span><span class="o">();</span>
+</code></pre>
+
+<p>Once we are sure someone is subscribed to changes in our node, we generate a
+new random number, then update the value of our node.</p>
 
       </div>
       <div class="dark-box">
