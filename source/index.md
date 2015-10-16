@@ -176,7 +176,6 @@ see if the node has a subscriber.
 ```dart
 myNum = numGen.nextInt(50);
 myNode.updateValue(myNum);
-link.save();
 ```
 
 Once we are sure someone is subscribed to changes in our node, we generate a
