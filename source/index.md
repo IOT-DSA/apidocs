@@ -58,8 +58,8 @@ a *Responder*. The Responder will provide data on demand. It will only send the
 data when it's requested, eg it Responds.
 
 <aside class="notice">
-The other types of Links are Requester
-and a hybrid Responder and Requester. We'll look at those types later.
+The other types of Links are a <em>Requester</em> and a hybrid <em>Responder</em>
+and <em>Requester</em>. We'll look at those types later.
 </aside>
 
 ## Link
@@ -165,7 +165,7 @@ if(myNode.hasSubscriber) {
 }
 ```
 
-Generally, if there is no one actively listening, or _subscribing_ to our node
+Generally, if there is no one actively listening, or *subscribing* to our node
 there is not a lot of reason to update the value. So first, we will check to
 see if the node has a subscriber.
 
