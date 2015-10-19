@@ -180,3 +180,31 @@ myNode.updateValue(myNum);
 
 Once we are sure someone is subscribed to changes in our node, we generate a
 new random number, then update the value of our node.
+
+## Adding an action
+
+
+Sometimes we may wish to allow our Link to respond to an action. That is, we
+may want to allow a user to send a command to our link so it can perform
+some type of function. That function may be to execute a command on the system,
+poll or retrieve additional data, or any other functionality we may want to
+include.
+
+In our sample, we are going to add a command to allow our number generator
+to provide multiple values, and initialize it with a default value.
+
+To setup our actions is a two-step process. The first of which is to add a node
+to our Link. The second is to add a `profile` to the link which will correspond
+to the node. A profile can be considered a method which is executed when a node
+of that type receives an `invoke` call. The return of this method is a node
+which executes our desired tasks and returns, if applicable, any data. This
+process will become clear soon.
+
+<aside class="warning">
+Currently, the only way to accurately provide a profile is by passing it as part
+of the constructor for the LinkProvider.
+</aside>
+
+<aside class="notice">
+The SDK's contain some helper classes which make the creation of a node easier.
+</aside>
