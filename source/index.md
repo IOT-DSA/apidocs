@@ -183,6 +183,7 @@ new random number, then update the value of our node.
 
 ## Adding an action
 
+<!-- TODO: Add code example here -->
 
 Sometimes we may wish to allow our Link to respond to an action. That is, we
 may want to allow a user to send a command to our link so it can perform
@@ -208,3 +209,6 @@ of the constructor for the LinkProvider.
 <aside class="notice">
 The SDK's contain some helper classes which make the creation of a node easier.
 </aside>
+
+<!-- TODO: Add save information here. Then add info about finding all children
+    once a node is initialized -->
