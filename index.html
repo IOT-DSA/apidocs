@@ -43,8 +43,9 @@
       <div id="toc">
       </div>
         <ul class="toc-footer">
-            <li><a href='#'>Sign Up for a Developer Key</a></li>
-            <li><a href='http://github.com/tripit/slate'>Documentation Powered by Slate</a></li>
+            <li><a href="http://iot-dsa.org/">IOT-DSA Homepage</a></li>
+            <li><a href="https://github.com/IOT-DSA/docs/wiki">IOT-DSA Wiki</a></li>
+            <li><a href="http://iot-dsa.github.io/docs/sdks/dart/index.html">Dart API Reference</a></li>
         </ul>
     </div>
     <div class="page-wrapper">
@@ -70,10 +71,13 @@ to get updates when other, or even our, data is changed.</p>
 
 
 <span class="c1">// run.dart</span>
-
 <span class="kn">import</span> <span class="s">'package:dslink/dslink.dart'</span><span class="o">;</span>
 </code></pre>
-<pre class="highlight java"><code><span class="c1">// TODO</span>
+<pre class="highlight ruby"><code><span class="c1"># Add to your Gemfile</span>
+<span class="n">gem</span> <span class="s1">'dslink'</span><span class="p">,</span> <span class="ss">:git</span> <span class="o">=&gt;</span> <span class="s1">'git://github.com/IOT_DSA/sdk-dslink-ruby.git'</span>
+
+<span class="c1">#link.rb</span>
+<span class="nb">require</span> <span class="s1">'dslink'</span>
 </code></pre>
 
 <p>By using the Git repository, we ensure that we have the most up-to-date version
@@ -94,10 +98,11 @@ and <em>Requester</em>. We&rsquo;ll look at those types later.
 <h2 id="link">Link</h2>
 
 <blockquote>
-<p>Note that we pass the application startup arguments to the link creation.</p>
+<p>Note that in some sdks we must pass the application startup arguments to the
+link creation, other SDKs will automatically retrieve these arguments on their
+own.</p>
 </blockquote>
 <pre class="highlight dart"><code><span class="c1">// run.dart</span>
-
 <span class="n">main</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
   <span class="kd">var</span> <span class="n">link</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinkProvider</span><span class="o">(</span><span class="n">args</span><span class="o">,</span> <span class="s">'Example-'</span><span class="o">);</span>
   <span class="n">link</span><span class="o">.</span><span class="na">connect</span><span class="o">();</span>
@@ -207,6 +212,134 @@ see if the node has a subscriber.</p>
 
 <p>Once we are sure someone is subscribed to changes in our node, we generate a
 new random number, then update the value of our node.</p>
+
+<h2 id="adding-an-action">Adding an action</h2>
+<pre class="highlight dart"><code><span class="c1">// Our new constructor in which we pass both our default node for</span>
+<span class="c1">// adding a value, and our profile, or action on that node.</span>
+<span class="kd">var</span> <span class="n">nodeList</span> <span class="o">=</span> <span class="o">[];</span> <span class="c1">// Store all nodes we create to reference later.</span>
+
+<span class="c1">// Following replaces previous link initialization.</span>
+<span class="n">link</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinkProvider</span><span class="o">(</span><span class="n">args</span><span class="o">,</span> <span class="s">'Example-'</span><span class="o">,</span> <span class="nl">defaultNodes:</span> <span class="o">{</span>
+  <span class="s">'AddNum'</span> <span class="o">:</span> <span class="o">{</span>
+    <span class="sx">r'$name'</span> <span class="o">:</span> <span class="s">'Add number'</span><span class="o">,</span>
+    <span class="sx">r'$is'</span> <span class="o">:</span> <span class="s">'addnum'</span><span class="o">,</span>
+    <span class="sx">r'$invokable'</span> <span class="o">:</span> <span class="s">'write'</span><span class="o">,</span>
+    <span class="sx">r'$params'</span> <span class="o">:</span> <span class="o">[{</span><span class="s">'name'</span> <span class="o">:</span> <span class="s">'value'</span><span class="o">,</span> <span class="s">'type'</span> <span class="o">:</span> <span class="s">'int'</span><span class="o">}]</span>
+  <span class="o">}},</span> <span class="nl">profiles:</span> <span class="o">{</span>
+    <span class="s">'addnum'</span> <span class="o">:</span> <span class="o">(</span><span class="kt">String</span> <span class="n">path</span><span class="o">)</span> <span class="o">=&gt;</span>
+        <span class="k">new</span> <span class="n">SimpleActionNode</span><span class="o">(</span><span class="n">path</span><span class="o">,</span> <span class="o">(</span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">,</span> <span class="kd">dynamic</span><span class="o">&gt;</span><span class="n">params</span><span class="o">)</span> <span class="o">{</span>
+          <span class="kd">var</span> <span class="n">addVal</span> <span class="o">=</span> <span class="kt">int</span><span class="o">.</span><span class="na">parse</span><span class="o">(</span><span class="n">params</span><span class="o">[</span><span class="s">'value'</span><span class="o">]);</span>
+          <span class="kd">var</span> <span class="n">ndNum</span> <span class="o">=</span> <span class="n">nodeList</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
+          <span class="n">nodeList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">link</span><span class="o">.</span><span class="na">addNode</span><span class="o">(</span><span class="s">'/MyNum</span><span class="si">$ndNum</span><span class="s">'</span><span class="o">,</span> <span class="o">{</span>
+            <span class="sx">r'$name'</span> <span class="o">:</span> <span class="s">'My node #</span><span class="si">$ndNum</span><span class="s">'</span><span class="o">,</span>
+            <span class="sx">r'$type'</span> <span class="o">:</span> <span class="s">'int'</span><span class="o">,</span>
+            <span class="s">'?value'</span> <span class="o">:</span> <span class="n">addVal</span>
+          <span class="o">}));</span>
+          <span class="c1">// myNode.updateValue(myNum + addVal);</span>
+        <span class="o">})</span>
+<span class="o">});</span>
+</code></pre>
+<pre class="highlight dart"><code><span class="c1">// Add our initial node to our node list instead of a single variable</span>
+<span class="n">nodeList</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">link</span><span class="o">.</span><span class="na">addNode</span><span class="o">(</span><span class="s">'/MyNum'</span><span class="o">,</span>
+  <span class="o">{</span> <span class="sx">r'$name'</span><span class="o">:</span> <span class="s">'My Number'</span><span class="o">,</span>
+    <span class="sx">r'$type'</span> <span class="o">:</span> <span class="s">'int'</span><span class="o">,</span>
+    <span class="s">'?value'</span> <span class="o">:</span> <span class="n">myNum</span><span class="o">})</span>
+<span class="o">);</span>
+
+<span class="c1">// Update our timer to provide a new random number for each node not just</span>
+<span class="c1">// the initial one.</span>
+<span class="k">new</span> <span class="n">Timer</span><span class="o">.</span><span class="na">periodic</span><span class="o">(</span><span class="kd">const</span> <span class="n">Duration</span><span class="o">(</span><span class="nl">seconds:</span> <span class="mi">5</span><span class="o">),</span> <span class="o">(</span><span class="n">timer</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">for</span><span class="o">(</span><span class="kd">var</span> <span class="n">myNode</span> <span class="k">in</span> <span class="n">nodeList</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">myNode</span><span class="o">.</span><span class="na">hasSubscriber</span><span class="o">)</span> <span class="o">{</span>
+      <span class="n">myNum</span> <span class="o">=</span> <span class="n">numGen</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="mi">50</span><span class="o">);</span>
+      <span class="n">myNode</span><span class="o">.</span><span class="na">updateValue</span><span class="o">(</span><span class="n">myNum</span><span class="o">);</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">});</span>
+</code></pre>
+
+<p>Sometimes we may wish to allow our Link to respond to an action. That is, we
+may want to allow a user to send a command to our link so it can perform
+some type of function. That function may be to execute a command on the system,
+poll or retrieve additional data, or any other functionality we may want to
+include.</p>
+
+<p>In our sample, we are going to add a command to allow our number generator
+to provide multiple values, and initialize it with a default value.</p>
+
+<p>To setup our actions is a two-step process. The first of which is to add a node
+to our Link. The second is to add a <code class="prettyprint">profile</code> to the link which will correspond
+to the node. A profile can be considered a method which is executed when a node
+of that type receives an <code class="prettyprint">invoke</code> call. The return of this method is a node
+which executes our desired tasks and returns, if applicable, any data. This
+process will become clear soon.</p>
+
+<aside class="warning">
+Currently, the only way to accurately provide a profile is by passing it as part
+of the constructor for the LinkProvider.
+</aside>
+
+<aside class="notice">
+The SDK&rsquo;s contain some helper classes which make the creation of a node easier.
+</aside>
+
+<h2 id="saving-a-link-39-s-state">Saving a link&rsquo;s state</h2>
+
+<blockquote>
+<p>Initialize the link to load any existing saved data.</p>
+</blockquote>
+<pre class="highlight dart"><code><span class="c1">// after the link = new LinkProvider(..) and before link.connect();</span>
+<span class="n">link</span><span class="o">.</span><span class="na">init</span><span class="o">();</span>
+</code></pre>
+
+<blockquote>
+<p>Call save on the link.</p>
+</blockquote>
+<pre class="highlight dart"><code><span class="c1">// Add outside of the for loop inside the Timer call.</span>
+<span class="n">link</span><span class="o">.</span><span class="na">save</span><span class="o">();</span>
+</code></pre>
+
+<p>We can now add as many values to our link as we like. And every 5 seconds, a
+new number is generated for each of these nodes. However if we stop our link,
+and restart it, we&rsquo;ll find that all of the additional nodes we created no longer
+exist. Nor does it initialize with the previous values which were being stored.</p>
+
+<p>When a link is saved, it will create a <code class="prettyprint">node.json</code> which will store the state
+of our link and nodes at that time. In order to properly use the data from
+the save file, we also need to ensure we initialize the link prior to
+connecting.</p>
+
+<aside class="notice">
+Some SDK&rsquo;s will automatically initialize the node on connection, however it is
+best practice to explicitly initialize the link yourself.
+</aside>
+
+<p>Now if we restart our link, the values we added are already included when it
+reconnects to our broker</p>
+
+<h2 id="getting-child-nodes">Getting child nodes.</h2>
+
+<blockquote>
+<p>Get the root node of our Responder Link.</p>
+</blockquote>
+<pre class="highlight dart"><code><span class="c1">// At the top of our Timer callback.</span>
+<span class="kd">var</span> <span class="n">rootNode</span> <span class="o">=</span> <span class="o">~</span><span class="n">link</span><span class="o">;</span> <span class="c1">// Shortcut for link.getNode('/');</span>
+</code></pre>
+
+<blockquote>
+<p>Update for loop to iterate over the children of the root node.</p>
+</blockquote>
+<pre class="highlight dart"><code><span class="k">for</span><span class="o">(</span><span class="kd">var</span> <span class="n">myNode</span> <span class="k">in</span> <span class="n">rootNode</span><span class="o">.</span><span class="na">children</span><span class="o">)</span> <span class="o">{</span>
+<span class="c1">// ... Existing checking for subscriber and updating value</span>
+<span class="o">}</span>
+</code></pre>
+
+<p>After we&rsquo;ve restarted the link, you may notice a slight problem. Any values that
+were added to the node are not being updated. This is because we explicitly
+tracked them in our own list rather than querying our link for its child nodes.</p>
+
+<p>First we query our link for the root node (top-most node). Once we have that
+we can iterate over the children nodes to update each of those values.</p>
 
       </div>
       <div class="dark-box">
