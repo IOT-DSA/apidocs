@@ -294,7 +294,7 @@ best practice to explicitly initialize the link yourself.
 Now if we restart our link, the values we added are already included when it
 reconnects to our broker
 
-## Getting child nodes.
+## Getting child nodes
 
 > Get the root node of our Responder Link.
 
