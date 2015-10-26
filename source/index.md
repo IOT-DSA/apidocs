@@ -11,8 +11,9 @@ language_tabs:
   - c: C
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='http://github.com/tripit/slate'>Documentation Powered by Slate</a>
+  - <a href="http://iot-dsa.org/">IOT-DSA Homepage</a>
+  - <a href="https://github.com/IOT-DSA/docs/wiki">IOT-DSA Wiki</a>
+  - <a href="http://iot-dsa.github.io/docs/sdks/dart/index.html">Dart API Reference</a>
 
 includes:
 
