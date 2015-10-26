@@ -290,5 +290,29 @@ Some SDK's will automatically initialize the node on connection, however it is
 best practice to explicitly initialize the link yourself.
 </aside>
 
-<!-- TODO: Add save information here. Then add info about finding all children
-    once a node is initialized -->
+Now if we restart our link, the values we added are already included when it
+reconnects to our broker
+
+## Getting child nodes.
+
+> Get the root node of our Responder Link.
+
+```dart
+// At the top of our Timer callback.
+var rootNode = ~link; // Shortcut for link.getNode('/');
+```
+
+> Update for loop to iterate over the children of the root node.
+
+```dart
+for(var myNode in rootNode.children) {
+// ... Existing checking for subscriber and updating value
+}
+```
+
+After we've restarted the link, you may notice a slight problem. Any values that
+were added to the node are not being updated. This is because we explicitly
+tracked them in our own list rather than querying our link for its child nodes.
+
+First we query our link for the root node (top-most node). Once we have that
+we can iterate over the children nodes to update each of those values.
