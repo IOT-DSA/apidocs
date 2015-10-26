@@ -39,12 +39,15 @@ dependencies:
 
 
 // run.dart
-
 import 'package:dslink/dslink.dart';
 ```
 
-```java
-// TODO
+```ruby
+# Add to your Gemfile
+gem 'dslink', :git => 'git://github.com/IOT_DSA/sdk-dslink-ruby.git'
+
+#link.rb
+require 'dslink'
 ```
 
 By using the Git repository, we ensure that we have the most up-to-date version
@@ -64,11 +67,12 @@ and <em>Requester</em>. We'll look at those types later.
 
 ## Link
 
-> Note that we pass the application startup arguments to the link creation.
+> Note that in some sdks we must pass the application startup arguments to the
+> link creation, other SDKs will automatically retrieve these arguments on their
+> own.
 
 ```dart
 // run.dart
-
 main(List<String> args) {
   var link = new LinkProvider(args, 'Example-');
   link.connect();
@@ -184,11 +188,10 @@ new random number, then update the value of our node.
 ## Adding an action
 
 ```dart
-// Our new constructor in which we pass both our default node for adding
-// and our profile, or action on that node.
+// Our new constructor in which we pass both our default node for
+// adding a value, and our profile, or action on that node.
 var nodeList = []; // Store all nodes we create to reference later.
 
-link = n
 // Following replaces previous link initialization.
 link = new LinkProvider(args, 'Example-', defaultNodes: {
   'AddNum' : {
@@ -254,6 +257,37 @@ of the constructor for the LinkProvider.
 
 <aside class="notice">
 The SDK's contain some helper classes which make the creation of a node easier.
+</aside>
+
+## Saving a link's state
+
+> Initialize the link to load any existing saved data.
+
+```dart
+// after the link = new LinkProvider(..) and before link.connect();
+link.init();
+```
+
+> Call save on the link.
+
+```dart
+// Add outside of the for loop inside the Timer call.
+link.save();
+```
+
+We can now add as many values to our link as we like. And every 5 seconds, a
+new number is generated for each of these nodes. However if we stop our link,
+and restart it, we'll find that all of the additional nodes we created no longer
+exist. Nor does it initialize with the previous values which were being stored.
+
+When a link is saved, it will create a `node.json` which will store the state
+of our link and nodes at that time. In order to properly use the data from
+the save file, we also need to ensure we initialize the link prior to
+connecting.
+
+<aside class="notice">
+Some SDK's will automatically initialize the node on connection, however it is
+best practice to explicitly initialize the link yourself.
 </aside>
 
 <!-- TODO: Add save information here. Then add info about finding all children
