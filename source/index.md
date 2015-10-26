@@ -183,7 +183,53 @@ new random number, then update the value of our node.
 
 ## Adding an action
 
-<!-- TODO: Add code example here -->
+```dart
+// Our new constructor in which we pass both our default node for adding
+// and our profile, or action on that node.
+var nodeList = []; // Store all nodes we create to reference later.
+
+link = n
+// Following replaces previous link initialization.
+link = new LinkProvider(args, 'Example-', defaultNodes: {
+  'AddNum' : {
+    r'$name' : 'Add number',
+    r'$is' : 'addnum',
+    r'$invokable' : 'write',
+    r'$params' : [{'name' : 'value', 'type' : 'int'}]
+  }}, profiles: {
+    'addnum' : (String path) =>
+        new SimpleActionNode(path, (Map<String, dynamic>params) {
+          var addVal = int.parse(params['value']);
+          var ndNum = nodeList.length;
+          nodeList.add(link.addNode('/MyNum$ndNum', {
+            r'$name' : 'My node #$ndNum',
+            r'$type' : 'int',
+            '?value' : addVal
+          }));
+          // myNode.updateValue(myNum + addVal);
+        })
+});
+```
+
+```dart
+// Add our initial node to our node list instead of a single variable
+nodeList.add(link.addNode('/MyNum',
+  { r'$name': 'My Number',
+    r'$type' : 'int',
+    '?value' : myNum})
+);
+
+// Update our timer to provide a new random number for each node not just
+// the initial one.
+new Timer.periodic(const Duration(seconds: 5), (timer) {
+  for(var myNode in nodeList) {
+    if(myNode.hasSubscriber) {
+      myNum = numGen.nextInt(50);
+      myNode.updateValue(myNum);
+    }
+  }
+});
+```
 
 Sometimes we may wish to allow our Link to respond to an action. That is, we
 may want to allow a user to send a command to our link so it can perform
