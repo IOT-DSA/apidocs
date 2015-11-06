@@ -329,8 +329,11 @@ reconnects to our broker</p>
 <blockquote>
 <p>Update for loop to iterate over the children of the root node.</p>
 </blockquote>
-<pre class="highlight dart"><code><span class="k">for</span><span class="o">(</span><span class="kd">var</span> <span class="n">myNode</span> <span class="k">in</span> <span class="n">rootNode</span><span class="o">.</span><span class="na">children</span><span class="o">)</span> <span class="o">{</span>
-<span class="c1">// ... Existing checking for subscriber and updating value</span>
+<pre class="highlight dart"><code><span class="c1">/// rootNode.children returns a Map&lt;String, Node&gt; where String</span>
+<span class="c1">/// is the node identifier and Node is the [Node] object itself.</span>
+<span class="k">for</span><span class="o">(</span><span class="kd">var</span> <span class="n">nodeName</span> <span class="k">in</span> <span class="n">rootNode</span><span class="o">.</span><span class="na">children</span><span class="o">.</span><span class="na">keys</span><span class="o">)</span> <span class="o">{</span>
+  <span class="kd">var</span> <span class="n">myNode</span> <span class="o">=</span> <span class="n">rootNode</span><span class="o">[</span><span class="n">nodeName</span><span class="o">];</span>
+  <span class="c1">// ... Existing checking for subscriber and updating value</span>
 <span class="o">}</span>
 </code></pre>
 
@@ -340,6 +343,57 @@ tracked them in our own list rather than querying our link for its child nodes.<
 
 <p>First we query our link for the root node (top-most node). Once we have that
 we can iterate over the children nodes to update each of those values.</p>
+
+<h2 id="nesting-nodes">Nesting Nodes</h2>
+
+<blockquote>
+<p>Update the default nodes</p>
+</blockquote>
+<pre class="highlight dart"><code><span class="c1">/// Change the default nodes from our constructor.</span>
+<span class="c1">/// The rest of the constructor stays the same.</span>
+<span class="nl">defaultNodes:</span> <span class="o">{</span>
+  <span class="s">'CustomNumbers'</span> <span class="o">:</span> <span class="o">{</span>
+    <span class="sx">r'$name'</span> <span class="o">:</span> <span class="s">'Custom Numbers'</span><span class="o">,</span>
+    <span class="s">'AddNum'</span> <span class="o">:</span> <span class="o">{</span>
+      <span class="c1">// ... Previous information still here.</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">},</span>
+</code></pre>
+
+<blockquote>
+<p>Update location our action adds to.</p>
+</blockquote>
+<pre class="highlight dart"><code><span class="c1">// Within our addnum profile update where we add the</span>
+<span class="c1">// new node when the action runs.</span>
+<span class="n">link</span><span class="o">.</span><span class="na">addNode</span><span class="o">(</span><span class="s">'/CustomNumbers/MyNum</span><span class="si">$ndNum</span><span class="s">'</span><span class="o">,</span> <span class="o">{</span>
+<span class="c1">// ... rest of the code is the same.</span>
+</code></pre>
+
+<p>As the number of nodes grows, having a series of nodes all at the top level
+can become a nightmare. Often it is preferable to create a hierarchy for values.
+Lets change the location of our custom numbers to be under their own node and
+move the action to that node.</p>
+
+<p>First create a new mapping of the default node hierarchy. In this case we&rsquo;re
+actually wrapping our existing <code class="prettyprint">AddNum</code> node with the new node <code class="prettyprint">CustomNumbers</code>.</p>
+
+<p>Next we just need to ensure that when the action is triggered to add a new
+custom value (eg: <code class="prettyprint">My Node #1</code>), that it gets added under the <code class="prettyprint">Customer Numbers</code>
+section as opposed to the top level node.</p>
+
+<aside class="notice">
+It&rsquo;s left as an exercise to the reader to implement the required updates
+to generate random values in the new location, as well as the original
+MyNum value.
+</aside>
+
+<p>The <code class="prettyprint">&#39;$name&#39;</code> field of our <code class="prettyprint">CustomNumbers</code> node is entirely optional, but
+it provides an easier way of reading the node within a broker. However this
+value does not need to match the name of the node in any way and does not
+impact its configuration at all. It is only meta data. Full documentation on
+the meta data and configuration for a node is
+<a href="https://github.com/IOT-DSA/docs/wiki/Configs#core-configs">available from our Wiki</a>.</p>
 
       </div>
       <div class="dark-box">
