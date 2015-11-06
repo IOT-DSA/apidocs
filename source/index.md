@@ -306,8 +306,11 @@ var rootNode = ~link; // Shortcut for link.getNode('/');
 > Update for loop to iterate over the children of the root node.
 
 ```dart
-for(var myNode in rootNode.children) {
-// ... Existing checking for subscriber and updating value
+/// rootNode.children returns a Map<String, Node> where String
+/// is the node identifier and Node is the [Node] object itself.
+for(var nodeName in rootNode.children.keys) {
+  var myNode = rootNode[nodeName];
+  // ... Existing checking for subscriber and updating value
 }
 ```
 
@@ -317,3 +320,47 @@ tracked them in our own list rather than querying our link for its child nodes.
 
 First we query our link for the root node (top-most node). Once we have that
 we can iterate over the children nodes to update each of those values.
+
+## Nesting Nodes
+
+> Update the default nodes
+
+```dart
+/// Change the default nodes from our constructor.
+/// The rest of the constructor stays the same.
+defaultNodes: {
+  'CustomNumbers' : {
+    r'$name' : 'Custom Numbers',
+    'AddNum' : {
+      // ... Previous information still here.
+    }
+  }
+},
+```
+
+> Update location our action adds to.
+
+```dart
+// Within our addnum profile update where we add the
+// new node when the action runs.
+link.addNode('/CustomNumbers/MyNum$ndNum', {
+// ... rest of the code is the same.
+```
+
+As the number of nodes grows, having a series of nodes all at the top level
+can become a nightmare. Often it is preferable to create a hierarchy for values.
+Lets change the location of our custom numbers to be under their own node and
+move the action to that node.
+
+First create a new mapping of the default node hierarchy. In this case we're
+actually wrapping our existing `AddNum` node with the new node `CustomNumbers`.
+
+Next we just need to ensure that when the action is triggered to add a new
+custom value (eg: `My Node #1`), that it gets added under the `Customer Numbers`
+section as opposed to the top level node.
+
+<aside class="notice">
+It's left as an exercise to the reader to implement the required updates
+to generate random values in the new location, as well as the original
+MyNum value.
+</aside>
