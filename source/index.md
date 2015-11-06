@@ -364,3 +364,10 @@ It's left as an exercise to the reader to implement the required updates
 to generate random values in the new location, as well as the original
 MyNum value.
 </aside>
+
+The `'$name'` field of our `CustomNumbers` node is entirely optional, but
+it provides an easier way of reading the node within a broker. However this
+value does not need to match the name of the node in any way and does not
+impact its configuration at all. It is only meta data. Full documentation on
+the meta data and configuration for a node is
+[available from our Wiki](https://github.com/IOT-DSA/docs/wiki/Configs#core-configs).
