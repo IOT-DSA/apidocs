@@ -53,11 +53,9 @@
       <div class="content">
         <h1 id="introduction">Introduction</h1>
 
-<p>So you have some data that you would like to be able to send to a DGLux server
-or DSA Broker, but you’re not sure how to accomplish that? This guide will
-introduce you to the basics of communicating with a Broker using the DSLink SDK.
-We&rsquo;ll learn how to send data to a Broker as well as how to subscribe to data
-to get updates when other, or even our, data is changed.</p>
+<p>This guide will introduce you to the basics of communicating with a Broker using
+the DSLink SDK. We&rsquo;ll learn how to send data to a Broker as well as how to
+subscribe to data to get updates when other, or even our, data is changed.</p>
 
 <h1 id="importing">Importing</h1>
 
@@ -394,6 +392,71 @@ value does not need to match the name of the node in any way and does not
 impact its configuration at all. It is only meta data. Full documentation on
 the meta data and configuration for a node is
 <a href="https://github.com/IOT-DSA/docs/wiki/Configs#core-configs">available from our Wiki</a>.</p>
+
+          <h1 id="requesters">Requesters</h1>
+
+<p>While a <code class="prettyprint">Responder</code> provides information on-demand, a <code class="prettyprint">Requester</code> will
+provide data when it needs to. This could be by Requesting information
+that it needs, or by pushing data to an existing value. We&rsquo;ll look at how
+to view currently available nodes and <code class="prettyprint">subscribe</code> to a specific one.</p>
+
+<aside class="notice">
+It is important to note, that while a requester may subscribe to a
+specific node, the Requester is actually subscribing to the Broker for
+that data, not to the node directly. The Broker will receive updates and
+pass them along to as many Requesters. Any given responder will only have
+the connection to the Broker not multiple Requesters.
+</aside>
+
+<h2 id="link">Link</h2>
+
+<blockquote>
+<p>Initialize a Requester only link</p>
+</blockquote>
+<pre class="highlight dart"><code><span class="kd">var</span> <span class="n">link</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinkProvider</span><span class="o">(</span><span class="n">args</span><span class="o">,</span> <span class="s">'RequesterExample-'</span><span class="o">,</span>
+               <span class="nl">isRequester:</span> <span class="kc">true</span><span class="o">,</span> <span class="nl">isResponder:</span> <span class="kc">false</span><span class="o">);</span>
+<span class="n">await</span> <span class="n">link</span><span class="o">.</span><span class="na">connect</span><span class="o">();</span>
+<span class="kd">var</span> <span class="n">requester</span> <span class="o">=</span> <span class="n">link</span><span class="o">.</span><span class="na">requester</span><span class="o">;</span>
+</code></pre>
+
+<p>Each link can be a Responder or a Requester (or both). At this time we&rsquo;re
+only interested in creating a requester so we initialize our link specifically
+for the requester.</p>
+
+<p>After the link connects, we can the access the requester directly in order to
+query the broker for nodes.</p>
+
+<h2 id="query-nodes">Query Nodes</h2>
+
+<blockquote>
+<p>Recursively poll nodes and children.</p>
+</blockquote>
+<pre class="highlight dart"><code><span class="n">iterateChildren</span><span class="o">(</span><span class="n">RemoteNode</span> <span class="n">nd</span><span class="o">)</span> <span class="n">async</span> <span class="o">{</span>
+  <span class="n">print</span><span class="o">(</span><span class="s">'Node: </span><span class="si">${nd.remotePath}</span><span class="s">'</span><span class="o">);</span>
+  <span class="k">if</span> <span class="o">(</span><span class="n">nd</span><span class="o">.</span><span class="na">children</span><span class="o">.</span><span class="na">isNotEmpty</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">for</span> <span class="o">(</span><span class="kd">var</span> <span class="n">nodeName</span> <span class="k">in</span> <span class="n">nd</span><span class="o">.</span><span class="na">children</span><span class="o">.</span><span class="na">keys</span><span class="o">)</span> <span class="o">{</span>
+      <span class="kd">var</span> <span class="n">path</span> <span class="o">=</span> <span class="n">nd</span><span class="o">.</span><span class="na">remotePath</span> <span class="o">+</span> <span class="s">'/</span><span class="si">$nodeName</span><span class="s">'</span><span class="o">;</span>
+      <span class="n">iterateChildren</span><span class="o">(</span><span class="n">await</span> <span class="n">requester</span><span class="o">.</span><span class="na">getRemoteNode</span><span class="o">(</span><span class="n">path</span><span class="o">));</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+<span class="c1">// Query initial node and pass it to our recursive function.</span>
+<span class="kd">var</span> <span class="n">exampleNode</span> <span class="o">=</span>
+      <span class="n">await</span> <span class="n">requester</span><span class="o">.</span><span class="na">getRemoteNode</span><span class="o">(</span><span class="s">'/downstream/Example'</span><span class="o">);</span>
+<span class="n">iterateChildren</span><span class="o">(</span><span class="n">exampleNode</span><span class="o">);</span>
+</code></pre>
+
+<p>With the requester, we can now query a node from the broker and get a listing
+of the nodes and recursively poll their children. For this sample we are going
+to query the broker for the nodes of the Responder link we created previously.</p>
+
+<aside class="notice">
+Ensure that your Responder link is connected to your broker before trying
+out this code.
+</aside>
+
+<!-- TODO: Aside mentioning that you can only subscribe to a value not to
+    an entire node with subnodes. -->
 
       </div>
       <div class="dark-box">
