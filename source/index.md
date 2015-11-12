@@ -16,17 +16,16 @@ toc_footers:
   - <a href="http://iot-dsa.github.io/docs/sdks/dart/index.html">Dart API Reference</a>
 
 includes:
+  - requesters
 
 search: true
 ---
 
 # Introduction
 
-So you have some data that you would like to be able to send to a DGLux server
-or DSA Broker, but you’re not sure how to accomplish that? This guide will
-introduce you to the basics of communicating with a Broker using the DSLink SDK.
-We'll learn how to send data to a Broker as well as how to subscribe to data
-to get updates when other, or even our, data is changed.
+This guide will introduce you to the basics of communicating with a Broker using
+the DSLink SDK. We'll learn how to send data to a Broker as well as how to
+subscribe to data to get updates when other, or even our, data is changed.
 
 # Importing
 
