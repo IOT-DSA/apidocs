@@ -55,10 +55,19 @@ With the requester, we can now query a node from the broker and get a listing
 of the nodes and recursively poll their children. For this sample we are going
 to query the broker for the nodes of the Responder link we created previously.
 
-<aside class="notice">
+<aside class="warning">
 Ensure that your Responder link is connected to your broker before trying
 out this code.
 </aside>
+
+You'll notice that we query for the node with each child, rather than
+accessing it from the parent node. This is due to the fact that when a
+remote node is returned, the content it contains is limited to prevent
+large amounts of data from being transferred when only a small subset may
+be required. Part of the restricted content is the full child node, and its
+own children. Also included in the restricted content is the value of a node,
+as depending on the node, the value may be anything from a single integer to
+a fully populated table, to even a file on the system.
 
 <!-- TODO: Aside mentioning that you can only subscribe to a value not to
     an entire node with subnodes. -->
