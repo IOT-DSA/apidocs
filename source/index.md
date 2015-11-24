@@ -9,7 +9,7 @@ language_tabs:
   - python: Python
   - ruby: Ruby
   - c: C
-  - c#: C#
+  - csharp: C#
   - scala: Scala
 
 toc_footers:
