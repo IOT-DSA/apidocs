@@ -9,6 +9,8 @@ language_tabs:
   - python: Python
   - ruby: Ruby
   - c: C
+  - c#: C#
+  - scala: Scala
 
 toc_footers:
   - <a href="http://iot-dsa.org/">IOT-DSA Homepage</a>
