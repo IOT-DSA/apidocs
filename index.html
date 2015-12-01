@@ -250,7 +250,9 @@ new random number, then update the value of our node.</p>
 <span class="c1">// the initial one.</span>
 <span class="k">new</span> <span class="n">Timer</span><span class="o">.</span><span class="na">periodic</span><span class="o">(</span><span class="kd">const</span> <span class="n">Duration</span><span class="o">(</span><span class="nl">seconds:</span> <span class="mi">5</span><span class="o">),</span> <span class="o">(</span><span class="n">timer</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">for</span><span class="o">(</span><span class="kd">var</span> <span class="n">myNode</span> <span class="k">in</span> <span class="n">nodeList</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">if</span><span class="o">(</span><span class="n">myNode</span><span class="o">.</span><span class="na">hasSubscriber</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// Don't update if there's no value</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">myNode</span><span class="o">.</span><span class="na">value</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="k">continue</span><span class="o">;</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">myNode</span><span class="o">.</span><span class="na">hasSubscriber</span><span class="o">)</span> <span class="o">{</span>
       <span class="n">myNum</span> <span class="o">=</span> <span class="n">numGen</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="mi">50</span><span class="o">);</span>
       <span class="n">myNode</span><span class="o">.</span><span class="na">updateValue</span><span class="o">(</span><span class="n">myNum</span><span class="o">);</span>
     <span class="o">}</span>
@@ -395,6 +397,11 @@ impact its configuration at all. It is only meta data. Full documentation on
 the meta data and configuration for a node is
 <a href="https://github.com/IOT-DSA/docs/wiki/Configs#core-configs">available from our Wiki</a>.</p>
 
+<aside class="warning">
+Node paths should be alphanumeric only with underscores. Node paths cannot
+include spaces, or a number of other special characters.
+</aside>
+
           <h1 id="requesters">Requesters</h1>
 
 <p>While a <code class="prettyprint">Responder</code> provides information on-demand, a <code class="prettyprint">Requester</code> will
@@ -514,8 +521,7 @@ in that value, we need to <code class="prettyprint">subscribe</code> to that nod
 
 <p>Using <code class="prettyprint">subscribe</code> will activate the <code class="prettyprint">hasSubscriber</code> flag on a node. It will
 also receive any updates to that node. In the sample we also verify that the
-node we&rsquo;re looking has a <code class="prettyprint">$type</code> value of <code class="prettyprint">int</code>. Otherwise we will subscribe
-to a value-less node which may cause our Responder to do some strange things.</p>
+node we&rsquo;re looking has a <code class="prettyprint">$type</code> value of <code class="prettyprint">int</code>.</p>
 
 <aside class="notice">
 You can only subscribe to a single value. You <strong>cannot</strong> subscribe
