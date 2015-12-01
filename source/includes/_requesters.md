@@ -121,8 +121,7 @@ in that value, we need to `subscribe` to that node.
 
 Using `subscribe` will activate the `hasSubscriber` flag on a node. It will
 also receive any updates to that node. In the sample we also verify that the
-node we're looking has a `$type` value of `int`. Otherwise we will subscribe
-to a value-less node which may cause our Responder to do some strange things.
+node we're looking has a `$type` value of `int`.
 
 <aside class="notice">
 You can only subscribe to a single value. You <strong>cannot</strong> subscribe
