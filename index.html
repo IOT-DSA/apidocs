@@ -457,17 +457,70 @@ Ensure that your Responder link is connected to your broker before trying
 out this code.
 </aside>
 
-<p>You&rsquo;ll notice that we query for the node with each child, rather than
-accessing it from the parent node. This is due to the fact that when a
-remote node is returned, the content it contains is limited to prevent
-large amounts of data from being transferred when only a small subset may
-be required. Part of the restricted content is the full child node, and its
-own children. Also included in the restricted content is the value of a node,
-as depending on the node, the value may be anything from a single integer to
-a fully populated table, to even a file on the system.</p>
+<p>You&rsquo;ll notice that we query for each child node, rather than accessing it from
+the parent node. This is due to the fact that when a remote node is returned,
+the content it contains is limited to prevent large amounts of data from being
+transferred when only a small subset may be required. Part of the restricted
+content is the full child node, and its own children. Also included in the
+restricted content is the value of a node, as depending on the node, the value
+may be anything from a single integer to a fully populated table, to even a
+file on the system.</p>
 
-<!-- TODO: Aside mentioning that you can only subscribe to a value not to
-    an entire node with subnodes. -->
+<h2 id="list-nodes">List Nodes</h2>
+<pre class="highlight dart"><code><span class="c1">// Replace print('Node: ${nd.remotePath}'); in</span>
+<span class="c1">// iterateChildren with:</span>
+<span class="n">requester</span><span class="o">.</span><span class="na">list</span><span class="o">(</span><span class="n">nd</span><span class="o">.</span><span class="na">remotePath</span><span class="o">).</span><span class="na">listen</span><span class="o">(</span><span class="n">listUpdates</span><span class="o">);</span>
+
+<span class="c1">// A new function outside of main</span>
+<span class="kt">void</span> <span class="nf">listUpdates</span><span class="p">(</span><span class="n">RequesterListUpdate</span> <span class="n">update</span><span class="o">)</span> <span class="o">{</span>
+  <span class="n">print</span><span class="o">(</span><span class="s">'Node - </span><span class="si">${update.node.name}</span><span class="s">'</span><span class="o">);</span>
+  <span class="n">print</span><span class="o">(</span><span class="s">'</span><span class="se">\t</span><span class="s">Changes: </span><span class="si">${update.changes}</span><span class="s">'</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+
+<p>Iterating over children is great when we initialize our connection, however
+it won&rsquo;t report any changes to those nodes, such as if a new child node is
+added, removed or modified. The list method on the Requester takes the full
+path of the node, and will call a method every time a change occurs to the
+node which is passed to it.</p>
+
+<p>The <code class="prettyprint">list</code> method will provide an update object which contains the node which
+was changed, and the configuration, attributes or children which were changed.
+It will only provide the updates of the specific node, and not any children
+of that node, so we need to ensure we call it on each node we want to keep
+updated on.</p>
+
+<p>With the Responder and Requester links running, try adding a new node to our
+custom numbers and observe the output from the Requester link we&rsquo;ve created.</p>
+
+<h2 id="subscribing-to-nodes">Subscribing to Nodes</h2>
+<pre class="highlight dart"><code><span class="c1">// Replace requester.list(nd.remotePath).listen(listUpdates);</span>
+<span class="c1">// in iterate children with:</span>
+<span class="k">if</span> <span class="o">(</span><span class="n">nd</span><span class="o">.</span><span class="na">getConfig</span><span class="o">(</span><span class="sx">r'$type'</span><span class="o">)</span> <span class="o">==</span> <span class="s">'int'</span><span class="o">)</span> <span class="o">{</span>
+  <span class="n">requester</span><span class="o">.</span><span class="na">subscribe</span><span class="o">(</span><span class="n">nd</span><span class="o">.</span><span class="na">remotePath</span><span class="o">,</span>
+    <span class="o">(</span><span class="n">ValueUpdate</span> <span class="n">update</span><span class="o">)</span> <span class="o">=&gt;</span> <span class="n">subscribeUpdates</span><span class="o">(</span><span class="n">update</span><span class="o">,</span> <span class="n">nd</span><span class="o">.</span><span class="na">name</span><span class="o">));</span>
+<span class="o">}</span>
+
+<span class="c1">// A new function outside of main.</span>
+<span class="kt">void</span> <span class="nf">subscribeUpdates</span><span class="p">(</span><span class="n">ValueUpdate</span> <span class="n">update</span><span class="o">,</span> <span class="kt">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+  <span class="n">print</span><span class="o">(</span><span class="s">'Name: </span><span class="si">$name</span><span class="s"> ValueUpdate: </span><span class="si">${update.value}</span><span class="s">'</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+
+<p>When listing nodes, we see the changes in a node&rsquo;s configuration including
+any new children. However we do not receive the actual values when they&rsquo;re
+updated by the Responder. To get the change of a values, and only the change
+in that value, we need to <code class="prettyprint">subscribe</code> to that node.</p>
+
+<p>Using <code class="prettyprint">subscribe</code> will activate the <code class="prettyprint">hasSubscriber</code> flag on a node. It will
+also receive any updates to that node. In the sample we also verify that the
+node we&rsquo;re looking has a <code class="prettyprint">$type</code> value of <code class="prettyprint">int</code>. Otherwise we will subscribe
+to a value-less node which may cause our Responder to do some strange things.</p>
+
+<aside class="notice">
+You can only subscribe to a single value. You <strong>cannot</strong> subscribe
+to a parent node and receive all child updates.
+</aside>
 
       </div>
       <div class="dark-box">
