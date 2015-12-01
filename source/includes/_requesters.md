@@ -60,14 +60,71 @@ Ensure that your Responder link is connected to your broker before trying
 out this code.
 </aside>
 
-You'll notice that we query for the node with each child, rather than
-accessing it from the parent node. This is due to the fact that when a
-remote node is returned, the content it contains is limited to prevent
-large amounts of data from being transferred when only a small subset may
-be required. Part of the restricted content is the full child node, and its
-own children. Also included in the restricted content is the value of a node,
-as depending on the node, the value may be anything from a single integer to
-a fully populated table, to even a file on the system.
+You'll notice that we query for each child node, rather than accessing it from
+the parent node. This is due to the fact that when a remote node is returned,
+the content it contains is limited to prevent large amounts of data from being
+transferred when only a small subset may be required. Part of the restricted
+content is the full child node, and its own children. Also included in the
+restricted content is the value of a node, as depending on the node, the value
+may be anything from a single integer to a fully populated table, to even a
+file on the system.
 
-<!-- TODO: Aside mentioning that you can only subscribe to a value not to
-    an entire node with subnodes. -->
+## List Nodes
+
+```dart
+// Replace print('Node: ${nd.remotePath}'); in
+// iterateChildren with:
+requester.list(nd.remotePath).listen(listUpdates);
+
+// A new function outside of main
+void listUpdates(RequesterListUpdate update) {
+  print('Node - ${update.node.name}');
+  print('\tChanges: ${update.changes}');
+}
+```
+
+Iterating over children is great when we initialize our connection, however
+it won't report any changes to those nodes, such as if a new child node is
+added, removed or modified. The list method on the Requester takes the full
+path of the node, and will call a method every time a change occurs to the
+node which is passed to it.
+
+The `list` method will provide an update object which contains the node which
+was changed, and the configuration, attributes or children which were changed.
+It will only provide the updates of the specific node, and not any children
+of that node, so we need to ensure we call it on each node we want to keep
+updated on.
+
+With the Responder and Requester links running, try adding a new node to our
+custom numbers and observe the output from the Requester link we've created.
+
+## Subscribing to Nodes
+
+```dart
+// Replace requester.list(nd.remotePath).listen(listUpdates);
+// in iterate children with:
+if (nd.getConfig(r'$type') == 'int') {
+  requester.subscribe(nd.remotePath,
+    (ValueUpdate update) => subscribeUpdates(update, nd.name));
+}
+
+// A new function outside of main.
+void subscribeUpdates(ValueUpdate update, String name) {
+  print('Name: $name ValueUpdate: ${update.value}');
+}
+```
+
+When listing nodes, we see the changes in a node's configuration including
+any new children. However we do not receive the actual values when they're
+updated by the Responder. To get the change of a values, and only the change
+in that value, we need to `subscribe` to that node.
+
+Using `subscribe` will activate the `hasSubscriber` flag on a node. It will
+also receive any updates to that node. In the sample we also verify that the
+node we're looking has a `$type` value of `int`. Otherwise we will subscribe
+to a value-less node which may cause our Responder to do some strange things.
+
+<aside class="notice">
+You can only subscribe to a single value. You <strong>cannot</strong> subscribe
+to a parent node and receive all child updates.
+</aside>
