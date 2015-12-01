@@ -228,7 +228,9 @@ nodeList.add(link.addNode('/MyNum',
 // the initial one.
 new Timer.periodic(const Duration(seconds: 5), (timer) {
   for(var myNode in nodeList) {
-    if(myNode.hasSubscriber) {
+    // Don't update if there's no value
+    if (myNode.value == null) continue;
+    if (myNode.hasSubscriber) {
       myNum = numGen.nextInt(50);
       myNode.updateValue(myNum);
     }
@@ -372,3 +374,8 @@ value does not need to match the name of the node in any way and does not
 impact its configuration at all. It is only meta data. Full documentation on
 the meta data and configuration for a node is
 [available from our Wiki](https://github.com/IOT-DSA/docs/wiki/Configs#core-configs).
+
+<aside class="warning">
+Node paths should be alphanumeric only with underscores. Node paths cannot
+include spaces, or a number of other special characters.
+</aside>
