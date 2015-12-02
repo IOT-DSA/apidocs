@@ -377,6 +377,6 @@ the meta data and configuration for a node is
 [available from our Wiki](https://github.com/IOT-DSA/docs/wiki/Configs#core-configs).
 
 <aside class="warning">
-Node paths should be alphanumeric only with underscores. Node paths cannot
-include spaces, or a number of other special characters.
+Node paths should be alphanumeric only with spaces or underscores. Node paths
+cannot include a number of special characters.
 </aside>
