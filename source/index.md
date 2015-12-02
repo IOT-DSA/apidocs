@@ -19,6 +19,7 @@ toc_footers:
 
 includes:
   - requesters
+  - footer
 
 search: true
 ---
