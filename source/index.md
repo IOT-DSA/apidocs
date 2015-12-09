@@ -233,9 +233,6 @@ if my_node.is_subscribed():
     print("Node is subscribed")
 ```
 
-Generally, if there is no one actively listening, or *subscribing* to our node
-there is not a lot of reason to update the value. So first, we will check to
-see if the node has a subscriber.
 In our simple example, we only want to update a value if there is someone
 actively listening, or *subscribing*, to our node. We can check a node
 specifically to see if it has a subscriber.
