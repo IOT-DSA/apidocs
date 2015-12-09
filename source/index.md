@@ -53,6 +53,18 @@ gem 'dslink', :git => 'git://github.com/IOT_DSA/sdk-dslink-ruby.git'
 require 'dslink'
 ```
 
+```python
+# Add to your setup.py
+setup(
+    install_requires=[
+        "dslink"
+    ]
+)
+
+# dslink.py
+import dslink
+```
+
 By using the Git repository, we ensure that we have the most up-to-date version
 of the DSLink SDK. In the future, the SDK may be made available through common
 package managers for each language.
@@ -81,6 +93,18 @@ main(List<String> args) {
   link.connect();
   // ...
 }
+```
+
+```python
+# dslink.py
+import dslink
+
+class ExampleDSLink(dslink.DSLink):
+    def start(self):
+        print("Starting DSLink")
+
+if __name__ == "__main__":
+    ExampleDSLink(dslink.Configuration("example", responder=True))
 ```
 
 In order to create any type of connection (Responder or Requester), we first
@@ -118,7 +142,14 @@ var numGen = new Random();
 var myNum = numGen.nextInt(50);
 ```
 
-Before we add the new, lets create a value that we can pass, and send updates
+```python
+# Import the random library at the top of the file
+import random
+
+var my_num = random.randint(0, 50)
+```
+
+Before we add the new, let's create a value that we can pass, and send updates
 for. In this case we'll just generate a random number between 0 and 50.
 
 ### Add node
@@ -131,6 +162,25 @@ var myNode = link.addNode('/MyNum',
   { r'$name': 'My Number',
     r'$type' : 'int',
     '?value' : myNum});
+```
+
+```python
+# In the DSLink class, implement get_default_nodes
+def get_default_nodes(self):
+    # Get default super_root
+    root = self.get_root_node()
+    
+    # Create MyNum Node
+    my_node = dslink.Node("MyNum", root) # Name the node, specify the parent
+    my_node.set_display_name("My Number")
+    my_node.set_type("int")
+    my_node.set_value(my_num)
+    
+    # Add my_node to the super_root
+    root.add_child(my_node)
+   
+    # Return the super root
+    return root
 ```
 
 Next we add our node to the Link. In this case we pass the node name, `/MyNum`
@@ -158,6 +208,11 @@ new Timer.periodic(const Duration(seconds: 5), (_) {
 });
 ```
 
+```python
+def update(self):
+    reactor.callLater(1, self.update) # Call again 1 second later
+```
+
 A node is of limited value if it only provides the initial request and nothing
 further. We want to provide updates to the value as things change. For our
 demonstration, we will setup a timer which updates our number once ever five
@@ -173,6 +228,14 @@ if(myNode.hasSubscriber) {
 }
 ```
 
+```python
+if my_node.is_subscribed():
+    print("Node is subscribed")
+```
+
+Generally, if there is no one actively listening, or *subscribing* to our node
+there is not a lot of reason to update the value. So first, we will check to
+see if the node has a subscriber.
 In our simple example, we only want to update a value if there is someone
 actively listening, or *subscribing*, to our node. We can check a node
 specifically to see if it has a subscriber.
@@ -237,6 +300,41 @@ new Timer.periodic(const Duration(seconds: 5), (timer) {
 });
 ```
 
+```python
+def start(self):
+    self.profile_manager.create_profile("addnum")
+    self.profile_manager.register_callback("addnum", self.addnum)
+
+def get_default_nodes(self):
+    root = self.get_root_node()
+    
+    my_num = dslink.Node("MyNum", root)
+    my_num.set_display_name("My Number")
+    my_num.set_type("int")
+    my_num.set_value(0)
+    
+    add_num = dslink.Node("AddNum", root)
+    add_num.set_display_name("Add number")
+    add_num.set_profile("addnum")
+    add_num.set_invokable("write")
+    add_num.set_parameters([
+        {
+            "name": "Number",
+            "type": "int"
+        }
+    ])
+    
+    root.add_child(my_num)
+    root.add_child(add_num)
+    
+    return root
+
+def addnum(self, parameters):
+    num = int(parameters.params["Number"]) # Parse number
+    self.super_root.get("/MyNum").set_value(num) # Set value
+    return [[]] # Return empty columns
+```
+
 Sometimes we may wish to allow our Link to respond to an action. That is, we
 may want to allow a user to send a command to our link so it can perform
 some type of function. That function may be to execute a command on the system,
@@ -271,11 +369,19 @@ The SDK's contain some helper classes which make the creation of a node easier.
 link.init();
 ```
 
+```python
+# The Python SDK initializes itself when implementing the class.
+```
+
 > Call save on the link.
 
 ```dart
 // Add outside of the for loop inside the Timer call.
 link.save();
+```
+
+```python
+# The Python SDK saves state automatically.
 ```
 
 We can now add as many values to our link as we like. And every 5 seconds, a
@@ -305,6 +411,10 @@ reconnects to our broker
 var rootNode = ~link; // Shortcut for link.getNode('/');
 ```
 
+```python
+root_node = self.super_root
+```
+
 > Update for loop to iterate over the children of the root node.
 
 ```dart
@@ -314,6 +424,11 @@ for(var nodeName in rootNode.children.keys) {
   var myNode = rootNode[nodeName];
   // ... Existing checking for subscriber and updating value
 }
+```
+
+```python
+for child_name in root_node.children:
+    child = root_node.children[child_name]
 ```
 
 After we've restarted the link, you may notice a slight problem. Any values that
@@ -338,6 +453,15 @@ defaultNodes: {
     }
   }
 },
+```
+
+```python
+my_num = dslink.Node("MyNum", root)
+
+add_num = dslink.Node("AddNum", root)
+
+my_num.add_child(add_num)
+root.add_child(my_num)
 ```
 
 > Update location our action adds to.
