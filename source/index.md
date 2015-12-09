@@ -153,7 +153,7 @@ directly with link itself.
 
 ```dart
 new Timer.periodic(const Duration(seconds: 5), (_) {
-// To be filled in soon.
+  myNode.updateValue('test string value');
 });
 ```
 
