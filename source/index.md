@@ -172,9 +172,18 @@ if(myNode.hasSubscriber) {
 }
 ```
 
-Generally, if there is no one actively listening, or *subscribing* to our node
-there is not a lot of reason to update the value. So first, we will check to
-see if the node has a subscriber.
+In our simple example, we only want to update a value if there is someone
+actively listening, or *subscribing*, to our node. We can check a node
+specifically to see if it has a subscriber.
+
+A value, however, should be set with at least an initial value, as once the value
+is updated, it is possible that a subscription to the node may occur at any time.
+
+<aside class="notice">
+In many situations it is preferable to have the latest value always ready rather
+than a value which may be hours, or even days, old when the the node receives
+its next subscription request.
+</aside>
 
 ## Updating the value
 
