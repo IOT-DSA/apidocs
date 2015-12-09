@@ -153,7 +153,8 @@ directly with link itself.
 
 ```dart
 new Timer.periodic(const Duration(seconds: 5), (_) {
-  myNode.updateValue(numGen.nextInt(50));
+	myNum = numGen.nextInt(50);
+	myNode.updateValue(myNum);
 });
 ```
 
@@ -184,18 +185,6 @@ In many situations it is preferable to have the latest value always ready rather
 than a value which may be hours, or even days, old when the the node receives
 its next subscription request.
 </aside>
-
-## Updating the value
-
-> Update the random number then update our value.
-
-```dart
-myNum = numGen.nextInt(50);
-myNode.updateValue(myNum);
-```
-
-Once we are sure someone is subscribed to changes in our node, we generate a
-new random number, then update the value of our node.
 
 ## Adding an action
 
