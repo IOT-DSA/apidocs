@@ -45,6 +45,18 @@ dependencies:
 import 'package:dslink/dslink.dart';
 ```
 
+```java
+// For Gradle add this to your build.gradle dependencies.
+compile 'org.iot-dsa:dslink:0.12.0'
+
+// For Apache Maven add this to your build.xml dependencies.
+<dependency>
+    <groupId>org.iot-dsa</groupId>
+    <artifactId>dslink</artifactId>
+    <version>0.12.0</version>
+</dependency>
+```
+
 ```ruby
 # Add to your Gemfile
 gem 'dslink', :git => 'git://github.com/IOT_DSA/sdk-dslink-ruby.git'
@@ -83,6 +95,35 @@ main(List<String> args) {
 }
 ```
 
+```java
+// package ...
+// import ...
+
+public class Main extends DSLinkHandler {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+
+    @Override
+    public boolean isResponder() {
+        return true;
+    }
+
+    @Override
+    public void onResponderInitialized(final DSLink link) {
+        LOGGER.info("Initialized");
+    }
+
+    @Override
+    public void onResponderConnected(final DSLink link) {
+        LOGGER.info("Connected");
+    }
+
+    public static void main(String[] args) {
+        DSLinkFactory.start(args, new Main());
+    }
+}
+```
+
 In order to create any type of connection (Responder or Requester), we first
 need to establish a link to the DSA Broker. In this example we will only
 establish the bare minimum link. There are a number of configuration options
@@ -118,6 +159,14 @@ var numGen = new Random();
 var myNum = numGen.nextInt(50);
 ```
 
+```java
+// Add this variable into your Main class.
+private static final Random RANDOM = new Random();
+
+// Generating a random number is as follows.
+int num = RANDOM.nextInt(50);
+```
+
 Before we add the new, lets create a value that we can pass, and send updates
 for. In this case we'll just generate a random number between 0 and 50.
 
@@ -131,6 +180,21 @@ var myNode = link.addNode('/MyNum',
   { r'$name': 'My Number',
     r'$type' : 'int',
     '?value' : myNum});
+```
+
+```java
+// In your Main class
+@Override
+public void onResponderInitialized(final DSLink link) {
+    Node superRoot = link.getNodeManager().getSuperRoot();
+    NodeBuilder builder = superRoot.createChild("MyNum");
+    builder.setDisplayName("My Number");
+    builder.setValueType(ValueType.NUMBER);
+    builder.setValue(new Value(0));
+    final Node node = builder.build();
+
+    // ...
+}
 ```
 
 Next we add our node to the Link. In this case we pass the node name, `/MyNum`
@@ -158,6 +222,25 @@ new Timer.periodic(const Duration(seconds: 5), (_) {
 });
 ```
 
+```java
+// In your Main class
+@Override
+public void onResponderInitialized(final DSLink link) {
+    // ...
+
+    Objects.getDaemonThreadPool().scheduleWithFixedDelay(new Runnable() {
+        @Override
+        public void run() {
+            int num = RANDOM.nextInt(50);
+            Value val = new Value(num);
+            node.setValue(val);
+        }
+    }, 0, 5, TimeUnit.SECONDS);
+
+    // ...
+}
+```
+
 A node is of limited value if it only provides the initial request and nothing
 further. We want to provide updates to the value as things change. For our
 demonstration, we will setup a timer which updates our number once ever five
@@ -170,6 +253,18 @@ seconds.
 ```dart
 if(myNode.hasSubscriber) {
   // To be filled in soon
+}
+```
+
+```java
+// scheduleWithFixedDelay ...
+@Override
+public void run() {
+    if (link.getSubscriptionManager().hasValueSub(node)) {
+        int num = RANDOM.nextInt(50);
+        Value val = new Value(num);
+        node.setValue(val);
+    }
 }
 ```
 
@@ -237,6 +332,34 @@ new Timer.periodic(const Duration(seconds: 5), (timer) {
 });
 ```
 
+```java
+// In your Main class
+@Override
+public void onResponderInitialized(final DSLink link) {
+    // Node superRoot = ...
+    // NodeBuilder builder = ...
+    // ...
+    // final Node node = ...
+    // ...
+
+    builder = superRoot.createChild("UpdateNum");
+    builder.setSerializable(false);
+    builder.setDisplayName("Update Number");
+    builder.setAction(new Action(Permission.WRITE,
+                                  new Handler<ActionResult>() {
+        @Override
+        public void handle(ActionResult event) {
+            int num = RANDOM.nextInt(50);
+            Value val = new Value(num);
+            node.setValue(val);
+        }
+    }));
+    builder.build();
+
+    // ...
+}
+```
+
 Sometimes we may wish to allow our Link to respond to an action. That is, we
 may want to allow a user to send a command to our link so it can perform
 some type of function. That function may be to execute a command on the system,
@@ -271,11 +394,19 @@ The SDK's contain some helper classes which make the creation of a node easier.
 link.init();
 ```
 
+```java
+// All the nodes are automatically reinitialized again on startup.
+```
+
 > Call save on the link.
 
 ```dart
 // Add outside of the for loop inside the Timer call.
 link.save();
+```
+
+```java
+// All the nodes are automatically saved.
 ```
 
 We can now add as many values to our link as we like. And every 5 seconds, a
@@ -305,6 +436,11 @@ reconnects to our broker
 var rootNode = ~link; // Shortcut for link.getNode('/');
 ```
 
+```java
+// Retrieves the super root of the responder.
+Node superRoot = link.getNodeManager().getSuperRoot();
+```
+
 > Update for loop to iterate over the children of the root node.
 
 ```dart
@@ -313,6 +449,13 @@ var rootNode = ~link; // Shortcut for link.getNode('/');
 for(var nodeName in rootNode.children.keys) {
   var myNode = rootNode[nodeName];
   // ... Existing checking for subscriber and updating value
+}
+```
+
+```java
+// Iterate all the children of the super root.
+for (Node child : superRoot.getChildren().values()) {
+    // ...
 }
 ```
 
@@ -340,6 +483,32 @@ defaultNodes: {
 },
 ```
 
+```java
+@Override
+public void onResponderInitialized(final DSLink link) {
+    Node superRoot = link.getNodeManager().getSuperRoot();
+    NodeBuilder builder = superRoot.createChild("Numbers");
+    builder.setSerializable(false);
+    final Node numbers = builder.build();
+
+    builder = numbers.createChild("MyNum");
+    builder.setDisplayName("My Number");
+    builder.setValueType(ValueType.NUMBER);
+    builder.setValue(new Value(0));
+    final Node node = builder.build();
+    Objects.getDaemonThreadPool().scheduleWithFixedDelay(new Runnable() {
+        @Override
+        public void run() {
+            if (link.getSubscriptionManager().hasValueSub(node)) {
+                int num = RANDOM.nextInt(50);
+                Value val = new Value(num);
+                node.setValue(val);
+            }
+        }
+    }, 0, 1, TimeUnit.SECONDS);
+}
+```
+
 > Update location our action adds to.
 
 ```dart
@@ -347,6 +516,31 @@ defaultNodes: {
 // new node when the action runs.
 link.addNode('/CustomNumbers/MyNum$ndNum', {
 // ... rest of the code is the same.
+```
+
+```java
+@Override
+public void onResponderInitialized(final DSLink link) {
+    // final Node numbers = ...
+    // final Node node = ...
+    // ...
+
+    builder = numbers.createChild("UpdateNum");
+    builder.setSerializable(false);
+    builder.setDisplayName("Update Number");
+    builder.setAction(new Action(Permission.WRITE,
+                                  new Handler<ActionResult>() {
+        @Override
+        public void handle(ActionResult event) {
+            int num = RANDOM.nextInt(50);
+            Value val = new Value(num);
+            node.setValue(val);
+        }
+    }));
+    builder.build();
+
+    LOGGER.info("Initialized");
+}
 ```
 
 As the number of nodes grows, having a series of nodes all at the top level
