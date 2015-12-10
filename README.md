@@ -9,12 +9,12 @@ Note
 ----
 
 To properly support code listing for Node.js, example source code which targets
-Node.js must be flagged as `node` type rather than javascript/js.
+Node.js must be flagged as `plaintext` type rather than javascript/js.
 
 For example:
 
 <pre><code>
-```node
+```plaintext
 // Some JS stuff
 ```
 </code></pre>
