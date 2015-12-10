@@ -24,6 +24,32 @@ await link.connect();
 var requester = link.requester;
 ```
 
+```js
+var link = new DS.LinkProvider('http://127.0.0.1:8080/conn', 'RequesterExample-', {
+  isRequester: true,
+  isResponder: false
+});
+
+link.connect().then(function() {
+  return link.onRequesterReady;
+}).then(function(requester) {
+   // work with requester here  
+});
+```
+
+```node
+var link = new DS.LinkProvider(args, 'RequesterExample-', {
+  isRequester: true,
+  isResponder: false
+});
+
+link.connect().then(function() {
+  return link.onRequesterReady;
+}).then(function(requester) {
+   // work with requester here  
+});
+```
+
 Each link can be a Responder or a Requester (or both). At this time we're
 only interested in creating a requester so we initialize our link specifically
 for the requester.
@@ -49,6 +75,46 @@ iterateChildren(RemoteNode nd) async {
 var exampleNode =
       await requester.getRemoteNode('/downstream/Example');
 iterateChildren(exampleNode);
+```
+
+```node
+function iterateChildren(nd) {
+  console.log('Node: ' + nd.remotePath);
+  var keys = Object.keys(nd.children);
+  if (keys.length > 0) {
+    keys.forEach(function(nodeName) {
+      var path = nd.remotePath + '/' + nodeName;
+      requester.getRemoteNode(path).then(function(node) {
+        iterateChildren(node);
+      });
+    });
+  }
+}
+
+// Query initial node and pass it to our recursive function.
+requester.getRemoteNode('/downstream/Example').then(function(exampleNode) {
+  iterateChildren(exampleNode);  
+});
+```
+
+```js
+function iterateChildren(nd) {
+  console.log('Node: ' + nd.remotePath);
+  var keys = Object.keys(nd.children);
+  if (keys.length > 0) {
+    keys.forEach(function(nodeName) {
+      var path = nd.remotePath + '/' + nodeName;
+      requester.getRemoteNode(path).then(function(node) {
+        iterateChildren(node);
+      });
+    });
+  }
+}
+
+// Query initial node and pass it to our recursive function.
+requester.getRemoteNode('/downstream/Example').then(function(exampleNode) {
+  iterateChildren(exampleNode);  
+});
 ```
 
 With the requester, we can now query a node from the broker and get a listing
@@ -83,6 +149,30 @@ void listUpdates(RequesterListUpdate update) {
 }
 ```
 
+```node
+// Replace console.log('Node: ' + nd.remotePath) in
+// iterateChildren with:
+requester.list(nd.remotePath).on("data", listUpdates);
+
+// a new function that is globally defined
+function listUpdates(update) {
+  console.log('Node - ' + update.node.name);
+  console.log('\tChanges: ' + update.changes);
+}
+```
+
+```js
+// Replace console.log('Node: ' + nd.remotePath) in
+// iterateChildren with:
+requester.list(nd.remotePath).on("data", listUpdates);
+
+// a new function that is globally defined
+function listUpdates(update) {
+  console.log('Node - ' + update.node.name);
+  console.log('\tChanges: ' + update.changes);
+}
+```
+
 Iterating over children is great when we initialize our connection, however
 it won't report any changes to those nodes, such as if a new child node is
 added, removed or modified. The list method on the Requester takes the full
@@ -111,6 +201,34 @@ if (nd.getConfig(r'$type') == 'int') {
 // A new function outside of main.
 void subscribeUpdates(ValueUpdate update, String name) {
   print('Name: $name ValueUpdate: ${update.value}');
+}
+```
+
+```node
+// Replace requester.list(nd.remotePath).on("data", listUpdates)
+// in iterateChildren with:
+if (nd.getConfig('$type') === 'int') {
+  requester.subscribe(nd.remotePath,
+    function(update) { subscribeUpdates(update, nd.name); });
+}
+
+// a new function that is globally defined
+function subscribeUpdates(update, name) {
+  console.log('Name: ' + name + ' ValueUpdate: ' + update.value);
+}
+```
+
+```js
+// Replace requester.list(nd.remotePath).on("data", listUpdates)
+// in iterateChildren with:
+if (nd.getConfig('$type') === 'int') {
+  requester.subscribe(nd.remotePath,
+    function(update) { subscribeUpdates(update, nd.name); });
+}
+
+// a new function that is globally defined
+function subscribeUpdates(update, name) {
+  console.log('Name: ' + name + ' ValueUpdate: ' + update.value);
 }
 ```
 

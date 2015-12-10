@@ -53,6 +53,23 @@ gem 'dslink', :git => 'git://github.com/IOT_DSA/sdk-dslink-ruby.git'
 require 'dslink'
 ```
 
+```node
+// package.json
+"dependencies": {
+  "dslink": "IOT-DSA/sdk-dslink-javascript#artifacts"
+}
+
+// index.js
+var DS = require('dslink');
+```
+
+```js
+// index.html
+<script src="https://raw.githubusercontent.com/IOT-DSA/sdk-dslink-javascript/artifacts/dist/dslink.browser.min.js"></script>
+
+// DS is a globally accessed variable
+```
+
 By using the Git repository, we ensure that we have the most up-to-date version
 of the DSLink SDK. In the future, the SDK may be made available through common
 package managers for each language.
@@ -81,6 +98,16 @@ main(List<String> args) {
   link.connect();
   // ...
 }
+```
+
+```node
+var link = new DS.LinkProvider(process.argv.slice(2), 'Example-');
+link.connect();
+```
+
+```js
+var link = new DS.LinkProvider('http://127.0.0.1:8080/conn', 'Example-');
+link.connect();
 ```
 
 In order to create any type of connection (Responder or Requester), we first
@@ -118,6 +145,14 @@ var numGen = new Random();
 var myNum = numGen.nextInt(50);
 ```
 
+```node
+var myNum = Math.round(Math.random() * 50);
+```
+
+```js
+var myNum = Math.round(Math.random() * 50);
+```
+
 Before we add the new, lets create a value that we can pass, and send updates
 for. In this case we'll just generate a random number between 0 and 50.
 
@@ -131,6 +166,22 @@ var myNode = link.addNode('/MyNum',
   { r'$name': 'My Number',
     r'$type' : 'int',
     '?value' : myNum});
+```
+
+```node
+var myNode = link.addNode('/MyNum', {
+  '$name': 'My Number',
+  '$type': 'int',
+  '?value': myNum
+});
+```
+
+```js
+var myNode = link.addNode('/MyNum', {
+  '$name': 'My Number',
+  '$type': 'int',
+  '?value': myNum
+});
 ```
 
 Next we add our node to the Link. In this case we pass the node name, `/MyNum`
@@ -214,28 +265,6 @@ link = new LinkProvider(args, 'Example-', defaultNodes: {
           }));
           // myNode.updateValue(myNum + addVal);
         })
-});
-```
-
-```dart
-// Add our initial node to our node list instead of a single variable
-nodeList.add(link.addNode('/MyNum',
-  { r'$name': 'My Number',
-    r'$type' : 'int',
-    '?value' : myNum})
-);
-
-// Update our timer to provide a new random number for each node not just
-// the initial one.
-new Timer.periodic(const Duration(seconds: 5), (timer) {
-  for(var myNode in nodeList) {
-    // Don't update if there's no value
-    if (myNode.value == null) continue;
-    if (myNode.hasSubscriber) {
-      myNum = numGen.nextInt(50);
-      myNode.updateValue(myNum);
-    }
-  }
 });
 ```
 
