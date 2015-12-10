@@ -45,6 +45,18 @@ dependencies:
 import 'package:dslink/dslink.dart';
 ```
 
+```java
+// For Gradle add this to your build.gradle dependencies.
+compile 'org.iot-dsa:dslink:0.12.0'
+
+// For Apache Maven add this to your build.xml dependencies.
+<dependency>
+    <groupId>org.iot-dsa</groupId>
+    <artifactId>dslink</artifactId>
+    <version>0.12.0</version>
+</dependency>
+```
+
 ```ruby
 # Add to your Gemfile
 gem 'dslink', :git => 'git://github.com/IOT_DSA/sdk-dslink-ruby.git'
@@ -68,6 +80,18 @@ var DS = require('dslink');
 <script src="https://raw.githubusercontent.com/IOT-DSA/sdk-dslink-javascript/artifacts/dist/dslink.browser.min.js"></script>
 
 // DS is a globally accessed variable
+```
+
+```python
+# Add to your setup.py
+setup(
+    install_requires=[
+        "dslink"
+    ]
+)
+
+# dslink.py
+import dslink
 ```
 
 By using the Git repository, we ensure that we have the most up-to-date version
@@ -108,6 +132,47 @@ link.connect();
 ```js
 var link = new DS.LinkProvider('http://127.0.0.1:8080/conn', 'Example-');
 link.connect();
+```
+
+```java
+// package ...
+// import ...
+
+public class Main extends DSLinkHandler {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+
+    @Override
+    public boolean isResponder() {
+        return true;
+    }
+
+    @Override
+    public void onResponderInitialized(final DSLink link) {
+        LOGGER.info("Initialized");
+    }
+
+    @Override
+    public void onResponderConnected(final DSLink link) {
+        LOGGER.info("Connected");
+    }
+
+    public static void main(String[] args) {
+        DSLinkFactory.start(args, new Main());
+    }
+}
+```
+
+```python
+# dslink.py
+import dslink
+
+class ExampleDSLink(dslink.DSLink):
+    def start(self):
+        print("Starting DSLink")
+
+if __name__ == "__main__":
+    ExampleDSLink(dslink.Configuration("example", responder=True))
 ```
 
 In order to create any type of connection (Responder or Requester), we first
@@ -153,7 +218,22 @@ var myNum = Math.round(Math.random() * 50);
 var myNum = Math.round(Math.random() * 50);
 ```
 
-Before we add the new, lets create a value that we can pass, and send updates
+```java
+// Add this variable into your Main class.
+private static final Random RANDOM = new Random();
+
+// Generating a random number is as follows.
+int num = RANDOM.nextInt(50);
+```
+
+```python
+# Import the random library at the top of the file
+import random
+
+var my_num = random.randint(0, 50)
+```
+
+Before we add the new, let's create a value that we can pass, and send updates
 for. In this case we'll just generate a random number between 0 and 50.
 
 ### Add node
@@ -184,6 +264,40 @@ var myNode = link.addNode('/MyNum', {
 });
 ```
 
+```java
+// In your Main class
+@Override
+public void onResponderInitialized(final DSLink link) {
+    Node superRoot = link.getNodeManager().getSuperRoot();
+    NodeBuilder builder = superRoot.createChild("MyNum");
+    builder.setDisplayName("My Number");
+    builder.setValueType(ValueType.NUMBER);
+    builder.setValue(new Value(0));
+    final Node node = builder.build();
+
+    // ...
+}
+```
+
+```python
+# In the DSLink class, implement get_default_nodes
+def get_default_nodes(self):
+    # Get default super_root
+    root = self.get_root_node()
+
+    # Create MyNum Node
+    my_node = dslink.Node("MyNum", root) # Name the node, specify the parent
+    my_node.set_display_name("My Number")
+    my_node.set_type("int")
+    my_node.set_value(my_num)
+
+    # Add my_node to the super_root
+    root.add_child(my_node)
+
+    # Return the super root
+    return root
+```
+
 Next we add our node to the Link. In this case we pass the node name, `/MyNum`
 and the configuration. The node name begins with a forward-slash \(`/`\)
 which indicate it is appended to the root of our DSLink.
@@ -204,8 +318,33 @@ directly with link itself.
 
 ```dart
 new Timer.periodic(const Duration(seconds: 5), (_) {
-// To be filled in soon.
+	myNum = numGen.nextInt(50);
+	myNode.updateValue(myNum);
 });
+```
+
+```java
+// In your Main class
+@Override
+public void onResponderInitialized(final DSLink link) {
+    // ...
+
+    Objects.getDaemonThreadPool().scheduleWithFixedDelay(new Runnable() {
+        @Override
+        public void run() {
+            int num = RANDOM.nextInt(50);
+            Value val = new Value(num);
+            node.setValue(val);
+        }
+    }, 0, 5, TimeUnit.SECONDS);
+
+    // ...
+}
+```
+
+```python
+def update(self):
+    reactor.callLater(1, self.update) # Call again 1 second later
 ```
 
 A node is of limited value if it only provides the initial request and nothing
@@ -223,21 +362,35 @@ if(myNode.hasSubscriber) {
 }
 ```
 
-Generally, if there is no one actively listening, or *subscribing* to our node
-there is not a lot of reason to update the value. So first, we will check to
-see if the node has a subscriber.
-
-## Updating the value
-
-> Update the random number then update our value.
-
-```dart
-myNum = numGen.nextInt(50);
-myNode.updateValue(myNum);
+```java
+// scheduleWithFixedDelay ...
+@Override
+public void run() {
+    if (link.getSubscriptionManager().hasValueSub(node)) {
+        int num = RANDOM.nextInt(50);
+        Value val = new Value(num);
+        node.setValue(val);
+    }
+}
 ```
 
-Once we are sure someone is subscribed to changes in our node, we generate a
-new random number, then update the value of our node.
+```python
+if my_node.is_subscribed():
+    print("Node is subscribed")
+```
+
+In our simple example, we only want to update a value if there is someone
+actively listening, or *subscribing*, to our node. We can check a node
+specifically to see if it has a subscriber.
+
+A value, however, should be set with at least an initial value, as once the value
+is updated, it is possible that a subscription to the node may occur at any time.
+
+<aside class="notice">
+In many situations it is preferable to have the latest value always ready rather
+than a value which may be hours, or even days, old when the the node receives
+its next subscription request.
+</aside>
 
 ## Adding an action
 
@@ -266,6 +419,91 @@ link = new LinkProvider(args, 'Example-', defaultNodes: {
           // myNode.updateValue(myNum + addVal);
         })
 });
+```
+
+```dart
+// Add our initial node to our node list instead of a single variable
+nodeList.add(link.addNode('/MyNum',
+  { r'$name': 'My Number',
+    r'$type' : 'int',
+    '?value' : myNum})
+);
+
+// Update our timer to provide a new random number for each node not just
+// the initial one.
+new Timer.periodic(const Duration(seconds: 5), (timer) {
+  for(var myNode in nodeList) {
+    // Don't update if there's no value
+    if (myNode.value == null) continue;
+    if (myNode.hasSubscriber) {
+      myNum = numGen.nextInt(50);
+      myNode.updateValue(myNum);
+    }
+  }
+});
+```
+
+```java
+// In your Main class
+@Override
+public void onResponderInitialized(final DSLink link) {
+    // Node superRoot = ...
+    // NodeBuilder builder = ...
+    // ...
+    // final Node node = ...
+    // ...
+
+    builder = superRoot.createChild("UpdateNum");
+    builder.setSerializable(false);
+    builder.setDisplayName("Update Number");
+    builder.setAction(new Action(Permission.WRITE,
+                                  new Handler<ActionResult>() {
+        @Override
+        public void handle(ActionResult event) {
+            int num = RANDOM.nextInt(50);
+            Value val = new Value(num);
+            node.setValue(val);
+        }
+    }));
+    builder.build();
+
+    // ...
+}
+```
+
+```python
+def start(self):
+    self.profile_manager.create_profile("addnum")
+    self.profile_manager.register_callback("addnum", self.addnum)
+
+def get_default_nodes(self):
+    root = self.get_root_node()
+
+    my_num = dslink.Node("MyNum", root)
+    my_num.set_display_name("My Number")
+    my_num.set_type("int")
+    my_num.set_value(0)
+
+    add_num = dslink.Node("AddNum", root)
+    add_num.set_display_name("Add number")
+    add_num.set_profile("addnum")
+    add_num.set_invokable("write")
+    add_num.set_parameters([
+        {
+            "name": "Number",
+            "type": "int"
+        }
+    ])
+
+    root.add_child(my_num)
+    root.add_child(add_num)
+
+    return root
+
+def addnum(self, parameters):
+    num = int(parameters.params["Number"]) # Parse number
+    self.super_root.get("/MyNum").set_value(num) # Set value
+    return [[]] # Return empty columns
 ```
 
 Sometimes we may wish to allow our Link to respond to an action. That is, we
@@ -302,11 +540,27 @@ The SDK's contain some helper classes which make the creation of a node easier.
 link.init();
 ```
 
+```java
+// All the nodes are automatically reinitialized again on startup.
+```
+
+```python
+# The Python SDK initializes itself when implementing the class.
+```
+
 > Call save on the link.
 
 ```dart
 // Add outside of the for loop inside the Timer call.
 link.save();
+```
+
+```java
+// All the nodes are automatically saved.
+```
+
+```python
+# The Python SDK saves state automatically.
 ```
 
 We can now add as many values to our link as we like. And every 5 seconds, a
@@ -336,6 +590,15 @@ reconnects to our broker
 var rootNode = ~link; // Shortcut for link.getNode('/');
 ```
 
+```java
+// Retrieves the super root of the responder.
+Node superRoot = link.getNodeManager().getSuperRoot();
+```
+
+```python
+root_node = self.super_root
+```
+
 > Update for loop to iterate over the children of the root node.
 
 ```dart
@@ -345,6 +608,18 @@ for(var nodeName in rootNode.children.keys) {
   var myNode = rootNode[nodeName];
   // ... Existing checking for subscriber and updating value
 }
+```
+
+```java
+// Iterate all the children of the super root.
+for (Node child : superRoot.getChildren().values()) {
+    // ...
+}
+```
+
+```python
+for child_name in root_node.children:
+    child = root_node.children[child_name]
 ```
 
 After we've restarted the link, you may notice a slight problem. Any values that
@@ -371,6 +646,41 @@ defaultNodes: {
 },
 ```
 
+```java
+@Override
+public void onResponderInitialized(final DSLink link) {
+    Node superRoot = link.getNodeManager().getSuperRoot();
+    NodeBuilder builder = superRoot.createChild("Numbers");
+    builder.setSerializable(false);
+    final Node numbers = builder.build();
+
+    builder = numbers.createChild("MyNum");
+    builder.setDisplayName("My Number");
+    builder.setValueType(ValueType.NUMBER);
+    builder.setValue(new Value(0));
+    final Node node = builder.build();
+    Objects.getDaemonThreadPool().scheduleWithFixedDelay(new Runnable() {
+        @Override
+        public void run() {
+            if (link.getSubscriptionManager().hasValueSub(node)) {
+                int num = RANDOM.nextInt(50);
+                Value val = new Value(num);
+                node.setValue(val);
+            }
+        }
+    }, 0, 1, TimeUnit.SECONDS);
+}
+```
+
+```python
+my_num = dslink.Node("MyNum", root)
+
+add_num = dslink.Node("AddNum", root)
+
+my_num.add_child(add_num)
+root.add_child(my_num)
+```
+
 > Update location our action adds to.
 
 ```dart
@@ -378,6 +688,31 @@ defaultNodes: {
 // new node when the action runs.
 link.addNode('/CustomNumbers/MyNum$ndNum', {
 // ... rest of the code is the same.
+```
+
+```java
+@Override
+public void onResponderInitialized(final DSLink link) {
+    // final Node numbers = ...
+    // final Node node = ...
+    // ...
+
+    builder = numbers.createChild("UpdateNum");
+    builder.setSerializable(false);
+    builder.setDisplayName("Update Number");
+    builder.setAction(new Action(Permission.WRITE,
+                                  new Handler<ActionResult>() {
+        @Override
+        public void handle(ActionResult event) {
+            int num = RANDOM.nextInt(50);
+            Value val = new Value(num);
+            node.setValue(val);
+        }
+    }));
+    builder.build();
+
+    LOGGER.info("Initialized");
+}
 ```
 
 As the number of nodes grows, having a series of nodes all at the top level
