@@ -13,7 +13,7 @@
 
       <script>
         $(function() {
-          setupLanguages(["dart","java","node","javascript","python","ruby","c","csharp","scala"]);
+          setupLanguages(["dart","java","plaintext","javascript","python","ruby","c","csharp","scala"]);
         });
       </script>
   </head>
@@ -30,7 +30,7 @@
         <div class="lang-selector">
               <a href="#" data-language-name="dart">Dart</a>
               <a href="#" data-language-name="java">Java</a>
-              <a href="#" data-language-name="node">Node.js</a>
+              <a href="#" data-language-name="plaintext">Node.js</a>
               <a href="#" data-language-name="javascript">Javascript</a>
               <a href="#" data-language-name="python">Python</a>
               <a href="#" data-language-name="ruby">Ruby</a>
@@ -59,6 +59,15 @@
 the DSLink SDK. We&rsquo;ll learn how to send data to a Broker as well as how to
 subscribe to data to get updates when other, or even our, data is changed.</p>
 
+<aside class="notice">
+While not covered in this documentation, it is important to know that an
+additional component while creating a DSLink is a configuration file called
+<code>dslink.json</code>. It is also suggested you also
+<a href="https://github.com/IOT-DSA/docs/wiki/dslink.json">review the
+documentation</a> from our Wiki on the content of a <code>dslink.json</code>
+file.
+</aside>
+
 <h1 id="importing">Importing</h1>
 
 <blockquote>
@@ -73,11 +82,44 @@ subscribe to data to get updates when other, or even our, data is changed.</p>
 <span class="c1">// run.dart</span>
 <span class="kn">import</span> <span class="s">'package:dslink/dslink.dart'</span><span class="o">;</span>
 </code></pre>
+<pre class="highlight java"><code><span class="c1">// For Gradle add this to your build.gradle dependencies.</span>
+<span class="n">compile</span> <span class="err">'</span><span class="n">org</span><span class="o">.</span><span class="na">iot</span><span class="o">-</span><span class="nl">dsa:dslink:</span><span class="mf">0.12</span><span class="o">.</span><span class="mi">0</span><span class="err">'</span>
+
+<span class="c1">// For Apache Maven add this to your build.xml dependencies.</span>
+<span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">org</span><span class="o">.</span><span class="na">iot</span><span class="o">-</span><span class="n">dsa</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">dslink</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span><span class="mf">0.12</span><span class="o">.</span><span class="mi">0</span><span class="o">&lt;/</span><span class="n">version</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span>
+</code></pre>
 <pre class="highlight ruby"><code><span class="c1"># Add to your Gemfile</span>
 <span class="n">gem</span> <span class="s1">'dslink'</span><span class="p">,</span> <span class="ss">:git</span> <span class="o">=&gt;</span> <span class="s1">'git://github.com/IOT_DSA/sdk-dslink-ruby.git'</span>
 
 <span class="c1">#link.rb</span>
 <span class="nb">require</span> <span class="s1">'dslink'</span>
+</code></pre>
+<pre class="highlight plaintext"><code>// package.json
+"dependencies": {
+  "dslink": "IOT-DSA/sdk-dslink-javascript#artifacts"
+}
+
+// index.js
+var DS = require('dslink');
+</code></pre>
+<pre class="highlight javascript"><code><span class="c1">// index.html</span>
+<span class="o">&lt;</span><span class="nx">script</span> <span class="nx">src</span><span class="o">=</span><span class="s2">"https://raw.githubusercontent.com/IOT-DSA/sdk-dslink-javascript/artifacts/dist/dslink.browser.min.js"</span><span class="o">&gt;&lt;</span><span class="sr">/script</span><span class="err">&gt;
+</span>
+<span class="c1">// DS is a globally accessed variable</span>
+</code></pre>
+<pre class="highlight python"><code><span class="c"># Add to your setup.py</span>
+<span class="n">setup</span><span class="p">(</span>
+    <span class="n">install_requires</span><span class="o">=</span><span class="p">[</span>
+        <span class="s">"dslink"</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c"># dslink.py</span>
+<span class="kn">import</span> <span class="nn">dslink</span>
 </code></pre>
 
 <p>By using the Git repository, we ensure that we have the most up-to-date version
@@ -108,6 +150,49 @@ own.</p>
   <span class="n">link</span><span class="o">.</span><span class="na">connect</span><span class="o">();</span>
   <span class="c1">// ...</span>
 <span class="o">}</span>
+</code></pre>
+<pre class="highlight plaintext"><code>var link = new DS.LinkProvider(process.argv.slice(2), 'Example-');
+link.connect();
+</code></pre>
+<pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">link</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DS</span><span class="p">.</span><span class="nx">LinkProvider</span><span class="p">(</span><span class="s1">'http://127.0.0.1:8080/conn'</span><span class="p">,</span> <span class="s1">'Example-'</span><span class="p">);</span>
+<span class="nx">link</span><span class="p">.</span><span class="nx">connect</span><span class="p">();</span>
+</code></pre>
+<pre class="highlight java"><code><span class="c1">// package ...</span>
+<span class="c1">// import ...</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="kd">extends</span> <span class="n">DSLinkHandler</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Logger</span> <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">LoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">Main</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="n">isResponder</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">onResponderInitialized</span><span class="o">(</span><span class="kd">final</span> <span class="n">DSLink</span> <span class="n">link</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"Initialized"</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="n">onResponderConnected</span><span class="o">(</span><span class="kd">final</span> <span class="n">DSLink</span> <span class="n">link</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"Connected"</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="n">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">DSLinkFactory</span><span class="o">.</span><span class="na">start</span><span class="o">(</span><span class="n">args</span><span class="o">,</span> <span class="k">new</span> <span class="n">Main</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+<pre class="highlight python"><code><span class="c"># dslink.py</span>
+<span class="kn">import</span> <span class="nn">dslink</span>
+
+<span class="k">class</span> <span class="nc">ExampleDSLink</span><span class="p">(</span><span class="n">dslink</span><span class="o">.</span><span class="n">DSLink</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Starting DSLink"</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="n">ExampleDSLink</span><span class="p">(</span><span class="n">dslink</span><span class="o">.</span><span class="n">Configuration</span><span class="p">(</span><span class="s">"example"</span><span class="p">,</span> <span class="n">responder</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
 </code></pre>
 
 <p>In order to create any type of connection (Responder or Requester), we first
@@ -144,8 +229,23 @@ permission to access.</p>
 <span class="kd">var</span> <span class="n">numGen</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Random</span><span class="o">();</span>
 <span class="kd">var</span> <span class="n">myNum</span> <span class="o">=</span> <span class="n">numGen</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="mi">50</span><span class="o">);</span>
 </code></pre>
+<pre class="highlight plaintext"><code>var myNum = Math.round(Math.random() * 50);
+</code></pre>
+<pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">myNum</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">50</span><span class="p">);</span>
+</code></pre>
+<pre class="highlight java"><code><span class="c1">// Add this variable into your Main class.</span>
+<span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Random</span> <span class="n">RANDOM</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Random</span><span class="o">();</span>
 
-<p>Before we add the new, lets create a value that we can pass, and send updates
+<span class="c1">// Generating a random number is as follows.</span>
+<span class="kt">int</span> <span class="n">num</span> <span class="o">=</span> <span class="n">RANDOM</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="mi">50</span><span class="o">);</span>
+</code></pre>
+<pre class="highlight python"><code><span class="c"># Import the random library at the top of the file</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="n">var</span> <span class="n">my_num</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+</code></pre>
+
+<p>Before we add the new, let&rsquo;s create a value that we can pass, and send updates
 for. In this case we&rsquo;ll just generate a random number between 0 and 50.</p>
 
 <h3 id="add-node">Add node</h3>
@@ -158,6 +258,48 @@ for. In this case we&rsquo;ll just generate a random number between 0 and 50.</p
   <span class="o">{</span> <span class="sx">r'$name'</span><span class="o">:</span> <span class="s">'My Number'</span><span class="o">,</span>
     <span class="sx">r'$type'</span> <span class="o">:</span> <span class="s">'int'</span><span class="o">,</span>
     <span class="s">'?value'</span> <span class="o">:</span> <span class="n">myNum</span><span class="o">});</span>
+</code></pre>
+<pre class="highlight plaintext"><code>var myNode = link.addNode('/MyNum', {
+  '$name': 'My Number',
+  '$type': 'int',
+  '?value': myNum
+});
+</code></pre>
+<pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">myNode</span> <span class="o">=</span> <span class="nx">link</span><span class="p">.</span><span class="nx">addNode</span><span class="p">(</span><span class="s1">'/MyNum'</span><span class="p">,</span> <span class="p">{</span>
+  <span class="s1">'$name'</span><span class="p">:</span> <span class="s1">'My Number'</span><span class="p">,</span>
+  <span class="s1">'$type'</span><span class="p">:</span> <span class="s1">'int'</span><span class="p">,</span>
+  <span class="s1">'?value'</span><span class="p">:</span> <span class="nx">myNum</span>
+<span class="p">});</span>
+</code></pre>
+<pre class="highlight java"><code><span class="c1">// In your Main class</span>
+<span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">onResponderInitialized</span><span class="p">(</span><span class="kd">final</span> <span class="n">DSLink</span> <span class="n">link</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">Node</span> <span class="n">superRoot</span> <span class="o">=</span> <span class="n">link</span><span class="o">.</span><span class="na">getNodeManager</span><span class="o">().</span><span class="na">getSuperRoot</span><span class="o">();</span>
+    <span class="n">NodeBuilder</span> <span class="n">builder</span> <span class="o">=</span> <span class="n">superRoot</span><span class="o">.</span><span class="na">createChild</span><span class="o">(</span><span class="s">"MyNum"</span><span class="o">);</span>
+    <span class="n">builder</span><span class="o">.</span><span class="na">setDisplayName</span><span class="o">(</span><span class="s">"My Number"</span><span class="o">);</span>
+    <span class="n">builder</span><span class="o">.</span><span class="na">setValueType</span><span class="o">(</span><span class="n">ValueType</span><span class="o">.</span><span class="na">NUMBER</span><span class="o">);</span>
+    <span class="n">builder</span><span class="o">.</span><span class="na">setValue</span><span class="o">(</span><span class="k">new</span> <span class="n">Value</span><span class="o">(</span><span class="mi">0</span><span class="o">));</span>
+    <span class="kd">final</span> <span class="n">Node</span> <span class="n">node</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">build</span><span class="o">();</span>
+
+    <span class="c1">// ...</span>
+<span class="o">}</span>
+</code></pre>
+<pre class="highlight python"><code><span class="c"># In the DSLink class, implement get_default_nodes</span>
+<span class="k">def</span> <span class="nf">get_default_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c"># Get default super_root</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_root_node</span><span class="p">()</span>
+
+    <span class="c"># Create MyNum Node</span>
+    <span class="n">my_node</span> <span class="o">=</span> <span class="n">dslink</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="s">"MyNum"</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span> <span class="c"># Name the node, specify the parent</span>
+    <span class="n">my_node</span><span class="o">.</span><span class="n">set_display_name</span><span class="p">(</span><span class="s">"My Number"</span><span class="p">)</span>
+    <span class="n">my_node</span><span class="o">.</span><span class="n">set_type</span><span class="p">(</span><span class="s">"int"</span><span class="p">)</span>
+    <span class="n">my_node</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">my_num</span><span class="p">)</span>
+
+    <span class="c"># Add my_node to the super_root</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">my_node</span><span class="p">)</span>
+
+    <span class="c"># Return the super root</span>
+    <span class="k">return</span> <span class="n">root</span>
 </code></pre>
 
 <p>Next we add our node to the Link. In this case we pass the node name, <code class="prettyprint">/MyNum</code>
@@ -178,8 +320,29 @@ directly with link itself.</p>
 
 <h2 id="updating-a-node">Updating a node</h2>
 <pre class="highlight dart"><code><span class="k">new</span> <span class="n">Timer</span><span class="o">.</span><span class="na">periodic</span><span class="o">(</span><span class="kd">const</span> <span class="n">Duration</span><span class="o">(</span><span class="nl">seconds:</span> <span class="mi">5</span><span class="o">),</span> <span class="o">(</span><span class="n">_</span><span class="o">)</span> <span class="o">{</span>
-<span class="c1">// To be filled in soon.</span>
+    <span class="n">myNum</span> <span class="o">=</span> <span class="n">numGen</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="mi">50</span><span class="o">);</span>
+    <span class="n">myNode</span><span class="o">.</span><span class="na">updateValue</span><span class="o">(</span><span class="n">myNum</span><span class="o">);</span>
 <span class="o">});</span>
+</code></pre>
+<pre class="highlight java"><code><span class="c1">// In your Main class</span>
+<span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">onResponderInitialized</span><span class="p">(</span><span class="kd">final</span> <span class="n">DSLink</span> <span class="n">link</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// ...</span>
+
+    <span class="n">Objects</span><span class="o">.</span><span class="na">getDaemonThreadPool</span><span class="o">().</span><span class="na">scheduleWithFixedDelay</span><span class="o">(</span><span class="k">new</span> <span class="n">Runnable</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="n">run</span><span class="o">()</span> <span class="o">{</span>
+            <span class="kt">int</span> <span class="n">num</span> <span class="o">=</span> <span class="n">RANDOM</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="mi">50</span><span class="o">);</span>
+            <span class="n">Value</span> <span class="n">val</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Value</span><span class="o">(</span><span class="n">num</span><span class="o">);</span>
+            <span class="n">node</span><span class="o">.</span><span class="na">setValue</span><span class="o">(</span><span class="n">val</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">},</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="n">TimeUnit</span><span class="o">.</span><span class="na">SECONDS</span><span class="o">);</span>
+
+    <span class="c1">// ...</span>
+<span class="o">}</span>
+</code></pre>
+<pre class="highlight python"><code><span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">reactor</span><span class="o">.</span><span class="n">callLater</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">)</span> <span class="c"># Call again 1 second later</span>
 </code></pre>
 
 <p>A node is of limited value if it only provides the initial request and nothing
@@ -196,6 +359,19 @@ seconds.</p>
   <span class="c1">// To be filled in soon</span>
 <span class="o">}</span>
 </code></pre>
+<pre class="highlight java"><code><span class="c1">// scheduleWithFixedDelay ...</span>
+<span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="p">(</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">link</span><span class="o">.</span><span class="na">getSubscriptionManager</span><span class="o">().</span><span class="na">hasValueSub</span><span class="o">(</span><span class="n">node</span><span class="o">))</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">num</span> <span class="o">=</span> <span class="n">RANDOM</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="mi">50</span><span class="o">);</span>
+        <span class="n">Value</span> <span class="n">val</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Value</span><span class="o">(</span><span class="n">num</span><span class="o">);</span>
+        <span class="n">node</span><span class="o">.</span><span class="na">setValue</span><span class="o">(</span><span class="n">val</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+<pre class="highlight python"><code><span class="k">if</span> <span class="n">my_node</span><span class="o">.</span><span class="n">is_subscribed</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"Node is subscribed"</span><span class="p">)</span>
+</code></pre>
 
 <p>In our simple example, we only want to update a value if there is someone
 actively listening, or <em>subscribing</em>, to our node. We can check a node
@@ -209,18 +385,6 @@ In many situations it is preferable to have the latest value always ready rather
 than a value which may be hours, or even days, old when the the node receives
 its next subscription request.
 </aside>
-
-<h2 id="updating-the-value">Updating the value</h2>
-
-<blockquote>
-<p>Update the random number then update our value.</p>
-</blockquote>
-<pre class="highlight dart"><code><span class="n">myNum</span> <span class="o">=</span> <span class="n">numGen</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="mi">50</span><span class="o">);</span>
-<span class="n">myNode</span><span class="o">.</span><span class="na">updateValue</span><span class="o">(</span><span class="n">myNum</span><span class="o">);</span>
-</code></pre>
-
-<p>Once we are sure someone is subscribed to changes in our node, we generate a
-new random number, then update the value of our node.</p>
 
 <h2 id="adding-an-action">Adding an action</h2>
 <pre class="highlight dart"><code><span class="c1">// Our new constructor in which we pass both our default node for</span>
@@ -268,6 +432,65 @@ new random number, then update the value of our node.</p>
   <span class="o">}</span>
 <span class="o">});</span>
 </code></pre>
+<pre class="highlight java"><code><span class="c1">// In your Main class</span>
+<span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">onResponderInitialized</span><span class="p">(</span><span class="kd">final</span> <span class="n">DSLink</span> <span class="n">link</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// Node superRoot = ...</span>
+    <span class="c1">// NodeBuilder builder = ...</span>
+    <span class="c1">// ...</span>
+    <span class="c1">// final Node node = ...</span>
+    <span class="c1">// ...</span>
+
+    <span class="n">builder</span> <span class="o">=</span> <span class="n">superRoot</span><span class="o">.</span><span class="na">createChild</span><span class="o">(</span><span class="s">"UpdateNum"</span><span class="o">);</span>
+    <span class="n">builder</span><span class="o">.</span><span class="na">setSerializable</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+    <span class="n">builder</span><span class="o">.</span><span class="na">setDisplayName</span><span class="o">(</span><span class="s">"Update Number"</span><span class="o">);</span>
+    <span class="n">builder</span><span class="o">.</span><span class="na">setAction</span><span class="o">(</span><span class="k">new</span> <span class="n">Action</span><span class="o">(</span><span class="n">Permission</span><span class="o">.</span><span class="na">WRITE</span><span class="o">,</span>
+                                  <span class="k">new</span> <span class="n">Handler</span><span class="o">&lt;</span><span class="n">ActionResult</span><span class="o">&gt;()</span> <span class="o">{</span>
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="n">handle</span><span class="o">(</span><span class="n">ActionResult</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kt">int</span> <span class="n">num</span> <span class="o">=</span> <span class="n">RANDOM</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="mi">50</span><span class="o">);</span>
+            <span class="n">Value</span> <span class="n">val</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Value</span><span class="o">(</span><span class="n">num</span><span class="o">);</span>
+            <span class="n">node</span><span class="o">.</span><span class="na">setValue</span><span class="o">(</span><span class="n">val</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}));</span>
+    <span class="n">builder</span><span class="o">.</span><span class="na">build</span><span class="o">();</span>
+
+    <span class="c1">// ...</span>
+<span class="o">}</span>
+</code></pre>
+<pre class="highlight python"><code><span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">profile_manager</span><span class="o">.</span><span class="n">create_profile</span><span class="p">(</span><span class="s">"addnum"</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">profile_manager</span><span class="o">.</span><span class="n">register_callback</span><span class="p">(</span><span class="s">"addnum"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">addnum</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">get_default_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_root_node</span><span class="p">()</span>
+
+    <span class="n">my_num</span> <span class="o">=</span> <span class="n">dslink</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="s">"MyNum"</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
+    <span class="n">my_num</span><span class="o">.</span><span class="n">set_display_name</span><span class="p">(</span><span class="s">"My Number"</span><span class="p">)</span>
+    <span class="n">my_num</span><span class="o">.</span><span class="n">set_type</span><span class="p">(</span><span class="s">"int"</span><span class="p">)</span>
+    <span class="n">my_num</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">add_num</span> <span class="o">=</span> <span class="n">dslink</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="s">"AddNum"</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
+    <span class="n">add_num</span><span class="o">.</span><span class="n">set_display_name</span><span class="p">(</span><span class="s">"Add number"</span><span class="p">)</span>
+    <span class="n">add_num</span><span class="o">.</span><span class="n">set_profile</span><span class="p">(</span><span class="s">"addnum"</span><span class="p">)</span>
+    <span class="n">add_num</span><span class="o">.</span><span class="n">set_invokable</span><span class="p">(</span><span class="s">"write"</span><span class="p">)</span>
+    <span class="n">add_num</span><span class="o">.</span><span class="n">set_parameters</span><span class="p">([</span>
+        <span class="p">{</span>
+            <span class="s">"name"</span><span class="p">:</span> <span class="s">"Number"</span><span class="p">,</span>
+            <span class="s">"type"</span><span class="p">:</span> <span class="s">"int"</span>
+        <span class="p">}</span>
+    <span class="p">])</span>
+
+    <span class="n">root</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">my_num</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">add_num</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">root</span>
+
+<span class="k">def</span> <span class="nf">addnum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">"Number"</span><span class="p">])</span> <span class="c"># Parse number</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">super_root</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">"/MyNum"</span><span class="p">)</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="c"># Set value</span>
+    <span class="k">return</span> <span class="p">[[]]</span> <span class="c"># Return empty columns</span>
+</code></pre>
 
 <p>Sometimes we may wish to allow our Link to respond to an action. That is, we
 may want to allow a user to send a command to our link so it can perform
@@ -302,12 +525,20 @@ The SDK&rsquo;s contain some helper classes which make the creation of a node ea
 <pre class="highlight dart"><code><span class="c1">// after the link = new LinkProvider(..) and before link.connect();</span>
 <span class="n">link</span><span class="o">.</span><span class="na">init</span><span class="o">();</span>
 </code></pre>
+<pre class="highlight java"><code><span class="c1">// All the nodes are automatically reinitialized again on startup.</span>
+</code></pre>
+<pre class="highlight python"><code><span class="c"># The Python SDK initializes itself when implementing the class.</span>
+</code></pre>
 
 <blockquote>
 <p>Call save on the link.</p>
 </blockquote>
 <pre class="highlight dart"><code><span class="c1">// Add outside of the for loop inside the Timer call.</span>
 <span class="n">link</span><span class="o">.</span><span class="na">save</span><span class="o">();</span>
+</code></pre>
+<pre class="highlight java"><code><span class="c1">// All the nodes are automatically saved.</span>
+</code></pre>
+<pre class="highlight python"><code><span class="c"># The Python SDK saves state automatically.</span>
 </code></pre>
 
 <p>We can now add as many values to our link as we like. And every 5 seconds, a
@@ -336,6 +567,11 @@ reconnects to our broker</p>
 <pre class="highlight dart"><code><span class="c1">// At the top of our Timer callback.</span>
 <span class="kd">var</span> <span class="n">rootNode</span> <span class="o">=</span> <span class="o">~</span><span class="n">link</span><span class="o">;</span> <span class="c1">// Shortcut for link.getNode('/');</span>
 </code></pre>
+<pre class="highlight java"><code><span class="c1">// Retrieves the super root of the responder.</span>
+<span class="n">Node</span> <span class="n">superRoot</span> <span class="o">=</span> <span class="n">link</span><span class="o">.</span><span class="na">getNodeManager</span><span class="o">().</span><span class="na">getSuperRoot</span><span class="o">();</span>
+</code></pre>
+<pre class="highlight python"><code><span class="n">root_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">super_root</span>
+</code></pre>
 
 <blockquote>
 <p>Update for loop to iterate over the children of the root node.</p>
@@ -346,6 +582,14 @@ reconnects to our broker</p>
   <span class="kd">var</span> <span class="n">myNode</span> <span class="o">=</span> <span class="n">rootNode</span><span class="o">[</span><span class="n">nodeName</span><span class="o">];</span>
   <span class="c1">// ... Existing checking for subscriber and updating value</span>
 <span class="o">}</span>
+</code></pre>
+<pre class="highlight java"><code><span class="c1">// Iterate all the children of the super root.</span>
+<span class="k">for</span> <span class="o">(</span><span class="n">Node</span> <span class="n">child</span> <span class="o">:</span> <span class="n">superRoot</span><span class="o">.</span><span class="na">getChildren</span><span class="o">().</span><span class="na">values</span><span class="o">())</span> <span class="o">{</span>
+    <span class="c1">// ...</span>
+<span class="o">}</span>
+</code></pre>
+<pre class="highlight python"><code><span class="k">for</span> <span class="n">child_name</span> <span class="ow">in</span> <span class="n">root_node</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">root_node</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">child_name</span><span class="p">]</span>
 </code></pre>
 
 <p>After we&rsquo;ve restarted the link, you may notice a slight problem. Any values that
@@ -371,6 +615,37 @@ we can iterate over the children nodes to update each of those values.</p>
   <span class="o">}</span>
 <span class="o">},</span>
 </code></pre>
+<pre class="highlight java"><code><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">onResponderInitialized</span><span class="p">(</span><span class="kd">final</span> <span class="n">DSLink</span> <span class="n">link</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">Node</span> <span class="n">superRoot</span> <span class="o">=</span> <span class="n">link</span><span class="o">.</span><span class="na">getNodeManager</span><span class="o">().</span><span class="na">getSuperRoot</span><span class="o">();</span>
+    <span class="n">NodeBuilder</span> <span class="n">builder</span> <span class="o">=</span> <span class="n">superRoot</span><span class="o">.</span><span class="na">createChild</span><span class="o">(</span><span class="s">"Numbers"</span><span class="o">);</span>
+    <span class="n">builder</span><span class="o">.</span><span class="na">setSerializable</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+    <span class="kd">final</span> <span class="n">Node</span> <span class="n">numbers</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">build</span><span class="o">();</span>
+
+    <span class="n">builder</span> <span class="o">=</span> <span class="n">numbers</span><span class="o">.</span><span class="na">createChild</span><span class="o">(</span><span class="s">"MyNum"</span><span class="o">);</span>
+    <span class="n">builder</span><span class="o">.</span><span class="na">setDisplayName</span><span class="o">(</span><span class="s">"My Number"</span><span class="o">);</span>
+    <span class="n">builder</span><span class="o">.</span><span class="na">setValueType</span><span class="o">(</span><span class="n">ValueType</span><span class="o">.</span><span class="na">NUMBER</span><span class="o">);</span>
+    <span class="n">builder</span><span class="o">.</span><span class="na">setValue</span><span class="o">(</span><span class="k">new</span> <span class="n">Value</span><span class="o">(</span><span class="mi">0</span><span class="o">));</span>
+    <span class="kd">final</span> <span class="n">Node</span> <span class="n">node</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">build</span><span class="o">();</span>
+    <span class="n">Objects</span><span class="o">.</span><span class="na">getDaemonThreadPool</span><span class="o">().</span><span class="na">scheduleWithFixedDelay</span><span class="o">(</span><span class="k">new</span> <span class="n">Runnable</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="n">run</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">link</span><span class="o">.</span><span class="na">getSubscriptionManager</span><span class="o">().</span><span class="na">hasValueSub</span><span class="o">(</span><span class="n">node</span><span class="o">))</span> <span class="o">{</span>
+                <span class="kt">int</span> <span class="n">num</span> <span class="o">=</span> <span class="n">RANDOM</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="mi">50</span><span class="o">);</span>
+                <span class="n">Value</span> <span class="n">val</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Value</span><span class="o">(</span><span class="n">num</span><span class="o">);</span>
+                <span class="n">node</span><span class="o">.</span><span class="na">setValue</span><span class="o">(</span><span class="n">val</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">},</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="n">TimeUnit</span><span class="o">.</span><span class="na">SECONDS</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+<pre class="highlight python"><code><span class="n">my_num</span> <span class="o">=</span> <span class="n">dslink</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="s">"MyNum"</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
+
+<span class="n">add_num</span> <span class="o">=</span> <span class="n">dslink</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="s">"AddNum"</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
+
+<span class="n">my_num</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">add_num</span><span class="p">)</span>
+<span class="n">root</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">my_num</span><span class="p">)</span>
+</code></pre>
 
 <blockquote>
 <p>Update location our action adds to.</p>
@@ -379,6 +654,29 @@ we can iterate over the children nodes to update each of those values.</p>
 <span class="c1">// new node when the action runs.</span>
 <span class="n">link</span><span class="o">.</span><span class="na">addNode</span><span class="o">(</span><span class="s">'/CustomNumbers/MyNum</span><span class="si">$ndNum</span><span class="s">'</span><span class="o">,</span> <span class="o">{</span>
 <span class="c1">// ... rest of the code is the same.</span>
+</code></pre>
+<pre class="highlight java"><code><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">onResponderInitialized</span><span class="p">(</span><span class="kd">final</span> <span class="n">DSLink</span> <span class="n">link</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// final Node numbers = ...</span>
+    <span class="c1">// final Node node = ...</span>
+    <span class="c1">// ...</span>
+
+    <span class="n">builder</span> <span class="o">=</span> <span class="n">numbers</span><span class="o">.</span><span class="na">createChild</span><span class="o">(</span><span class="s">"UpdateNum"</span><span class="o">);</span>
+    <span class="n">builder</span><span class="o">.</span><span class="na">setSerializable</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+    <span class="n">builder</span><span class="o">.</span><span class="na">setDisplayName</span><span class="o">(</span><span class="s">"Update Number"</span><span class="o">);</span>
+    <span class="n">builder</span><span class="o">.</span><span class="na">setAction</span><span class="o">(</span><span class="k">new</span> <span class="n">Action</span><span class="o">(</span><span class="n">Permission</span><span class="o">.</span><span class="na">WRITE</span><span class="o">,</span>
+                                  <span class="k">new</span> <span class="n">Handler</span><span class="o">&lt;</span><span class="n">ActionResult</span><span class="o">&gt;()</span> <span class="o">{</span>
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="n">handle</span><span class="o">(</span><span class="n">ActionResult</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kt">int</span> <span class="n">num</span> <span class="o">=</span> <span class="n">RANDOM</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="mi">50</span><span class="o">);</span>
+            <span class="n">Value</span> <span class="n">val</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Value</span><span class="o">(</span><span class="n">num</span><span class="o">);</span>
+            <span class="n">node</span><span class="o">.</span><span class="na">setValue</span><span class="o">(</span><span class="n">val</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}));</span>
+    <span class="n">builder</span><span class="o">.</span><span class="na">build</span><span class="o">();</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"Initialized"</span><span class="o">);</span>
+<span class="o">}</span>
 </code></pre>
 
 <p>As the number of nodes grows, having a series of nodes all at the top level
@@ -436,6 +734,28 @@ the connection to the Broker not multiple Requesters.
 <span class="n">await</span> <span class="n">link</span><span class="o">.</span><span class="na">connect</span><span class="o">();</span>
 <span class="kd">var</span> <span class="n">requester</span> <span class="o">=</span> <span class="n">link</span><span class="o">.</span><span class="na">requester</span><span class="o">;</span>
 </code></pre>
+<pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">link</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DS</span><span class="p">.</span><span class="nx">LinkProvider</span><span class="p">(</span><span class="s1">'http://127.0.0.1:8080/conn'</span><span class="p">,</span> <span class="s1">'RequesterExample-'</span><span class="p">,</span> <span class="p">{</span>
+  <span class="na">isRequester</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="na">isResponder</span><span class="p">:</span> <span class="kc">false</span>
+<span class="p">});</span>
+
+<span class="nx">link</span><span class="p">.</span><span class="nx">connect</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">link</span><span class="p">.</span><span class="nx">onRequesterReady</span><span class="p">;</span>
+<span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">requester</span><span class="p">)</span> <span class="p">{</span>
+   <span class="c1">// work with requester here  </span>
+<span class="p">});</span>
+</code></pre>
+<pre class="highlight plaintext"><code>var link = new DS.LinkProvider(args, 'RequesterExample-', {
+  isRequester: true,
+  isResponder: false
+});
+
+link.connect().then(function() {
+  return link.onRequesterReady;
+}).then(function(requester) {
+   // work with requester here  
+});
+</code></pre>
 
 <p>Each link can be a Responder or a Requester (or both). At this time we&rsquo;re
 only interested in creating a requester so we initialize our link specifically
@@ -462,6 +782,42 @@ query the broker for nodes.</p>
 <span class="kd">var</span> <span class="n">exampleNode</span> <span class="o">=</span>
       <span class="n">await</span> <span class="n">requester</span><span class="o">.</span><span class="na">getRemoteNode</span><span class="o">(</span><span class="s">'/downstream/Example'</span><span class="o">);</span>
 <span class="n">iterateChildren</span><span class="o">(</span><span class="n">exampleNode</span><span class="o">);</span>
+</code></pre>
+<pre class="highlight plaintext"><code>function iterateChildren(nd) {
+  console.log('Node: ' + nd.remotePath);
+  var keys = Object.keys(nd.children);
+  if (keys.length &gt; 0) {
+    keys.forEach(function(nodeName) {
+      var path = nd.remotePath + '/' + nodeName;
+      requester.getRemoteNode(path).then(function(node) {
+        iterateChildren(node);
+      });
+    });
+  }
+}
+
+// Query initial node and pass it to our recursive function.
+requester.getRemoteNode('/downstream/Example').then(function(exampleNode) {
+  iterateChildren(exampleNode);  
+});
+</code></pre>
+<pre class="highlight javascript"><code><span class="kd">function</span> <span class="nx">iterateChildren</span><span class="p">(</span><span class="nx">nd</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Node: '</span> <span class="o">+</span> <span class="nx">nd</span><span class="p">.</span><span class="nx">remotePath</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">keys</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">nd</span><span class="p">.</span><span class="nx">children</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">keys</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">keys</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">nodeName</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">nd</span><span class="p">.</span><span class="nx">remotePath</span> <span class="o">+</span> <span class="s1">'/'</span> <span class="o">+</span> <span class="nx">nodeName</span><span class="p">;</span>
+      <span class="nx">requester</span><span class="p">.</span><span class="nx">getRemoteNode</span><span class="p">(</span><span class="nx">path</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">iterateChildren</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+      <span class="p">});</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Query initial node and pass it to our recursive function.</span>
+<span class="nx">requester</span><span class="p">.</span><span class="nx">getRemoteNode</span><span class="p">(</span><span class="s1">'/downstream/Example'</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exampleNode</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">iterateChildren</span><span class="p">(</span><span class="nx">exampleNode</span><span class="p">);</span>  
+<span class="p">});</span>
 </code></pre>
 
 <p>With the requester, we can now query a node from the broker and get a listing
@@ -493,6 +849,26 @@ file on the system.</p>
   <span class="n">print</span><span class="o">(</span><span class="s">'</span><span class="se">\t</span><span class="s">Changes: </span><span class="si">${update.changes}</span><span class="s">'</span><span class="o">);</span>
 <span class="o">}</span>
 </code></pre>
+<pre class="highlight plaintext"><code>// Replace console.log('Node: ' + nd.remotePath) in
+// iterateChildren with:
+requester.list(nd.remotePath).on("data", listUpdates);
+
+// a new function that is globally defined
+function listUpdates(update) {
+  console.log('Node - ' + update.node.name);
+  console.log('\tChanges: ' + update.changes);
+}
+</code></pre>
+<pre class="highlight javascript"><code><span class="c1">// Replace console.log('Node: ' + nd.remotePath) in</span>
+<span class="c1">// iterateChildren with:</span>
+<span class="nx">requester</span><span class="p">.</span><span class="nx">list</span><span class="p">(</span><span class="nx">nd</span><span class="p">.</span><span class="nx">remotePath</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s2">"data"</span><span class="p">,</span> <span class="nx">listUpdates</span><span class="p">);</span>
+
+<span class="c1">// a new function that is globally defined</span>
+<span class="kd">function</span> <span class="nx">listUpdates</span><span class="p">(</span><span class="nx">update</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Node - '</span> <span class="o">+</span> <span class="nx">update</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'\tChanges: '</span> <span class="o">+</span> <span class="nx">update</span><span class="p">.</span><span class="nx">changes</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
 
 <p>Iterating over children is great when we initialize our connection, however
 it won&rsquo;t report any changes to those nodes, such as if a new child node is
@@ -521,6 +897,30 @@ custom numbers and observe the output from the Requester link we&rsquo;ve create
 <span class="kt">void</span> <span class="nf">subscribeUpdates</span><span class="p">(</span><span class="n">ValueUpdate</span> <span class="n">update</span><span class="o">,</span> <span class="kt">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
   <span class="n">print</span><span class="o">(</span><span class="s">'Name: </span><span class="si">$name</span><span class="s"> ValueUpdate: </span><span class="si">${update.value}</span><span class="s">'</span><span class="o">);</span>
 <span class="o">}</span>
+</code></pre>
+<pre class="highlight plaintext"><code>// Replace requester.list(nd.remotePath).on("data", listUpdates)
+// in iterateChildren with:
+if (nd.getConfig('$type') === 'int') {
+  requester.subscribe(nd.remotePath,
+    function(update) { subscribeUpdates(update, nd.name); });
+}
+
+// a new function that is globally defined
+function subscribeUpdates(update, name) {
+  console.log('Name: ' + name + ' ValueUpdate: ' + update.value);
+}
+</code></pre>
+<pre class="highlight javascript"><code><span class="c1">// Replace requester.list(nd.remotePath).on("data", listUpdates)</span>
+<span class="c1">// in iterateChildren with:</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">nd</span><span class="p">.</span><span class="nx">getConfig</span><span class="p">(</span><span class="s1">'$type'</span><span class="p">)</span> <span class="o">===</span> <span class="s1">'int'</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">requester</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">nd</span><span class="p">.</span><span class="nx">remotePath</span><span class="p">,</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">update</span><span class="p">)</span> <span class="p">{</span> <span class="nx">subscribeUpdates</span><span class="p">(</span><span class="nx">update</span><span class="p">,</span> <span class="nx">nd</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span> <span class="p">});</span>
+<span class="p">}</span>
+
+<span class="c1">// a new function that is globally defined</span>
+<span class="kd">function</span> <span class="nx">subscribeUpdates</span><span class="p">(</span><span class="nx">update</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Name: '</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">' ValueUpdate: '</span> <span class="o">+</span> <span class="nx">update</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
+<span class="p">}</span>
 </code></pre>
 
 <p>When listing nodes, we see the changes in a node&rsquo;s configuration including
@@ -567,7 +967,7 @@ s.setAttribute('data-timestamp', +new Date());
           <div class="lang-selector">
                 <a href="#" data-language-name="dart">Dart</a>
                 <a href="#" data-language-name="java">Java</a>
-                <a href="#" data-language-name="node">Node.js</a>
+                <a href="#" data-language-name="plaintext">Node.js</a>
                 <a href="#" data-language-name="javascript">Javascript</a>
                 <a href="#" data-language-name="python">Python</a>
                 <a href="#" data-language-name="ruby">Ruby</a>
