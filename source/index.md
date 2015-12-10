@@ -4,7 +4,7 @@ title: API Reference
 language_tabs:
   - dart: Dart
   - java: Java
-  - node: Node.js
+  - plaintext: Node.js
   - javascript: Javascript
   - python: Python
   - ruby: Ruby
@@ -29,6 +29,15 @@ search: true
 This guide will introduce you to the basics of communicating with a Broker using
 the DSLink SDK. We'll learn how to send data to a Broker as well as how to
 subscribe to data to get updates when other, or even our, data is changed.
+
+<aside class="notice">
+While not covered in this documentation, it is important to know that an
+additional component while creating a DSLink is a configuration file called
+<code>dslink.json</code>. It is also suggested you also
+<a href="https://github.com/IOT-DSA/docs/wiki/dslink.json">review the
+documentation</a> from our Wiki on the content of a <code>dslink.json</code>
+file.
+</aside>
 
 # Importing
 
@@ -65,7 +74,7 @@ gem 'dslink', :git => 'git://github.com/IOT_DSA/sdk-dslink-ruby.git'
 require 'dslink'
 ```
 
-```node
+```plaintext
 // package.json
 "dependencies": {
   "dslink": "IOT-DSA/sdk-dslink-javascript#artifacts"
@@ -75,7 +84,7 @@ require 'dslink'
 var DS = require('dslink');
 ```
 
-```js
+```javascript
 // index.html
 <script src="https://raw.githubusercontent.com/IOT-DSA/sdk-dslink-javascript/artifacts/dist/dslink.browser.min.js"></script>
 
@@ -124,7 +133,7 @@ main(List<String> args) {
 }
 ```
 
-```node
+```plaintext
 var link = new DS.LinkProvider(process.argv.slice(2), 'Example-');
 link.connect();
 ```
@@ -210,7 +219,7 @@ var numGen = new Random();
 var myNum = numGen.nextInt(50);
 ```
 
-```node
+```plaintext
 var myNum = Math.round(Math.random() * 50);
 ```
 
@@ -248,7 +257,7 @@ var myNode = link.addNode('/MyNum',
     '?value' : myNum});
 ```
 
-```node
+```plaintext
 var myNode = link.addNode('/MyNum', {
   '$name': 'My Number',
   '$type': 'int',

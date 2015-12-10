@@ -37,7 +37,7 @@ link.connect().then(function() {
 });
 ```
 
-```node
+```plaintext
 var link = new DS.LinkProvider(args, 'RequesterExample-', {
   isRequester: true,
   isResponder: false
@@ -77,7 +77,7 @@ var exampleNode =
 iterateChildren(exampleNode);
 ```
 
-```node
+```plaintext
 function iterateChildren(nd) {
   console.log('Node: ' + nd.remotePath);
   var keys = Object.keys(nd.children);
@@ -149,7 +149,7 @@ void listUpdates(RequesterListUpdate update) {
 }
 ```
 
-```node
+```plaintext
 // Replace console.log('Node: ' + nd.remotePath) in
 // iterateChildren with:
 requester.list(nd.remotePath).on("data", listUpdates);
@@ -204,7 +204,7 @@ void subscribeUpdates(ValueUpdate update, String name) {
 }
 ```
 
-```node
+```plaintext
 // Replace requester.list(nd.remotePath).on("data", listUpdates)
 // in iterateChildren with:
 if (nd.getConfig('$type') === 'int') {
