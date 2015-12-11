@@ -66,6 +66,23 @@ compile 'org.iot-dsa:dslink:0.12.0'
 </dependency>
 ```
 
+```scala
+// For Gradle add this to your build.gradle dependencies.
+compile 'org.iot-dsa:dslink:0.12.0'
+
+// For Apache Maven add this to your build.xml dependencies.
+<dependency>
+    <groupId>org.iot-dsa</groupId>
+    <artifactId>dslink</artifactId>
+    <version>0.12.0</version>
+</dependency>
+
+// For SBT add this to your build.sbt libraryDependencies:
+libraryDependencies ++= Seq(
+  "org.iot-dsa" % "dslink" % "0.12.0"
+)
+```
+
 ```ruby
 # Add to your Gemfile
 gem 'dslink', :git => 'git://github.com/IOT_DSA/sdk-dslink-ruby.git'
@@ -174,6 +191,30 @@ public class Main extends DSLinkHandler {
 }
 ```
 
+```scala
+// package ...
+// import ...
+
+object Main extends DSLinkHandler {
+
+  private val log = LoggerFactory.getLogger(getClass)
+
+  override val isResponder = true
+
+  override def onResponderInitialized(link: DSLink) = {
+    log.info("Responder initialized")
+  }
+
+  override def onResponderConnected(link: DSLink) = {
+    log.info("Responder connected")
+  }
+
+  def main(args: Array[String]): Unit = {
+    DSLinkFactory.start(args, Main)
+  }
+}
+```
+
 ```python
 # dslink.py
 import dslink
@@ -237,6 +278,13 @@ private static final Random RANDOM = new Random();
 int num = RANDOM.nextInt(50);
 ```
 
+```scala
+import scala.util.Random
+
+// Generating a random number is as follows.
+val num = Random.nextInt(50)
+```
+
 ```python
 # Import the random library at the top of the file
 import random
@@ -287,6 +335,21 @@ public void onResponderInitialized(final DSLink link) {
     final Node node = builder.build();
 
     // ...
+}
+```
+
+```scala
+// In your Main class
+override def onResponderInitialized(link: DSLink) = {
+  val superRoot = link.getNodeManager.getSuperRoot
+  val builder = superRoot.
+    createChild("MyNum").
+    setDisplayName("My Number").
+    setValueType(ValueType.NUMBER).
+    setValue(new Value(0))
+  val node = builder.build
+
+  //...
 }
 ```
 
@@ -369,6 +432,18 @@ public void onResponderInitialized(final DSLink link) {
 }
 ```
 
+```scala
+override def onResponderInitialized(link: DSLink) = {
+    Objects.getDaemonThreadPool.scheduleWithFixedDelay(new Runnable {
+      def run = {
+      val num = Random.nextInt(50)
+      node.setValue(new Value(num))
+    }
+  }, 0, 5, TimeUnit.SECONDS)
+  //...
+}
+```
+
 ```python
 def update(self):
     # Call again 1 second later
@@ -410,6 +485,16 @@ public void run() {
         int num = RANDOM.nextInt(50);
         Value val = new Value(num);
         node.setValue(val);
+    }
+}
+```
+
+```scala
+// scheduleWithFixedDelay ...
+def run = {
+  if (link.getSubscriptionManager.hasValueSub(node)) {
+    val num = Random.nextInt(50)
+    node.setValue(new Value(num))
     }
 }
 ```
@@ -620,6 +705,24 @@ public void onResponderInitialized(final DSLink link) {
 }
 ```
 
+```scala
+override def onResponderInitialized(link: DSLink) = {
+  val superRoot = link.getNodeManager.getSuperRoot
+    val builder = superRoot.createChild("UpdateNum").
+      setSerializable(false).
+      setDisplayName("Update Number").
+      setAction(new Action(Permission.WRITE, new Handler[ActionResult] {
+        def handle(event: ActionResult) = {
+          val num = Random.nextInt(50)
+          node.setValue(new Value(num))
+        }
+      }))
+    builder.build
+
+    // ...
+}
+```
+
 ```python
 def start(self):
     self.profile_manager.create_profile("addnum")
@@ -708,6 +811,10 @@ link.init();
 // All the nodes are automatically reinitialized again on startup.
 ```
 
+```scala
+// All the nodes are automatically reinitialized again on startup.
+```
+
 ```python
 # The Python SDK initializes itself when implementing the class.
 ```
@@ -767,6 +874,18 @@ var rootNode = link.getNode('/');
 ```java
 // Retrieves the super root of the responder.
 Node superRoot = link.getNodeManager().getSuperRoot();
+```
+
+```scala
+import scala.collection.JavaConverters._
+
+// Retrieves the super root of the responder.
+val superRoot = link.getNodeManager.getSuperRoot
+
+// Iterate all the children of the super root.
+superRoot.getChildren.values.asScala foreach { child =>
+  // ...
+}
 ```
 
 ```python
@@ -891,6 +1010,28 @@ public void onResponderInitialized(final DSLink link) {
 }
 ```
 
+```scala
+override def onResponderInitialized(link: DSLink) = {
+    val superRoot = link.getNodeManager().getSuperRoot()
+    var builder = superRoot.createChild("Numbers").setSerializable(false)
+    val numbers = builder.build
+
+    builder = numbers.createChild("MyNum").
+      setDisplayName("My Number").
+      setValueType(ValueType.NUMBER).
+      setValue(new Value(0))
+    val node = builder.build
+    Objects.getDaemonThreadPool.scheduleWithFixedDelay(new Runnable {
+      def run = {
+            if (link.getSubscriptionManager.hasValueSub(node)) {
+        val num = Random.nextInt(50)
+        node.setValue(new Value(num))
+            }
+        }
+    }, 0, 1, TimeUnit.SECONDS)
+}
+```
+
 ```python
 my_num = dslink.Node("MyNum", root)
 
@@ -931,6 +1072,27 @@ public void onResponderInitialized(final DSLink link) {
     builder.build();
 
     LOGGER.info("Initialized");
+}
+```
+
+```scala
+override def onResponderInitialized(link: DSLink) = {
+    // val numbers = ...
+    // val node = ...
+    // ...
+
+    val builder = numbers.createChild("UpdateNum").
+      setSerializable(false).
+      setDisplayName("Update Number").
+      setAction(new Action(Permission.WRITE, new Handler[ActionResult] {
+        def handle(event: ActionResult) = {
+          val num = Random.nextInt(50)
+          node.setValue(new Value(num))
+        }
+      }))
+    builder.build
+
+    log.info("Initialized")
 }
 ```
 
