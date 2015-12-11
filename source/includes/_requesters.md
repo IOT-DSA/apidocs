@@ -52,6 +52,27 @@ link.connect().then(function() {
 });
 ```
 
+```scala
+object Main extends DSLinkHandler {
+
+  private val log = LoggerFactory.getLogger(getClass)
+
+  override def isRequester = true
+
+  override def onRequesterInitialized(link: DSLink) = {
+    log.info("Requester initialized")
+  }
+
+  override def onRequesterConnected(link: DSLink) = {
+    log.info("Requester connected")
+  }
+
+  def main(args: Array[String]): Unit = {
+    DSLinkFactory.start(args, Main)
+  }
+}
+```
+
 Each link can be a Responder or a Requester (or both). At this time we're
 only interested in creating a requester so we initialize our link specifically
 for the requester.
@@ -77,6 +98,17 @@ iterateChildren(RemoteNode nd) async {
 var exampleNode =
       await requester.getRemoteNode('/downstream/Example');
 iterateChildren(exampleNode);
+```
+
+```scala
+def iterateChildren(node: Node): Unit = {
+  println(s"Node: ${node.getPath}")
+  val children = Option(node.getChildren) map (_.asScala) getOrElse (Map.empty)
+  children foreach {
+    case (name, child) => // ...
+      iterateChildren(child)
+  }
+}
 ```
 
 ```plaintext
@@ -153,6 +185,15 @@ void listUpdates(RequesterListUpdate update) {
 }
 ```
 
+```scala
+val request = ListRequest("...path...")
+requester.list(request, new Handler[ListResponse] {
+  def handle(event: ListResponse) = {
+    //...
+  }
+})
+```
+
 ```plaintext
 // Replace console.log('Node: ' + nd.remotePath) in
 // iterateChildren with:
@@ -206,6 +247,14 @@ if (nd.getConfig(r'$type') == 'int') {
 void subscribeUpdates(ValueUpdate update, String name) {
   print('Name: $name ValueUpdate: ${update.value}');
 }
+```
+
+```scala
+requester.subscribe("...path...", new Handler[SubscriptionValue] {
+  def handle(event: SubscriptionValue) = {
+    println(s"Update received: path=${event.getPath}, value=${event.getValue}")
+  }
+})
 ```
 
 ```plaintext
