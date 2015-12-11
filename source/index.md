@@ -196,9 +196,7 @@ public class Main extends DSLinkHandler {
 // import ...
 
 object Main extends DSLinkHandler {
-
   private val log = LoggerFactory.getLogger(getClass)
-
   override val isResponder = true
 
   override def onResponderInitialized(link: DSLink) = {
@@ -434,13 +432,14 @@ public void onResponderInitialized(final DSLink link) {
 
 ```scala
 override def onResponderInitialized(link: DSLink) = {
-    Objects.getDaemonThreadPool.scheduleWithFixedDelay(new Runnable {
-      def run = {
-      val num = Random.nextInt(50)
-      node.setValue(new Value(num))
-    }
-  }, 0, 5, TimeUnit.SECONDS)
-  //...
+    Objects.getDaemonThreadPool
+        .scheduleWithFixedDelay(new Runnable {
+          def run = {
+          val num = Random.nextInt(50)
+          node.setValue(new Value(num))
+        }
+    }, 0, 5, TimeUnit.SECONDS)
+    //...
 }
 ```
 
@@ -711,14 +710,14 @@ override def onResponderInitialized(link: DSLink) = {
     val builder = superRoot.createChild("UpdateNum").
       setSerializable(false).
       setDisplayName("Update Number").
-      setAction(new Action(Permission.WRITE, new Handler[ActionResult] {
-        def handle(event: ActionResult) = {
-          val num = Random.nextInt(50)
-          node.setValue(new Value(num))
-        }
+      setAction(new Action(Permission.WRITE,
+        new Handler[ActionResult] {
+          def handle(event: ActionResult) = {
+            val num = Random.nextInt(50)
+            node.setValue(new Value(num))
+          }
       }))
     builder.build
-
     // ...
 }
 ```
@@ -1013,7 +1012,8 @@ public void onResponderInitialized(final DSLink link) {
 ```scala
 override def onResponderInitialized(link: DSLink) = {
     val superRoot = link.getNodeManager().getSuperRoot()
-    var builder = superRoot.createChild("Numbers").setSerializable(false)
+    var builder =
+        superRoot.createChild("Numbers").setSerializable(false)
     val numbers = builder.build
 
     builder = numbers.createChild("MyNum").
@@ -1021,13 +1021,14 @@ override def onResponderInitialized(link: DSLink) = {
       setValueType(ValueType.NUMBER).
       setValue(new Value(0))
     val node = builder.build
-    Objects.getDaemonThreadPool.scheduleWithFixedDelay(new Runnable {
-      def run = {
-            if (link.getSubscriptionManager.hasValueSub(node)) {
-        val num = Random.nextInt(50)
-        node.setValue(new Value(num))
-            }
-        }
+    Objects.getDaemonThreadPool
+      .scheduleWithFixedDelay(new Runnable {
+        def run = {
+          if (link.getSubscriptionManager.hasValueSub(node)) {
+            val num = Random.nextInt(50)
+            node.setValue(new Value(num))
+          }
+      }
     }, 0, 1, TimeUnit.SECONDS)
 }
 ```
@@ -1084,11 +1085,12 @@ override def onResponderInitialized(link: DSLink) = {
     val builder = numbers.createChild("UpdateNum").
       setSerializable(false).
       setDisplayName("Update Number").
-      setAction(new Action(Permission.WRITE, new Handler[ActionResult] {
-        def handle(event: ActionResult) = {
-          val num = Random.nextInt(50)
-          node.setValue(new Value(num))
-        }
+      setAction(new Action(Permission.WRITE,
+        new Handler[ActionResult] {
+          def handle(event: ActionResult) = {
+            val num = Random.nextInt(50)
+            node.setValue(new Value(num))
+          }
       }))
     builder.build
 
