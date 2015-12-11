@@ -139,7 +139,8 @@ link.connect();
 ```
 
 ```js
-var link = new DS.LinkProvider('http://127.0.0.1:8080/conn', 'Example-');
+var link =
+  new DS.LinkProvider('http://127.0.0.1:8080/conn', 'Example-');
 link.connect();
 ```
 
@@ -149,7 +150,8 @@ link.connect();
 
 public class Main extends DSLinkHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+    private static final Logger LOGGER =
+                    LoggerFactory.getLogger(Main.class);
 
     @Override
     public boolean isResponder() {
@@ -295,7 +297,8 @@ def get_default_nodes(self):
     root = self.get_root_node()
 
     # Create MyNum Node
-    my_node = dslink.Node("MyNum", root) # Name the node, specify the parent
+    # Name the node, specify the parent
+    my_node = dslink.Node("MyNum", root)
     my_node.set_display_name("My Number")
     my_node.set_type("int")
     my_node.set_value(my_num)
@@ -352,14 +355,15 @@ setInterval(function() {
 public void onResponderInitialized(final DSLink link) {
     // ...
 
-    Objects.getDaemonThreadPool().scheduleWithFixedDelay(new Runnable() {
-        @Override
-        public void run() {
-            int num = RANDOM.nextInt(50);
-            Value val = new Value(num);
-            node.setValue(val);
-        }
-    }, 0, 5, TimeUnit.SECONDS);
+    Objects.getDaemonThreadPool()
+        .scheduleWithFixedDelay(new Runnable() {
+            @Override
+            public void run() {
+                int num = RANDOM.nextInt(50);
+                Value val = new Value(num);
+                node.setValue(val);
+            }
+        }, 0, 5, TimeUnit.SECONDS);
 
     // ...
 }
@@ -367,7 +371,8 @@ public void onResponderInitialized(final DSLink link) {
 
 ```python
 def update(self):
-    reactor.callLater(1, self.update) # Call again 1 second later
+    # Call again 1 second later
+    reactor.callLater(1, self.update)
 ```
 
 A node is of limited value if it only provides the initial request and nothing
@@ -432,7 +437,8 @@ its next subscription request.
 ```plaintext
 // Our new constructor in which we pass both our default node for
 // adding a value, and our profile, or action on that node.
-var nodeList = []; // Store all nodes we create to reference later.
+// Store all nodes we create to reference later.
+var nodeList = [];
 
 // Following replaces previous link initialization.
 link = new DS.LinkProvider(process.argv.slice(2), 'Example-', {
@@ -460,47 +466,17 @@ link = new DS.LinkProvider(process.argv.slice(2), 'Example-', {
 });
 ```
 
-```js
-// Our new constructor in which we pass both our default node for
-// adding a value, and our profile, or action on that node.
-var nodeList = []; // Store all nodes we create to reference later.
-
-// Following replaces previous link initialization.
-link = new DS.LinkProvider('http://127.0.0.1:8080/conn', 'Example-', {
-  defaultNodes: {
-    AddNum: {
-      $name: 'Add number',
-      $is: 'addnum',
-      $invokable: 'write',
-      $params: [{ name: 'value', type: 'int' }]
-    }
-  },
-  profiles: {
-    addnum: function(path) {
-      return new DS.SimpleActionNode(path, function(params) {
-        var addVal = parseInt(params['value'], 10);
-        var ndNum = nodeList.length;
-        nodeList.add(link.addNode('/MyNum' + ndNum, {
-          $name: 'My node #' + ndNum,
-          $type: 'int',
-          '?value': addVal
-        }));
-        // myNode.updateValue(myNum + addVal);
-      });
-    }
-});
-```
-
 ```plaintext
-// Add our initial node to our node list instead of a single variable
+// Add our initial node to our node list instead of a
+// single variable
 nodeList.push(link.addNode('/MyNum',
   { $name: 'My Number',
     $type: 'int',
     '?value': myNum})
 );
 
-// Update our timer to provide a new random number for each node not just
-// the initial one.
+// Update our timer to provide a new random number for
+// each node not just the initial one.
 setTimeout(function() {
   nodeList.forEach(function(myNode) {
     if(myNode.value == null) return;
@@ -513,15 +489,49 @@ setTimeout(function() {
 ```
 
 ```js
-// Add our initial node to our node list instead of a single variable
+// Our new constructor in which we pass both our default node for
+// adding a value, and our profile, or action on that node.
+// Store all nodes we create to reference later.
+var nodeList = [];
+
+// Following replaces previous link initialization.
+link = new DS.LinkProvider('http://127.0.0.1:8080/conn',
+  'Example-', {
+    defaultNodes: {
+      AddNum: {
+        $name: 'Add number',
+        $is: 'addnum',
+        $invokable: 'write',
+        $params: [{ name: 'value', type: 'int' }]
+      }
+    },
+    profiles: {
+      addnum: function(path) {
+        return new DS.SimpleActionNode(path, function(params) {
+          var addVal = parseInt(params['value'], 10);
+          var ndNum = nodeList.length;
+          nodeList.add(link.addNode('/MyNum' + ndNum, {
+            $name: 'My node #' + ndNum,
+            $type: 'int',
+            '?value': addVal
+          }));
+          // myNode.updateValue(myNum + addVal);
+        });
+    }
+});
+```
+
+```js
+// Add our initial node to our node list instead of a
+// single variable
 nodeList.push(link.addNode('/MyNum',
   { $name: 'My Number',
     $type: 'int',
     '?value': myNum})
 );
 
-// Update our timer to provide a new random number for each node not just
-// the initial one.
+// Update our timer to provide a new random number for
+// each node not just the initial one.
 setTimeout(function() {
   nodeList.forEach(function(myNode) {
     if(myNode.value == null) return;
@@ -568,8 +578,8 @@ nodeList.add(link.addNode('/MyNum',
     '?value' : myNum})
 );
 
-// Update our timer to provide a new random number for each node not just
-// the initial one.
+// Update our timer to provide a new random number for each node
+// not just the initial one.
 new Timer.periodic(const Duration(seconds: 5), (timer) {
   for(var myNode in nodeList) {
     // Don't update if there's no value
@@ -675,19 +685,22 @@ The SDK's contain some helper classes which make the creation of a node easier.
 > Initialize the link to load any existing saved data.
 
 ```dart
-// after the link = new LinkProvider(..) and before link.connect();
+// after the link = new LinkProvider(..)
+// and before link.connect();
 link.init();
 ```
 
 
 ```js
-// after the link = new LinkProvider(..) and before link.connect();
+// after the link = new LinkProvider(..)
+// and before link.connect();
 link.init();
 ```
 
 
 ```plaintext
-// after the link = new LinkProvider(..) and before link.connect();
+// after the link = new LinkProvider(..)
+// and before link.connect();
 link.init();
 ```
 
@@ -864,7 +877,8 @@ public void onResponderInitialized(final DSLink link) {
     builder.setValueType(ValueType.NUMBER);
     builder.setValue(new Value(0));
     final Node node = builder.build();
-    Objects.getDaemonThreadPool().scheduleWithFixedDelay(new Runnable() {
+    Objects.getDaemonThreadPool().scheduleWithFixedDelay(
+        new Runnable() {
         @Override
         public void run() {
             if (link.getSubscriptionManager().hasValueSub(node)) {

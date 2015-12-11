@@ -25,10 +25,11 @@ var requester = link.requester;
 ```
 
 ```js
-var link = new DS.LinkProvider('http://127.0.0.1:8080/conn', 'RequesterExample-', {
-  isRequester: true,
-  isResponder: false
-});
+var link = new DS.LinkProvider('http://127.0.0.1:8080/conn',
+          'RequesterExample-', {
+            isRequester: true,
+            isResponder: false
+          });
 
 link.connect().then(function() {
   return link.onRequesterReady;
@@ -38,10 +39,11 @@ link.connect().then(function() {
 ```
 
 ```plaintext
-var link = new DS.LinkProvider(process.argv.slice(2), 'RequesterExample-', {
-  isRequester: true,
-  isResponder: false
-});
+var link = new DS.LinkProvider(process.argv.slice(2),
+          'RequesterExample-', {
+            isRequester: true,
+            isResponder: false
+          });
 
 link.connect().then(function() {
   return link.onRequesterReady;
@@ -92,9 +94,10 @@ function iterateChildren(nd) {
 }
 
 // Query initial node and pass it to our recursive function.
-requester.getRemoteNode('/downstream/Example').then(function(exampleNode) {
-  iterateChildren(exampleNode);  
-});
+requester.getRemoteNode('/downstream/Example')
+  .then(function(exampleNode) {
+    iterateChildren(exampleNode);  
+  });
 ```
 
 ```js
@@ -112,9 +115,10 @@ function iterateChildren(nd) {
 }
 
 // Query initial node and pass it to our recursive function.
-requester.getRemoteNode('/downstream/Example').then(function(exampleNode) {
-  iterateChildren(exampleNode);  
-});
+requester.getRemoteNode('/downstream/Example')
+  .then(function(exampleNode) {
+    iterateChildren(exampleNode);  
+  });
 ```
 
 With the requester, we can now query a node from the broker and get a listing
