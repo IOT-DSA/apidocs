@@ -92,6 +92,21 @@ file.
     <span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span><span class="mf">0.12</span><span class="o">.</span><span class="mi">0</span><span class="o">&lt;/</span><span class="n">version</span><span class="o">&gt;</span>
 <span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span>
 </code></pre>
+<pre class="highlight scala"><code><span class="c1">// For Gradle add this to your build.gradle dependencies.
+</span><span class="n">compile</span> <span class="ss">'org.</span><span class="n">iot</span><span class="o">-</span><span class="n">dsa</span><span class="k">:</span><span class="kt">dslink:</span><span class="err">0</span><span class="kt">.</span><span class="err">12</span><span class="kt">.</span><span class="err">0</span><span class="kt">'</span>
+
+<span class="c1">// For Apache Maven add this to your build.xml dependencies.
+</span><span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">org</span><span class="o">.</span><span class="n">iot</span><span class="o">-</span><span class="n">dsa</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">dslink</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span><span class="mf">0.12</span><span class="o">.</span><span class="mi">0</span><span class="o">&lt;/</span><span class="n">version</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span>
+
+<span class="c1">// For SBT add this to your build.sbt libraryDependencies:
+</span><span class="n">libraryDependencies</span> <span class="o">++=</span> <span class="nc">Seq</span><span class="o">(</span>
+  <span class="s">"org.iot-dsa"</span> <span class="o">%</span> <span class="s">"dslink"</span> <span class="o">%</span> <span class="s">"0.12.0"</span>
+<span class="o">)</span>
+</code></pre>
 <pre class="highlight ruby"><code><span class="c1"># Add to your Gemfile</span>
 <span class="n">gem</span> <span class="s1">'dslink'</span><span class="p">,</span> <span class="ss">:git</span> <span class="o">=&gt;</span> <span class="s1">'git://github.com/IOT_DSA/sdk-dslink-ruby.git'</span>
 
@@ -186,6 +201,26 @@ link.connect();
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre>
+<pre class="highlight scala"><code><span class="c1">// package ...
+// import ...
+</span>
+<span class="k">object</span> <span class="nc">Main</span> <span class="k">extends</span> <span class="nc">DSLinkHandler</span> <span class="o">{</span>
+  <span class="k">private</span> <span class="k">val</span> <span class="n">log</span> <span class="k">=</span> <span class="nc">LoggerFactory</span><span class="o">.</span><span class="n">getLogger</span><span class="o">(</span><span class="n">getClass</span><span class="o">)</span>
+  <span class="k">override</span> <span class="k">val</span> <span class="n">isResponder</span> <span class="k">=</span> <span class="kc">true</span>
+
+  <span class="k">override</span> <span class="k">def</span> <span class="n">onResponderInitialized</span><span class="o">(</span><span class="n">link</span><span class="k">:</span> <span class="kt">DSLink</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="o">(</span><span class="s">"Responder initialized"</span><span class="o">)</span>
+  <span class="o">}</span>
+
+  <span class="k">override</span> <span class="k">def</span> <span class="n">onResponderConnected</span><span class="o">(</span><span class="n">link</span><span class="k">:</span> <span class="kt">DSLink</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="o">(</span><span class="s">"Responder connected"</span><span class="o">)</span>
+  <span class="o">}</span>
+
+  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nc">DSLinkFactory</span><span class="o">.</span><span class="n">start</span><span class="o">(</span><span class="n">args</span><span class="o">,</span> <span class="nc">Main</span><span class="o">)</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
 <pre class="highlight python"><code><span class="c"># dslink.py</span>
 <span class="kn">import</span> <span class="nn">dslink</span>
 
@@ -241,6 +276,11 @@ permission to access.</p>
 <span class="c1">// Generating a random number is as follows.</span>
 <span class="kt">int</span> <span class="n">num</span> <span class="o">=</span> <span class="n">RANDOM</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="mi">50</span><span class="o">);</span>
 </code></pre>
+<pre class="highlight scala"><code><span class="k">import</span> <span class="nn">scala.util.Random</span>
+
+<span class="c1">// Generating a random number is as follows.
+</span><span class="k">val</span> <span class="n">num</span> <span class="k">=</span> <span class="nc">Random</span><span class="o">.</span><span class="n">nextInt</span><span class="o">(</span><span class="mi">50</span><span class="o">)</span>
+</code></pre>
 <pre class="highlight python"><code><span class="c"># Import the random library at the top of the file</span>
 <span class="kn">import</span> <span class="nn">random</span>
 
@@ -285,6 +325,19 @@ for. In this case we&rsquo;ll just generate a random number between 0 and 50.</p
 
     <span class="c1">// ...</span>
 <span class="o">}</span>
+</code></pre>
+<pre class="highlight scala"><code><span class="c1">// In your Main class
+</span><span class="k">override</span> <span class="k">def</span> <span class="n">onResponderInitialized</span><span class="o">(</span><span class="n">link</span><span class="k">:</span> <span class="kt">DSLink</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">superRoot</span> <span class="k">=</span> <span class="n">link</span><span class="o">.</span><span class="n">getNodeManager</span><span class="o">.</span><span class="n">getSuperRoot</span>
+  <span class="k">val</span> <span class="n">builder</span> <span class="k">=</span> <span class="n">superRoot</span><span class="o">.</span>
+    <span class="n">createChild</span><span class="o">(</span><span class="s">"MyNum"</span><span class="o">).</span>
+    <span class="n">setDisplayName</span><span class="o">(</span><span class="s">"My Number"</span><span class="o">).</span>
+    <span class="n">setValueType</span><span class="o">(</span><span class="nc">ValueType</span><span class="o">.</span><span class="nc">NUMBER</span><span class="o">).</span>
+    <span class="n">setValue</span><span class="o">(</span><span class="k">new</span> <span class="nc">Value</span><span class="o">(</span><span class="mi">0</span><span class="o">))</span>
+  <span class="k">val</span> <span class="n">node</span> <span class="k">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span>
+
+  <span class="c1">//...
+</span><span class="o">}</span>
 </code></pre>
 <pre class="highlight python"><code><span class="c"># In the DSLink class, implement get_default_nodes</span>
 <span class="k">def</span> <span class="nf">get_default_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -355,6 +408,17 @@ directly with link itself.</p>
     <span class="c1">// ...</span>
 <span class="o">}</span>
 </code></pre>
+<pre class="highlight scala"><code><span class="k">override</span> <span class="k">def</span> <span class="n">onResponderInitialized</span><span class="o">(</span><span class="n">link</span><span class="k">:</span> <span class="kt">DSLink</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="nc">Objects</span><span class="o">.</span><span class="n">getDaemonThreadPool</span>
+        <span class="o">.</span><span class="n">scheduleWithFixedDelay</span><span class="o">(</span><span class="k">new</span> <span class="nc">Runnable</span> <span class="o">{</span>
+          <span class="k">def</span> <span class="n">run</span> <span class="k">=</span> <span class="o">{</span>
+          <span class="k">val</span> <span class="n">num</span> <span class="k">=</span> <span class="nc">Random</span><span class="o">.</span><span class="n">nextInt</span><span class="o">(</span><span class="mi">50</span><span class="o">)</span>
+          <span class="n">node</span><span class="o">.</span><span class="n">setValue</span><span class="o">(</span><span class="k">new</span> <span class="nc">Value</span><span class="o">(</span><span class="n">num</span><span class="o">))</span>
+        <span class="o">}</span>
+    <span class="o">},</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="nc">TimeUnit</span><span class="o">.</span><span class="nc">SECONDS</span><span class="o">)</span>
+    <span class="c1">//...
+</span><span class="o">}</span>
+</code></pre>
 <pre class="highlight python"><code><span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="c"># Call again 1 second later</span>
     <span class="n">reactor</span><span class="o">.</span><span class="n">callLater</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">)</span>
@@ -389,6 +453,14 @@ seconds.</p>
         <span class="kt">int</span> <span class="n">num</span> <span class="o">=</span> <span class="n">RANDOM</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="mi">50</span><span class="o">);</span>
         <span class="n">Value</span> <span class="n">val</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Value</span><span class="o">(</span><span class="n">num</span><span class="o">);</span>
         <span class="n">node</span><span class="o">.</span><span class="na">setValue</span><span class="o">(</span><span class="n">val</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+<pre class="highlight scala"><code><span class="c1">// scheduleWithFixedDelay ...
+</span><span class="k">def</span> <span class="n">run</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">if</span> <span class="o">(</span><span class="n">link</span><span class="o">.</span><span class="n">getSubscriptionManager</span><span class="o">.</span><span class="n">hasValueSub</span><span class="o">(</span><span class="n">node</span><span class="o">))</span> <span class="o">{</span>
+    <span class="k">val</span> <span class="n">num</span> <span class="k">=</span> <span class="nc">Random</span><span class="o">.</span><span class="n">nextInt</span><span class="o">(</span><span class="mi">50</span><span class="o">)</span>
+    <span class="n">node</span><span class="o">.</span><span class="n">setValue</span><span class="o">(</span><span class="k">new</span> <span class="nc">Value</span><span class="o">(</span><span class="n">num</span><span class="o">))</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre>
@@ -582,6 +654,22 @@ setTimeout(function() {
     <span class="c1">// ...</span>
 <span class="o">}</span>
 </code></pre>
+<pre class="highlight scala"><code><span class="k">override</span> <span class="k">def</span> <span class="n">onResponderInitialized</span><span class="o">(</span><span class="n">link</span><span class="k">:</span> <span class="kt">DSLink</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">superRoot</span> <span class="k">=</span> <span class="n">link</span><span class="o">.</span><span class="n">getNodeManager</span><span class="o">.</span><span class="n">getSuperRoot</span>
+    <span class="k">val</span> <span class="n">builder</span> <span class="k">=</span> <span class="n">superRoot</span><span class="o">.</span><span class="n">createChild</span><span class="o">(</span><span class="s">"UpdateNum"</span><span class="o">).</span>
+      <span class="n">setSerializable</span><span class="o">(</span><span class="kc">false</span><span class="o">).</span>
+      <span class="n">setDisplayName</span><span class="o">(</span><span class="s">"Update Number"</span><span class="o">).</span>
+      <span class="n">setAction</span><span class="o">(</span><span class="k">new</span> <span class="nc">Action</span><span class="o">(</span><span class="nc">Permission</span><span class="o">.</span><span class="nc">WRITE</span><span class="o">,</span>
+        <span class="k">new</span> <span class="nc">Handler</span><span class="o">[</span><span class="kt">ActionResult</span><span class="o">]</span> <span class="o">{</span>
+          <span class="k">def</span> <span class="n">handle</span><span class="o">(</span><span class="n">event</span><span class="k">:</span> <span class="kt">ActionResult</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+            <span class="k">val</span> <span class="n">num</span> <span class="k">=</span> <span class="nc">Random</span><span class="o">.</span><span class="n">nextInt</span><span class="o">(</span><span class="mi">50</span><span class="o">)</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">setValue</span><span class="o">(</span><span class="k">new</span> <span class="nc">Value</span><span class="o">(</span><span class="n">num</span><span class="o">))</span>
+          <span class="o">}</span>
+      <span class="o">}))</span>
+    <span class="n">builder</span><span class="o">.</span><span class="n">build</span>
+    <span class="c1">// ...
+</span><span class="o">}</span>
+</code></pre>
 <pre class="highlight python"><code><span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">profile_manager</span><span class="o">.</span><span class="n">create_profile</span><span class="p">(</span><span class="s">"addnum"</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">profile_manager</span><span class="o">.</span><span class="n">register_callback</span><span class="p">(</span><span class="s">"addnum"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">addnum</span><span class="p">)</span>
@@ -660,6 +748,8 @@ link.init();
 </code></pre>
 <pre class="highlight java"><code><span class="c1">// All the nodes are automatically reinitialized again on startup.</span>
 </code></pre>
+<pre class="highlight scala"><code><span class="c1">// All the nodes are automatically reinitialized again on startup.
+</span></code></pre>
 <pre class="highlight python"><code><span class="c"># The Python SDK initializes itself when implementing the class.</span>
 </code></pre>
 
@@ -708,6 +798,16 @@ var rootNode = link.getNode('/');
 </code></pre>
 <pre class="highlight java"><code><span class="c1">// Retrieves the super root of the responder.</span>
 <span class="n">Node</span> <span class="n">superRoot</span> <span class="o">=</span> <span class="n">link</span><span class="o">.</span><span class="na">getNodeManager</span><span class="o">().</span><span class="na">getSuperRoot</span><span class="o">();</span>
+</code></pre>
+<pre class="highlight scala"><code><span class="k">import</span> <span class="nn">scala.collection.JavaConverters._</span>
+
+<span class="c1">// Retrieves the super root of the responder.
+</span><span class="k">val</span> <span class="n">superRoot</span> <span class="k">=</span> <span class="n">link</span><span class="o">.</span><span class="n">getNodeManager</span><span class="o">.</span><span class="n">getSuperRoot</span>
+
+<span class="c1">// Iterate all the children of the super root.
+</span><span class="n">superRoot</span><span class="o">.</span><span class="n">getChildren</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">asScala</span> <span class="n">foreach</span> <span class="o">{</span> <span class="n">child</span> <span class="k">=&gt;</span>
+  <span class="c1">// ...
+</span><span class="o">}</span>
 </code></pre>
 <pre class="highlight python"><code><span class="n">root_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">super_root</span>
 </code></pre>
@@ -815,6 +915,28 @@ defaultNodes: {
     <span class="o">},</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="n">TimeUnit</span><span class="o">.</span><span class="na">SECONDS</span><span class="o">);</span>
 <span class="o">}</span>
 </code></pre>
+<pre class="highlight scala"><code><span class="k">override</span> <span class="k">def</span> <span class="n">onResponderInitialized</span><span class="o">(</span><span class="n">link</span><span class="k">:</span> <span class="kt">DSLink</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="k">val</span> <span class="n">superRoot</span> <span class="k">=</span> <span class="n">link</span><span class="o">.</span><span class="n">getNodeManager</span><span class="o">().</span><span class="n">getSuperRoot</span><span class="o">()</span>
+    <span class="k">var</span> <span class="n">builder</span> <span class="k">=</span>
+        <span class="n">superRoot</span><span class="o">.</span><span class="n">createChild</span><span class="o">(</span><span class="s">"Numbers"</span><span class="o">).</span><span class="n">setSerializable</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span>
+    <span class="k">val</span> <span class="n">numbers</span> <span class="k">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span>
+
+    <span class="n">builder</span> <span class="k">=</span> <span class="n">numbers</span><span class="o">.</span><span class="n">createChild</span><span class="o">(</span><span class="s">"MyNum"</span><span class="o">).</span>
+      <span class="n">setDisplayName</span><span class="o">(</span><span class="s">"My Number"</span><span class="o">).</span>
+      <span class="n">setValueType</span><span class="o">(</span><span class="nc">ValueType</span><span class="o">.</span><span class="nc">NUMBER</span><span class="o">).</span>
+      <span class="n">setValue</span><span class="o">(</span><span class="k">new</span> <span class="nc">Value</span><span class="o">(</span><span class="mi">0</span><span class="o">))</span>
+    <span class="k">val</span> <span class="n">node</span> <span class="k">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span>
+    <span class="nc">Objects</span><span class="o">.</span><span class="n">getDaemonThreadPool</span>
+      <span class="o">.</span><span class="n">scheduleWithFixedDelay</span><span class="o">(</span><span class="k">new</span> <span class="nc">Runnable</span> <span class="o">{</span>
+        <span class="k">def</span> <span class="n">run</span> <span class="k">=</span> <span class="o">{</span>
+          <span class="k">if</span> <span class="o">(</span><span class="n">link</span><span class="o">.</span><span class="n">getSubscriptionManager</span><span class="o">.</span><span class="n">hasValueSub</span><span class="o">(</span><span class="n">node</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">val</span> <span class="n">num</span> <span class="k">=</span> <span class="nc">Random</span><span class="o">.</span><span class="n">nextInt</span><span class="o">(</span><span class="mi">50</span><span class="o">)</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">setValue</span><span class="o">(</span><span class="k">new</span> <span class="nc">Value</span><span class="o">(</span><span class="n">num</span><span class="o">))</span>
+          <span class="o">}</span>
+      <span class="o">}</span>
+    <span class="o">},</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="nc">TimeUnit</span><span class="o">.</span><span class="nc">SECONDS</span><span class="o">)</span>
+<span class="o">}</span>
+</code></pre>
 <pre class="highlight python"><code><span class="n">my_num</span> <span class="o">=</span> <span class="n">dslink</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="s">"MyNum"</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
 
 <span class="n">add_num</span> <span class="o">=</span> <span class="n">dslink</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="s">"AddNum"</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
@@ -852,6 +974,26 @@ defaultNodes: {
     <span class="n">builder</span><span class="o">.</span><span class="na">build</span><span class="o">();</span>
 
     <span class="n">LOGGER</span><span class="o">.</span><span class="na">info</span><span class="o">(</span><span class="s">"Initialized"</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+<pre class="highlight scala"><code><span class="k">override</span> <span class="k">def</span> <span class="n">onResponderInitialized</span><span class="o">(</span><span class="n">link</span><span class="k">:</span> <span class="kt">DSLink</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="c1">// val numbers = ...
+</span>    <span class="c1">// val node = ...
+</span>    <span class="c1">// ...
+</span>
+    <span class="k">val</span> <span class="n">builder</span> <span class="k">=</span> <span class="n">numbers</span><span class="o">.</span><span class="n">createChild</span><span class="o">(</span><span class="s">"UpdateNum"</span><span class="o">).</span>
+      <span class="n">setSerializable</span><span class="o">(</span><span class="kc">false</span><span class="o">).</span>
+      <span class="n">setDisplayName</span><span class="o">(</span><span class="s">"Update Number"</span><span class="o">).</span>
+      <span class="n">setAction</span><span class="o">(</span><span class="k">new</span> <span class="nc">Action</span><span class="o">(</span><span class="nc">Permission</span><span class="o">.</span><span class="nc">WRITE</span><span class="o">,</span>
+        <span class="k">new</span> <span class="nc">Handler</span><span class="o">[</span><span class="kt">ActionResult</span><span class="o">]</span> <span class="o">{</span>
+          <span class="k">def</span> <span class="n">handle</span><span class="o">(</span><span class="n">event</span><span class="k">:</span> <span class="kt">ActionResult</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+            <span class="k">val</span> <span class="n">num</span> <span class="k">=</span> <span class="nc">Random</span><span class="o">.</span><span class="n">nextInt</span><span class="o">(</span><span class="mi">50</span><span class="o">)</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">setValue</span><span class="o">(</span><span class="k">new</span> <span class="nc">Value</span><span class="o">(</span><span class="n">num</span><span class="o">))</span>
+          <span class="o">}</span>
+      <span class="o">}))</span>
+    <span class="n">builder</span><span class="o">.</span><span class="n">build</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="o">(</span><span class="s">"Initialized"</span><span class="o">)</span>
 <span class="o">}</span>
 </code></pre>
 
