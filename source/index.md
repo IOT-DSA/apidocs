@@ -332,6 +332,20 @@ new Timer.periodic(const Duration(seconds: 5), (_) {
 });
 ```
 
+```plaintext
+setInterval(function() {
+  myNum = Math.round(Math.random() * 50);
+  myNode.updateValue(myNum);
+}, 1000 * 5);
+```
+
+```js
+setInterval(function() {
+  myNum = Math.round(Math.random() * 50);
+  myNode.updateValue(myNum);
+}, 1000 * 5);
+```
+
 ```java
 // In your Main class
 @Override
@@ -371,6 +385,18 @@ if(myNode.hasSubscriber) {
 }
 ```
 
+```plaintext
+if(myNode.hasSubscriber) {
+  // To be filled in soon
+}
+```
+
+```js
+if(myNode.hasSubscriber) {
+  // To be filled in soon
+}
+```
+
 ```java
 // scheduleWithFixedDelay ...
 @Override
@@ -402,6 +428,110 @@ its next subscription request.
 </aside>
 
 ## Adding an action
+
+```plaintext
+// Our new constructor in which we pass both our default node for
+// adding a value, and our profile, or action on that node.
+var nodeList = []; // Store all nodes we create to reference later.
+
+// Following replaces previous link initialization.
+link = new DS.LinkProvider(process.argv.slice(2), 'Example-', {
+  defaultNodes: {
+    AddNum: {
+      $name: 'Add number',
+      $is: 'addnum',
+      $invokable: 'write',
+      $params: [{ name: 'value', type: 'int' }]
+    }
+  },
+  profiles: {
+    addnum: function(path, provider) {
+      return new DS.SimpleActionNode(path, function(params) {
+        var addVal = parseInt(params['value'], 10);
+        var ndNum = nodeList.length;
+        nodeList.add(link.addNode('/MyNum' + ndNum, {
+          $name: 'My node #' + ndNum,
+          $type: 'int',
+          '?value': addVal
+        }));
+        // myNode.updateValue(myNum + addVal);
+      }, provider);
+    }
+});
+```
+
+```js
+// Our new constructor in which we pass both our default node for
+// adding a value, and our profile, or action on that node.
+var nodeList = []; // Store all nodes we create to reference later.
+
+// Following replaces previous link initialization.
+link = new DS.LinkProvider('http://127.0.0.1:8080/conn', 'Example-', {
+  defaultNodes: {
+    AddNum: {
+      $name: 'Add number',
+      $is: 'addnum',
+      $invokable: 'write',
+      $params: [{ name: 'value', type: 'int' }]
+    }
+  },
+  profiles: {
+    addnum: function(path) {
+      return new DS.SimpleActionNode(path, function(params) {
+        var addVal = parseInt(params['value'], 10);
+        var ndNum = nodeList.length;
+        nodeList.add(link.addNode('/MyNum' + ndNum, {
+          $name: 'My node #' + ndNum,
+          $type: 'int',
+          '?value': addVal
+        }));
+        // myNode.updateValue(myNum + addVal);
+      });
+    }
+});
+```
+
+```plaintext
+// Add our initial node to our node list instead of a single variable
+nodeList.push(link.addNode('/MyNum',
+  { $name: 'My Number',
+    $type: 'int',
+    '?value': myNum})
+);
+
+// Update our timer to provide a new random number for each node not just
+// the initial one.
+setTimeout(function() {
+  nodeList.forEach(function(myNode) {
+    if(myNode.value == null) return;
+    if(myNode.ahsSubscriber) {
+      myNum = Math.round(Math.random() * 50);
+      myNode.updateValue(myNum);
+    }
+  });
+}, 5 * 1000);
+```
+
+```js
+// Add our initial node to our node list instead of a single variable
+nodeList.push(link.addNode('/MyNum',
+  { $name: 'My Number',
+    $type: 'int',
+    '?value': myNum})
+);
+
+// Update our timer to provide a new random number for each node not just
+// the initial one.
+setTimeout(function() {
+  nodeList.forEach(function(myNode) {
+    if(myNode.value == null) return;
+    if(myNode.ahsSubscriber) {
+      myNum = Math.round(Math.random() * 50);
+      myNode.updateValue(myNum);
+    }
+  });
+}, 5 * 1000);
+```
 
 ```dart
 // Our new constructor in which we pass both our default node for
@@ -549,6 +679,18 @@ The SDK's contain some helper classes which make the creation of a node easier.
 link.init();
 ```
 
+
+```js
+// after the link = new LinkProvider(..) and before link.connect();
+link.init();
+```
+
+
+```plaintext
+// after the link = new LinkProvider(..) and before link.connect();
+link.init();
+```
+
 ```java
 // All the nodes are automatically reinitialized again on startup.
 ```
@@ -599,6 +741,16 @@ reconnects to our broker
 var rootNode = ~link; // Shortcut for link.getNode('/');
 ```
 
+```plaintext
+// At the top of our setInterval callback.
+var rootNode = link.getNode('/');
+```
+
+```js
+// At the top of our setInterval callback.
+var rootNode = link.getNode('/');
+```
+
 ```java
 // Retrieves the super root of the responder.
 Node superRoot = link.getNodeManager().getSuperRoot();
@@ -617,6 +769,24 @@ for(var nodeName in rootNode.children.keys) {
   var myNode = rootNode[nodeName];
   // ... Existing checking for subscriber and updating value
 }
+```
+
+```plaintext
+/// rootNode.children returns an object where the key
+/// is the node identifier and the value is the node itself.
+Object.keys(rootNode.children).forEach(function(nodeName) {
+  var myNode = rootNode.children[nodeName];
+  // ... Existing checking for subscriber and updating value
+})
+```
+
+```js
+/// rootNode.children returns an object where the key
+/// is the node identifier and the value is the node itself.
+Object.keys(rootNode.children).forEach(function(nodeName) {
+  var myNode = rootNode.children[nodeName];
+  // ... Existing checking for subscriber and updating value
+})
 ```
 
 ```java
@@ -649,6 +819,32 @@ defaultNodes: {
   'CustomNumbers' : {
     r'$name' : 'Custom Numbers',
     'AddNum' : {
+      // ... Previous information still here.
+    }
+  }
+},
+```
+
+```plaintext
+/// Change the default nodes from our constructor.
+/// The rest of the constructor stays the same.
+defaultNodes: {
+  CustomNumbers: {
+    $name: 'Custom Numbers',
+    AddNum: {
+      // ... Previous information still here.
+    }
+  }
+},
+```
+
+```js
+/// Change the default nodes from our constructor.
+/// The rest of the constructor stays the same.
+defaultNodes: {
+  CustomNumbers: {
+    $name: 'Custom Numbers',
+    AddNum: {
       // ... Previous information still here.
     }
   }

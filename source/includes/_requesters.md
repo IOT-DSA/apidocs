@@ -38,7 +38,7 @@ link.connect().then(function() {
 ```
 
 ```plaintext
-var link = new DS.LinkProvider(args, 'RequesterExample-', {
+var link = new DS.LinkProvider(process.argv.slice(2), 'RequesterExample-', {
   isRequester: true,
   isResponder: false
 });
