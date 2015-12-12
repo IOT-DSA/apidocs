@@ -164,7 +164,13 @@ requester.getRemoteNode('/downstream/Example')
 ```
 
 ```python
-# TODO
+def recurse(self, listresponse):
+    for child_name in listresponse.node.children:
+        child = listresponse.node.children[child_name]
+        print(child.path)
+        self.requester.list(child.path, self.recurse)
+
+self.requester.list("/", self.recurse)
 ```
 
 With the requester, we can now query a node from the broker and get a listing
