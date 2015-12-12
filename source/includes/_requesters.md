@@ -73,6 +73,16 @@ object Main extends DSLinkHandler {
 }
 ```
 
+```python
+class RequesterDSLink(dslink.DSLink):
+    def start(self):
+        # self.requester is the Requester class.
+        pass
+
+if __name__ == "__main__":
+    RequesterDSLink(dslink.Configuration("RequesterDSLink", requester=True, responder=False))
+```
+
 Each link can be a Responder or a Requester (or both). At this time we're
 only interested in creating a requester so we initialize our link specifically
 for the requester.
@@ -153,6 +163,10 @@ requester.getRemoteNode('/downstream/Example')
   });
 ```
 
+```python
+# TODO
+```
+
 With the requester, we can now query a node from the broker and get a listing
 of the nodes and recursively poll their children. For this sample we are going
 to query the broker for the nodes of the Responder link we created previously.
@@ -216,6 +230,15 @@ function listUpdates(update) {
   console.log('Node - ' + update.node.name);
   console.log('\tChanges: ' + update.changes);
 }
+```
+
+```python
+def list(self, listresponse):
+    print(listresponse.node.name)
+    for child in listresponse.node.children:
+        print(child)
+
+self.requester.list("/path/to/node", self.list)
 ```
 
 Iterating over children is great when we initialize our connection, however
@@ -283,6 +306,14 @@ if (nd.getConfig('$type') === 'int') {
 function subscribeUpdates(update, name) {
   console.log('Name: ' + name + ' ValueUpdate: ' + update.value);
 }
+```
+
+```python
+# data is (value, updated_time)
+def value_updates(self, data):
+    print("Value updated to %s at %s" % (data[0], data[1]))
+
+self.requester.subscribe("/path/to/node", self.value_updates)
 ```
 
 When listing nodes, we see the changes in a node's configuration including

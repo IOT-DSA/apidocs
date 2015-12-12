@@ -287,7 +287,7 @@ val num = Random.nextInt(50)
 # Import the random library at the top of the file
 import random
 
-var my_num = random.randint(0, 50)
+my_num = random.randint(0, 50)
 ```
 
 Before we add the new, let's create a value that we can pass, and send updates
@@ -352,23 +352,20 @@ override def onResponderInitialized(link: DSLink) = {
 ```
 
 ```python
-# In the DSLink class, implement get_default_nodes
-def get_default_nodes(self):
-    # Get default super_root
-    root = self.get_root_node()
-
+# In the DSLink class, implement get_default_nodes.
+def get_default_nodes(self, super_root):
     # Create MyNum Node
     # Name the node, specify the parent
-    my_node = dslink.Node("MyNum", root)
+    my_node = dslink.Node("MyNum", super_root)
     my_node.set_display_name("My Number")
     my_node.set_type("int")
     my_node.set_value(my_num)
 
-    # Add my_node to the super_root
-    root.add_child(my_node)
+    # Add my_node to the super root
+    super_root.add_child(my_node)
 
     # Return the super root
-    return root
+    return super_root
 ```
 
 Next we add our node to the Link. In this case we pass the node name, `/MyNum`
@@ -444,9 +441,16 @@ override def onResponderInitialized(link: DSLink) = {
 ```
 
 ```python
+def start(self):
+    # Kick off initial loop.
+    self.call_later(1, self.update)
+    
 def update(self):
-    # Call again 1 second later
-    reactor.callLater(1, self.update)
+    num = random.randint(0, 50)
+    self.responder.get_super_root().get("/MyNum").set_value(num)
+    
+    # Call again 1 second later.
+    self.call_later(1, self.update)
 ```
 
 A node is of limited value if it only provides the initial request and nothing
@@ -499,8 +503,9 @@ def run = {
 ```
 
 ```python
+my_node = self.responder.get_super_root().get("/MyNum")
 if my_node.is_subscribed():
-    print("Node is subscribed")
+    my_node.set_value(random.randint(0, 50))
 ```
 
 In our simple example, we only want to update a value if there is someone
@@ -724,18 +729,16 @@ override def onResponderInitialized(link: DSLink) = {
 
 ```python
 def start(self):
-    self.profile_manager.create_profile("addnum")
-    self.profile_manager.register_callback("addnum", self.addnum)
+    self.responder.profile_manager.create_profile("addnum")
+    self.responder.profile_manager.register_callback("addnum", self.addnum)
 
-def get_default_nodes(self):
-    root = self.get_root_node()
-
-    my_num = dslink.Node("MyNum", root)
+def get_default_nodes(self, super_root):
+    my_num = dslink.Node("MyNum", super_root)
     my_num.set_display_name("My Number")
     my_num.set_type("int")
     my_num.set_value(0)
 
-    add_num = dslink.Node("AddNum", root)
+    add_num = dslink.Node("AddNum", super_root)
     add_num.set_display_name("Add number")
     add_num.set_profile("addnum")
     add_num.set_invokable("write")
@@ -746,14 +749,14 @@ def get_default_nodes(self):
         }
     ])
 
-    root.add_child(my_num)
-    root.add_child(add_num)
+    super_root.add_child(my_num)
+    super_root.add_child(add_num)
 
-    return root
+    return super_root
 
 def addnum(self, parameters):
     num = int(parameters.params["Number"]) # Parse number
-    self.super_root.get("/MyNum").set_value(num) # Set value
+    self.responder.get_super_root().get("/MyNum").set_value(num) # Set value
     return [[]] # Return empty columns
 ```
 
@@ -888,7 +891,7 @@ superRoot.getChildren.values.asScala foreach { child =>
 ```
 
 ```python
-root_node = self.super_root
+root_node = self.responder.get_super_root()
 ```
 
 > Update for loop to iterate over the children of the root node.
@@ -1034,12 +1037,14 @@ override def onResponderInitialized(link: DSLink) = {
 ```
 
 ```python
-my_num = dslink.Node("MyNum", root)
+my_num = dslink.Node("MyNum", super_root)
+# Other Node information...
 
-add_num = dslink.Node("AddNum", root)
+add_num = dslink.Node("AddNum", my_num) # Change the parent to my_num
+# Other Node information...
 
 my_num.add_child(add_num)
-root.add_child(my_num)
+super_root.add_child(my_num)
 ```
 
 > Update location our action adds to.
