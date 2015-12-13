@@ -25,21 +25,9 @@ var requester = link.requester;
 ```
 
 ```js
+// node.js
+// var link = new DS.LinkProvider(process.argv.slice(2),
 var link = new DS.LinkProvider('http://127.0.0.1:8080/conn',
-          'RequesterExample-', {
-            isRequester: true,
-            isResponder: false
-          });
-
-link.connect().then(function() {
-  return link.onRequesterReady;
-}).then(function(requester) {
-   // work with requester here  
-});
-```
-
-```plaintext
-var link = new DS.LinkProvider(process.argv.slice(2),
           'RequesterExample-', {
             isRequester: true,
             isResponder: false
@@ -121,27 +109,6 @@ def iterateChildren(node: Node): Unit = {
 }
 ```
 
-```plaintext
-function iterateChildren(nd) {
-  console.log('Node: ' + nd.remotePath);
-  var keys = Object.keys(nd.children);
-  if (keys.length > 0) {
-    keys.forEach(function(nodeName) {
-      var path = nd.remotePath + '/' + nodeName;
-      requester.getRemoteNode(path).then(function(node) {
-        iterateChildren(node);
-      });
-    });
-  }
-}
-
-// Query initial node and pass it to our recursive function.
-requester.getRemoteNode('/downstream/Example')
-  .then(function(exampleNode) {
-    iterateChildren(exampleNode);  
-  });
-```
-
 ```js
 function iterateChildren(nd) {
   console.log('Node: ' + nd.remotePath);
@@ -214,18 +181,6 @@ requester.list(request, new Handler[ListResponse] {
 })
 ```
 
-```plaintext
-// Replace console.log('Node: ' + nd.remotePath) in
-// iterateChildren with:
-requester.list(nd.remotePath).on("data", listUpdates);
-
-// a new function that is globally defined
-function listUpdates(update) {
-  console.log('Node - ' + update.node.name);
-  console.log('\tChanges: ' + update.changes);
-}
-```
-
 ```js
 // Replace console.log('Node: ' + nd.remotePath) in
 // iterateChildren with:
@@ -284,20 +239,6 @@ requester.subscribe("...path...", new Handler[SubscriptionValue] {
     println(s"Update received: path=${event.getPath}, value=${event.getValue}")
   }
 })
-```
-
-```plaintext
-// Replace requester.list(nd.remotePath).on("data", listUpdates)
-// in iterateChildren with:
-if (nd.getConfig('$type') === 'int') {
-  requester.subscribe(nd.remotePath,
-    function(update) { subscribeUpdates(update, nd.name); });
-}
-
-// a new function that is globally defined
-function subscribeUpdates(update, name) {
-  console.log('Name: ' + name + ' ValueUpdate: ' + update.value);
-}
 ```
 
 ```js

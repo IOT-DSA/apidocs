@@ -4,8 +4,7 @@ title: API Reference
 language_tabs:
   - dart: Dart
   - java: Java
-  - plaintext: Node.js
-  - javascript: Javascript
+  - javascript: JavaScript
   - python: Python
   - ruby: Ruby
   - c: C
@@ -91,7 +90,14 @@ gem 'dslink', :git => 'git://github.com/IOT_DSA/sdk-dslink-ruby.git'
 require 'dslink'
 ```
 
-```plaintext
+```javascript
+// BROWSER
+// index.html
+<script src="https://raw.githubusercontent.com/IOT-DSA/sdk-dslink-javascript/artifacts/dist/dslink.browser.min.js"></script>
+
+// DS is a globally accessed variable
+
+// NODE
 // package.json
 "dependencies": {
   "dslink": "IOT-DSA/sdk-dslink-javascript#artifacts"
@@ -99,13 +105,6 @@ require 'dslink'
 
 // index.js
 var DS = require('dslink');
-```
-
-```javascript
-// index.html
-<script src="https://raw.githubusercontent.com/IOT-DSA/sdk-dslink-javascript/artifacts/dist/dslink.browser.min.js"></script>
-
-// DS is a globally accessed variable
 ```
 
 ```python
@@ -150,14 +149,12 @@ main(List<String> args) {
 }
 ```
 
-```plaintext
+```javascript
+// node.js
 var link = new DS.LinkProvider(process.argv.slice(2), 'Example-');
-link.connect();
-```
+// browser
+var link = new DS.LinkProvider('http://127.0.0.1:8080/conn', 'Example-');
 
-```js
-var link =
-  new DS.LinkProvider('http://127.0.0.1:8080/conn', 'Example-');
 link.connect();
 ```
 
@@ -260,10 +257,6 @@ var numGen = new Random();
 var myNum = numGen.nextInt(50);
 ```
 
-```plaintext
-var myNum = Math.round(Math.random() * 50);
-```
-
 ```js
 var myNum = Math.round(Math.random() * 50);
 ```
@@ -303,14 +296,6 @@ var myNode = link.addNode('/MyNum',
   { r'$name': 'My Number',
     r'$type' : 'int',
     '?value' : myNum});
-```
-
-```plaintext
-var myNode = link.addNode('/MyNum', {
-  '$name': 'My Number',
-  '$type': 'int',
-  '?value': myNum
-});
 ```
 
 ```js
@@ -393,13 +378,6 @@ new Timer.periodic(const Duration(seconds: 5), (_) {
 });
 ```
 
-```plaintext
-setInterval(function() {
-  myNum = Math.round(Math.random() * 50);
-  myNode.updateValue(myNum);
-}, 1000 * 5);
-```
-
 ```js
 setInterval(function() {
   myNum = Math.round(Math.random() * 50);
@@ -444,11 +422,11 @@ override def onResponderInitialized(link: DSLink) = {
 def start(self):
     # Kick off initial loop.
     self.call_later(1, self.update)
-    
+
 def update(self):
     num = random.randint(0, 50)
     self.responder.get_super_root().get("/MyNum").set_value(num)
-    
+
     # Call again 1 second later.
     self.call_later(1, self.update)
 ```
@@ -463,12 +441,6 @@ seconds.
 > Add this to the timer function.
 
 ```dart
-if(myNode.hasSubscriber) {
-  // To be filled in soon
-}
-```
-
-```plaintext
 if(myNode.hasSubscriber) {
   // To be filled in soon
 }
@@ -523,60 +495,6 @@ its next subscription request.
 
 ## Adding an action
 
-```plaintext
-// Our new constructor in which we pass both our default node for
-// adding a value, and our profile, or action on that node.
-// Store all nodes we create to reference later.
-var nodeList = [];
-
-// Following replaces previous link initialization.
-link = new DS.LinkProvider(process.argv.slice(2), 'Example-', {
-  defaultNodes: {
-    AddNum: {
-      $name: 'Add number',
-      $is: 'addnum',
-      $invokable: 'write',
-      $params: [{ name: 'value', type: 'int' }]
-    }
-  },
-  profiles: {
-    addnum: function(path, provider) {
-      return new DS.SimpleActionNode(path, function(params) {
-        var addVal = parseInt(params['value'], 10);
-        var ndNum = nodeList.length;
-        nodeList.add(link.addNode('/MyNum' + ndNum, {
-          $name: 'My node #' + ndNum,
-          $type: 'int',
-          '?value': addVal
-        }));
-        // myNode.updateValue(myNum + addVal);
-      }, provider);
-    }
-});
-```
-
-```plaintext
-// Add our initial node to our node list instead of a
-// single variable
-nodeList.push(link.addNode('/MyNum',
-  { $name: 'My Number',
-    $type: 'int',
-    '?value': myNum})
-);
-
-// Update our timer to provide a new random number for
-// each node not just the initial one.
-setTimeout(function() {
-  nodeList.forEach(function(myNode) {
-    if(myNode.value == null) return;
-    if(myNode.ahsSubscriber) {
-      myNum = Math.round(Math.random() * 50);
-      myNode.updateValue(myNum);
-    }
-  });
-}, 5 * 1000);
-```
-
 ```js
 // Our new constructor in which we pass both our default node for
 // adding a value, and our profile, or action on that node.
@@ -584,6 +502,7 @@ setTimeout(function() {
 var nodeList = [];
 
 // Following replaces previous link initialization.
+// Again, for node.js, replace the URL with process.argv.slice(2)
 link = new DS.LinkProvider('http://127.0.0.1:8080/conn',
   'Example-', {
     defaultNodes: {
@@ -802,13 +721,6 @@ link.init();
 link.init();
 ```
 
-
-```plaintext
-// after the link = new LinkProvider(..)
-// and before link.connect();
-link.init();
-```
-
 ```java
 // All the nodes are automatically reinitialized again on startup.
 ```
@@ -825,6 +737,11 @@ link.init();
 
 ```dart
 // Add outside of the for loop inside the Timer call.
+link.save();
+```
+
+```js
+// Add outside of the for loop inside setInterval.
 link.save();
 ```
 
@@ -863,11 +780,6 @@ reconnects to our broker
 var rootNode = ~link; // Shortcut for link.getNode('/');
 ```
 
-```plaintext
-// At the top of our setInterval callback.
-var rootNode = link.getNode('/');
-```
-
 ```js
 // At the top of our setInterval callback.
 var rootNode = link.getNode('/');
@@ -903,15 +815,6 @@ for(var nodeName in rootNode.children.keys) {
   var myNode = rootNode[nodeName];
   // ... Existing checking for subscriber and updating value
 }
-```
-
-```plaintext
-/// rootNode.children returns an object where the key
-/// is the node identifier and the value is the node itself.
-Object.keys(rootNode.children).forEach(function(nodeName) {
-  var myNode = rootNode.children[nodeName];
-  // ... Existing checking for subscriber and updating value
-})
 ```
 
 ```js
@@ -953,19 +856,6 @@ defaultNodes: {
   'CustomNumbers' : {
     r'$name' : 'Custom Numbers',
     'AddNum' : {
-      // ... Previous information still here.
-    }
-  }
-},
-```
-
-```plaintext
-/// Change the default nodes from our constructor.
-/// The rest of the constructor stays the same.
-defaultNodes: {
-  CustomNumbers: {
-    $name: 'Custom Numbers',
-    AddNum: {
       // ... Previous information still here.
     }
   }
