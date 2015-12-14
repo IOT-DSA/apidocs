@@ -143,7 +143,11 @@ and <em>Requester</em>. We'll look at those types later.
 ```dart
 // run.dart
 main(List<String> args) {
+  // Server-side:
   var link = new LinkProvider(args, 'Example-');
+  // Client-side
+  var link =
+    new LinkProvider('http://localhost:8080/conn', 'Example-');
   link.connect();
   // ...
 }
@@ -153,7 +157,8 @@ main(List<String> args) {
 // node.js
 var link = new DS.LinkProvider(process.argv.slice(2), 'Example-');
 // browser
-var link = new DS.LinkProvider('http://127.0.0.1:8080/conn', 'Example-');
+var link =
+  new DS.LinkProvider('http://127.0.0.1:8080/conn', 'Example-');
 
 link.connect();
 ```
