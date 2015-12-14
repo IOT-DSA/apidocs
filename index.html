@@ -13,7 +13,7 @@
 
       <script>
         $(function() {
-          setupLanguages(["dart","java","plaintext","javascript","python","ruby","c","csharp","scala"]);
+          setupLanguages(["dart","java","javascript","python","ruby","c","csharp","scala"]);
         });
       </script>
   </head>
@@ -30,8 +30,7 @@
         <div class="lang-selector">
               <a href="#" data-language-name="dart">Dart</a>
               <a href="#" data-language-name="java">Java</a>
-              <a href="#" data-language-name="plaintext">Node.js</a>
-              <a href="#" data-language-name="javascript">Javascript</a>
+              <a href="#" data-language-name="javascript">JavaScript</a>
               <a href="#" data-language-name="python">Python</a>
               <a href="#" data-language-name="ruby">Ruby</a>
               <a href="#" data-language-name="c">C</a>
@@ -113,18 +112,20 @@ file.
 <span class="c1">#link.rb</span>
 <span class="nb">require</span> <span class="s1">'dslink'</span>
 </code></pre>
-<pre class="highlight plaintext"><code>// package.json
-"dependencies": {
-  "dslink": "IOT-DSA/sdk-dslink-javascript#artifacts"
-}
-
-// index.js
-var DS = require('dslink');
-</code></pre>
-<pre class="highlight javascript"><code><span class="c1">// index.html</span>
+<pre class="highlight javascript"><code><span class="c1">// BROWSER</span>
+<span class="c1">// index.html</span>
 <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">src</span><span class="o">=</span><span class="s2">"https://raw.githubusercontent.com/IOT-DSA/sdk-dslink-javascript/artifacts/dist/dslink.browser.min.js"</span><span class="o">&gt;&lt;</span><span class="sr">/script</span><span class="err">&gt;
 </span>
 <span class="c1">// DS is a globally accessed variable</span>
+
+<span class="c1">// NODE</span>
+<span class="c1">// package.json</span>
+<span class="s2">"dependencies"</span><span class="err">:</span> <span class="p">{</span>
+  <span class="s2">"dslink"</span><span class="err">:</span> <span class="s2">"IOT-DSA/sdk-dslink-javascript#artifacts"</span>
+<span class="p">}</span>
+
+<span class="c1">// index.js</span>
+<span class="kd">var</span> <span class="nx">DS</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'dslink'</span><span class="p">);</span>
 </code></pre>
 <pre class="highlight python"><code><span class="c"># Add to your setup.py</span>
 <span class="n">setup</span><span class="p">(</span>
@@ -161,16 +162,21 @@ own.</p>
 </blockquote>
 <pre class="highlight dart"><code><span class="c1">// run.dart</span>
 <span class="n">main</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+  <span class="c1">// Server-side:</span>
   <span class="kd">var</span> <span class="n">link</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinkProvider</span><span class="o">(</span><span class="n">args</span><span class="o">,</span> <span class="s">'Example-'</span><span class="o">);</span>
+  <span class="c1">// Client-side</span>
+  <span class="kd">var</span> <span class="n">link</span> <span class="o">=</span>
+    <span class="k">new</span> <span class="n">LinkProvider</span><span class="o">(</span><span class="s">'http://localhost:8080/conn'</span><span class="o">,</span> <span class="s">'Example-'</span><span class="o">);</span>
   <span class="n">link</span><span class="o">.</span><span class="na">connect</span><span class="o">();</span>
   <span class="c1">// ...</span>
 <span class="o">}</span>
 </code></pre>
-<pre class="highlight plaintext"><code>var link = new DS.LinkProvider(process.argv.slice(2), 'Example-');
-link.connect();
-</code></pre>
-<pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">link</span> <span class="o">=</span>
+<pre class="highlight javascript"><code><span class="c1">// node.js</span>
+<span class="kd">var</span> <span class="nx">link</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DS</span><span class="p">.</span><span class="nx">LinkProvider</span><span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">argv</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="s1">'Example-'</span><span class="p">);</span>
+<span class="c1">// browser</span>
+<span class="kd">var</span> <span class="nx">link</span> <span class="o">=</span>
   <span class="k">new</span> <span class="nx">DS</span><span class="p">.</span><span class="nx">LinkProvider</span><span class="p">(</span><span class="s1">'http://127.0.0.1:8080/conn'</span><span class="p">,</span> <span class="s1">'Example-'</span><span class="p">);</span>
+
 <span class="nx">link</span><span class="p">.</span><span class="nx">connect</span><span class="p">();</span>
 </code></pre>
 <pre class="highlight java"><code><span class="c1">// package ...</span>
@@ -266,8 +272,6 @@ permission to access.</p>
 <span class="kd">var</span> <span class="n">numGen</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Random</span><span class="o">();</span>
 <span class="kd">var</span> <span class="n">myNum</span> <span class="o">=</span> <span class="n">numGen</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="mi">50</span><span class="o">);</span>
 </code></pre>
-<pre class="highlight plaintext"><code>var myNum = Math.round(Math.random() * 50);
-</code></pre>
 <pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">myNum</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">50</span><span class="p">);</span>
 </code></pre>
 <pre class="highlight java"><code><span class="c1">// Add this variable into your Main class.</span>
@@ -284,7 +288,7 @@ permission to access.</p>
 <pre class="highlight python"><code><span class="c"># Import the random library at the top of the file</span>
 <span class="kn">import</span> <span class="nn">random</span>
 
-<span class="n">var</span> <span class="n">my_num</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="n">my_num</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
 </code></pre>
 
 <p>Before we add the new, let&rsquo;s create a value that we can pass, and send updates
@@ -300,12 +304,6 @@ for. In this case we&rsquo;ll just generate a random number between 0 and 50.</p
   <span class="o">{</span> <span class="sx">r'$name'</span><span class="o">:</span> <span class="s">'My Number'</span><span class="o">,</span>
     <span class="sx">r'$type'</span> <span class="o">:</span> <span class="s">'int'</span><span class="o">,</span>
     <span class="s">'?value'</span> <span class="o">:</span> <span class="n">myNum</span><span class="o">});</span>
-</code></pre>
-<pre class="highlight plaintext"><code>var myNode = link.addNode('/MyNum', {
-  '$name': 'My Number',
-  '$type': 'int',
-  '?value': myNum
-});
 </code></pre>
 <pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">myNode</span> <span class="o">=</span> <span class="nx">link</span><span class="p">.</span><span class="nx">addNode</span><span class="p">(</span><span class="s1">'/MyNum'</span><span class="p">,</span> <span class="p">{</span>
   <span class="s1">'$name'</span><span class="p">:</span> <span class="s1">'My Number'</span><span class="p">,</span>
@@ -339,23 +337,20 @@ for. In this case we&rsquo;ll just generate a random number between 0 and 50.</p
   <span class="c1">//...
 </span><span class="o">}</span>
 </code></pre>
-<pre class="highlight python"><code><span class="c"># In the DSLink class, implement get_default_nodes</span>
-<span class="k">def</span> <span class="nf">get_default_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="c"># Get default super_root</span>
-    <span class="n">root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_root_node</span><span class="p">()</span>
-
+<pre class="highlight python"><code><span class="c"># In the DSLink class, implement get_default_nodes.</span>
+<span class="k">def</span> <span class="nf">get_default_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">super_root</span><span class="p">):</span>
     <span class="c"># Create MyNum Node</span>
     <span class="c"># Name the node, specify the parent</span>
-    <span class="n">my_node</span> <span class="o">=</span> <span class="n">dslink</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="s">"MyNum"</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
+    <span class="n">my_node</span> <span class="o">=</span> <span class="n">dslink</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="s">"MyNum"</span><span class="p">,</span> <span class="n">super_root</span><span class="p">)</span>
     <span class="n">my_node</span><span class="o">.</span><span class="n">set_display_name</span><span class="p">(</span><span class="s">"My Number"</span><span class="p">)</span>
     <span class="n">my_node</span><span class="o">.</span><span class="n">set_type</span><span class="p">(</span><span class="s">"int"</span><span class="p">)</span>
     <span class="n">my_node</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">my_num</span><span class="p">)</span>
 
-    <span class="c"># Add my_node to the super_root</span>
-    <span class="n">root</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">my_node</span><span class="p">)</span>
+    <span class="c"># Add my_node to the super root</span>
+    <span class="n">super_root</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">my_node</span><span class="p">)</span>
 
     <span class="c"># Return the super root</span>
-    <span class="k">return</span> <span class="n">root</span>
+    <span class="k">return</span> <span class="n">super_root</span>
 </code></pre>
 
 <p>Next we add our node to the Link. In this case we pass the node name, <code class="prettyprint">/MyNum</code>
@@ -379,11 +374,6 @@ directly with link itself.</p>
     <span class="n">myNum</span> <span class="o">=</span> <span class="n">numGen</span><span class="o">.</span><span class="na">nextInt</span><span class="o">(</span><span class="mi">50</span><span class="o">);</span>
     <span class="n">myNode</span><span class="o">.</span><span class="na">updateValue</span><span class="o">(</span><span class="n">myNum</span><span class="o">);</span>
 <span class="o">});</span>
-</code></pre>
-<pre class="highlight plaintext"><code>setInterval(function() {
-  myNum = Math.round(Math.random() * 50);
-  myNode.updateValue(myNum);
-}, 1000 * 5);
 </code></pre>
 <pre class="highlight javascript"><code><span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
   <span class="nx">myNum</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">50</span><span class="p">);</span>
@@ -419,9 +409,16 @@ directly with link itself.</p>
     <span class="c1">//...
 </span><span class="o">}</span>
 </code></pre>
-<pre class="highlight python"><code><span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="c"># Call again 1 second later</span>
-    <span class="n">reactor</span><span class="o">.</span><span class="n">callLater</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">)</span>
+<pre class="highlight python"><code><span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c"># Kick off initial loop.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">call_later</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">get_super_root</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">"/MyNum"</span><span class="p">)</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+
+    <span class="c"># Call again 1 second later.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">call_later</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">)</span>
 </code></pre>
 
 <p>A node is of limited value if it only provides the initial request and nothing
@@ -437,10 +434,6 @@ seconds.</p>
 <pre class="highlight dart"><code><span class="k">if</span><span class="o">(</span><span class="n">myNode</span><span class="o">.</span><span class="na">hasSubscriber</span><span class="o">)</span> <span class="o">{</span>
   <span class="c1">// To be filled in soon</span>
 <span class="o">}</span>
-</code></pre>
-<pre class="highlight plaintext"><code>if(myNode.hasSubscriber) {
-  // To be filled in soon
-}
 </code></pre>
 <pre class="highlight javascript"><code><span class="k">if</span><span class="p">(</span><span class="nx">myNode</span><span class="p">.</span><span class="nx">hasSubscriber</span><span class="p">)</span> <span class="p">{</span>
   <span class="c1">// To be filled in soon</span>
@@ -464,8 +457,9 @@ seconds.</p>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre>
-<pre class="highlight python"><code><span class="k">if</span> <span class="n">my_node</span><span class="o">.</span><span class="n">is_subscribed</span><span class="p">():</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">"Node is subscribed"</span><span class="p">)</span>
+<pre class="highlight python"><code><span class="n">my_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">get_super_root</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">"/MyNum"</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">my_node</span><span class="o">.</span><span class="n">is_subscribed</span><span class="p">():</span>
+    <span class="n">my_node</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">))</span>
 </code></pre>
 
 <p>In our simple example, we only want to update a value if there is someone
@@ -482,62 +476,13 @@ its next subscription request.
 </aside>
 
 <h2 id="adding-an-action">Adding an action</h2>
-<pre class="highlight plaintext"><code>// Our new constructor in which we pass both our default node for
-// adding a value, and our profile, or action on that node.
-// Store all nodes we create to reference later.
-var nodeList = [];
-
-// Following replaces previous link initialization.
-link = new DS.LinkProvider(process.argv.slice(2), 'Example-', {
-  defaultNodes: {
-    AddNum: {
-      $name: 'Add number',
-      $is: 'addnum',
-      $invokable: 'write',
-      $params: [{ name: 'value', type: 'int' }]
-    }
-  },
-  profiles: {
-    addnum: function(path, provider) {
-      return new DS.SimpleActionNode(path, function(params) {
-        var addVal = parseInt(params['value'], 10);
-        var ndNum = nodeList.length;
-        nodeList.add(link.addNode('/MyNum' + ndNum, {
-          $name: 'My node #' + ndNum,
-          $type: 'int',
-          '?value': addVal
-        }));
-        // myNode.updateValue(myNum + addVal);
-      }, provider);
-    }
-});
-</code></pre>
-<pre class="highlight plaintext"><code>// Add our initial node to our node list instead of a
-// single variable
-nodeList.push(link.addNode('/MyNum',
-  { $name: 'My Number',
-    $type: 'int',
-    '?value': myNum})
-);
-
-// Update our timer to provide a new random number for
-// each node not just the initial one.
-setTimeout(function() {
-  nodeList.forEach(function(myNode) {
-    if(myNode.value == null) return;
-    if(myNode.ahsSubscriber) {
-      myNum = Math.round(Math.random() * 50);
-      myNode.updateValue(myNum);
-    }
-  });
-}, 5 * 1000);
-</code></pre>
 <pre class="highlight javascript"><code><span class="c1">// Our new constructor in which we pass both our default node for</span>
 <span class="c1">// adding a value, and our profile, or action on that node.</span>
 <span class="c1">// Store all nodes we create to reference later.</span>
 <span class="kd">var</span> <span class="nx">nodeList</span> <span class="o">=</span> <span class="p">[];</span>
 
 <span class="c1">// Following replaces previous link initialization.</span>
+<span class="c1">// Again, for node.js, replace the URL with process.argv.slice(2)</span>
 <span class="nx">link</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DS</span><span class="p">.</span><span class="nx">LinkProvider</span><span class="p">(</span><span class="s1">'http://127.0.0.1:8080/conn'</span><span class="p">,</span>
   <span class="s1">'Example-'</span><span class="p">,</span> <span class="p">{</span>
     <span class="na">defaultNodes</span><span class="p">:</span> <span class="p">{</span>
@@ -671,18 +616,16 @@ setTimeout(function() {
 </span><span class="o">}</span>
 </code></pre>
 <pre class="highlight python"><code><span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">profile_manager</span><span class="o">.</span><span class="n">create_profile</span><span class="p">(</span><span class="s">"addnum"</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">profile_manager</span><span class="o">.</span><span class="n">register_callback</span><span class="p">(</span><span class="s">"addnum"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">addnum</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">profile_manager</span><span class="o">.</span><span class="n">create_profile</span><span class="p">(</span><span class="s">"addnum"</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">profile_manager</span><span class="o">.</span><span class="n">register_callback</span><span class="p">(</span><span class="s">"addnum"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">addnum</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">get_default_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="n">root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_root_node</span><span class="p">()</span>
-
-    <span class="n">my_num</span> <span class="o">=</span> <span class="n">dslink</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="s">"MyNum"</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_default_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">super_root</span><span class="p">):</span>
+    <span class="n">my_num</span> <span class="o">=</span> <span class="n">dslink</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="s">"MyNum"</span><span class="p">,</span> <span class="n">super_root</span><span class="p">)</span>
     <span class="n">my_num</span><span class="o">.</span><span class="n">set_display_name</span><span class="p">(</span><span class="s">"My Number"</span><span class="p">)</span>
     <span class="n">my_num</span><span class="o">.</span><span class="n">set_type</span><span class="p">(</span><span class="s">"int"</span><span class="p">)</span>
     <span class="n">my_num</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
-    <span class="n">add_num</span> <span class="o">=</span> <span class="n">dslink</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="s">"AddNum"</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
+    <span class="n">add_num</span> <span class="o">=</span> <span class="n">dslink</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="s">"AddNum"</span><span class="p">,</span> <span class="n">super_root</span><span class="p">)</span>
     <span class="n">add_num</span><span class="o">.</span><span class="n">set_display_name</span><span class="p">(</span><span class="s">"Add number"</span><span class="p">)</span>
     <span class="n">add_num</span><span class="o">.</span><span class="n">set_profile</span><span class="p">(</span><span class="s">"addnum"</span><span class="p">)</span>
     <span class="n">add_num</span><span class="o">.</span><span class="n">set_invokable</span><span class="p">(</span><span class="s">"write"</span><span class="p">)</span>
@@ -693,14 +636,14 @@ setTimeout(function() {
         <span class="p">}</span>
     <span class="p">])</span>
 
-    <span class="n">root</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">my_num</span><span class="p">)</span>
-    <span class="n">root</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">add_num</span><span class="p">)</span>
+    <span class="n">super_root</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">my_num</span><span class="p">)</span>
+    <span class="n">super_root</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">add_num</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">root</span>
+    <span class="k">return</span> <span class="n">super_root</span>
 
 <span class="k">def</span> <span class="nf">addnum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
     <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s">"Number"</span><span class="p">])</span> <span class="c"># Parse number</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">super_root</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">"/MyNum"</span><span class="p">)</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="c"># Set value</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">get_super_root</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">"/MyNum"</span><span class="p">)</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="c"># Set value</span>
     <span class="k">return</span> <span class="p">[[]]</span> <span class="c"># Return empty columns</span>
 </code></pre>
 
@@ -742,10 +685,6 @@ The SDK&rsquo;s contain some helper classes which make the creation of a node ea
 <span class="c1">// and before link.connect();</span>
 <span class="nx">link</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span>
 </code></pre>
-<pre class="highlight plaintext"><code>// after the link = new LinkProvider(..)
-// and before link.connect();
-link.init();
-</code></pre>
 <pre class="highlight java"><code><span class="c1">// All the nodes are automatically reinitialized again on startup.</span>
 </code></pre>
 <pre class="highlight scala"><code><span class="c1">// All the nodes are automatically reinitialized again on startup.
@@ -758,6 +697,9 @@ link.init();
 </blockquote>
 <pre class="highlight dart"><code><span class="c1">// Add outside of the for loop inside the Timer call.</span>
 <span class="n">link</span><span class="o">.</span><span class="na">save</span><span class="o">();</span>
+</code></pre>
+<pre class="highlight javascript"><code><span class="c1">// Add outside of the for loop inside setInterval.</span>
+<span class="nx">link</span><span class="p">.</span><span class="nx">save</span><span class="p">();</span>
 </code></pre>
 <pre class="highlight java"><code><span class="c1">// All the nodes are automatically saved.</span>
 </code></pre>
@@ -790,9 +732,6 @@ reconnects to our broker</p>
 <pre class="highlight dart"><code><span class="c1">// At the top of our Timer callback.</span>
 <span class="kd">var</span> <span class="n">rootNode</span> <span class="o">=</span> <span class="o">~</span><span class="n">link</span><span class="o">;</span> <span class="c1">// Shortcut for link.getNode('/');</span>
 </code></pre>
-<pre class="highlight plaintext"><code>// At the top of our setInterval callback.
-var rootNode = link.getNode('/');
-</code></pre>
 <pre class="highlight javascript"><code><span class="c1">// At the top of our setInterval callback.</span>
 <span class="kd">var</span> <span class="nx">rootNode</span> <span class="o">=</span> <span class="nx">link</span><span class="p">.</span><span class="nx">getNode</span><span class="p">(</span><span class="s1">'/'</span><span class="p">);</span>
 </code></pre>
@@ -809,7 +748,7 @@ var rootNode = link.getNode('/');
   <span class="c1">// ...
 </span><span class="o">}</span>
 </code></pre>
-<pre class="highlight python"><code><span class="n">root_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">super_root</span>
+<pre class="highlight python"><code><span class="n">root_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">responder</span><span class="o">.</span><span class="n">get_super_root</span><span class="p">()</span>
 </code></pre>
 
 <blockquote>
@@ -821,13 +760,6 @@ var rootNode = link.getNode('/');
   <span class="kd">var</span> <span class="n">myNode</span> <span class="o">=</span> <span class="n">rootNode</span><span class="o">[</span><span class="n">nodeName</span><span class="o">];</span>
   <span class="c1">// ... Existing checking for subscriber and updating value</span>
 <span class="o">}</span>
-</code></pre>
-<pre class="highlight plaintext"><code>/// rootNode.children returns an object where the key
-/// is the node identifier and the value is the node itself.
-Object.keys(rootNode.children).forEach(function(nodeName) {
-  var myNode = rootNode.children[nodeName];
-  // ... Existing checking for subscriber and updating value
-})
 </code></pre>
 <pre class="highlight javascript"><code><span class="c1">/// rootNode.children returns an object where the key</span>
 <span class="c1">/// is the node identifier and the value is the node itself.</span>
@@ -867,17 +799,6 @@ we can iterate over the children nodes to update each of those values.</p>
     <span class="o">}</span>
   <span class="o">}</span>
 <span class="o">},</span>
-</code></pre>
-<pre class="highlight plaintext"><code>/// Change the default nodes from our constructor.
-/// The rest of the constructor stays the same.
-defaultNodes: {
-  CustomNumbers: {
-    $name: 'Custom Numbers',
-    AddNum: {
-      // ... Previous information still here.
-    }
-  }
-},
 </code></pre>
 <pre class="highlight javascript"><code><span class="c1">/// Change the default nodes from our constructor.</span>
 <span class="c1">/// The rest of the constructor stays the same.</span>
@@ -937,12 +858,14 @@ defaultNodes: {
     <span class="o">},</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="nc">TimeUnit</span><span class="o">.</span><span class="nc">SECONDS</span><span class="o">)</span>
 <span class="o">}</span>
 </code></pre>
-<pre class="highlight python"><code><span class="n">my_num</span> <span class="o">=</span> <span class="n">dslink</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="s">"MyNum"</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
+<pre class="highlight python"><code><span class="n">my_num</span> <span class="o">=</span> <span class="n">dslink</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="s">"MyNum"</span><span class="p">,</span> <span class="n">super_root</span><span class="p">)</span>
+<span class="c"># Other Node information...</span>
 
-<span class="n">add_num</span> <span class="o">=</span> <span class="n">dslink</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="s">"AddNum"</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
+<span class="n">add_num</span> <span class="o">=</span> <span class="n">dslink</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="s">"AddNum"</span><span class="p">,</span> <span class="n">my_num</span><span class="p">)</span> <span class="c"># Change the parent to my_num</span>
+<span class="c"># Other Node information...</span>
 
 <span class="n">my_num</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">add_num</span><span class="p">)</span>
-<span class="n">root</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">my_num</span><span class="p">)</span>
+<span class="n">super_root</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">my_num</span><span class="p">)</span>
 </code></pre>
 
 <blockquote>
@@ -1052,7 +975,9 @@ the connection to the Broker not multiple Requesters.
 <span class="n">await</span> <span class="n">link</span><span class="o">.</span><span class="na">connect</span><span class="o">();</span>
 <span class="kd">var</span> <span class="n">requester</span> <span class="o">=</span> <span class="n">link</span><span class="o">.</span><span class="na">requester</span><span class="o">;</span>
 </code></pre>
-<pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">link</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DS</span><span class="p">.</span><span class="nx">LinkProvider</span><span class="p">(</span><span class="s1">'http://127.0.0.1:8080/conn'</span><span class="p">,</span>
+<pre class="highlight javascript"><code><span class="c1">// node.js</span>
+<span class="c1">// var link = new DS.LinkProvider(process.argv.slice(2),</span>
+<span class="kd">var</span> <span class="nx">link</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DS</span><span class="p">.</span><span class="nx">LinkProvider</span><span class="p">(</span><span class="s1">'http://127.0.0.1:8080/conn'</span><span class="p">,</span>
           <span class="s1">'RequesterExample-'</span><span class="p">,</span> <span class="p">{</span>
             <span class="na">isRequester</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
             <span class="na">isResponder</span><span class="p">:</span> <span class="kc">false</span>
@@ -1064,17 +989,32 @@ the connection to the Broker not multiple Requesters.
    <span class="c1">// work with requester here  </span>
 <span class="p">});</span>
 </code></pre>
-<pre class="highlight plaintext"><code>var link = new DS.LinkProvider(process.argv.slice(2),
-          'RequesterExample-', {
-            isRequester: true,
-            isResponder: false
-          });
+<pre class="highlight scala"><code><span class="k">object</span> <span class="nc">Main</span> <span class="k">extends</span> <span class="nc">DSLinkHandler</span> <span class="o">{</span>
 
-link.connect().then(function() {
-  return link.onRequesterReady;
-}).then(function(requester) {
-   // work with requester here  
-});
+  <span class="k">private</span> <span class="k">val</span> <span class="n">log</span> <span class="k">=</span> <span class="nc">LoggerFactory</span><span class="o">.</span><span class="n">getLogger</span><span class="o">(</span><span class="n">getClass</span><span class="o">)</span>
+
+  <span class="k">override</span> <span class="k">def</span> <span class="n">isRequester</span> <span class="k">=</span> <span class="kc">true</span>
+
+  <span class="k">override</span> <span class="k">def</span> <span class="n">onRequesterInitialized</span><span class="o">(</span><span class="n">link</span><span class="k">:</span> <span class="kt">DSLink</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="o">(</span><span class="s">"Requester initialized"</span><span class="o">)</span>
+  <span class="o">}</span>
+
+  <span class="k">override</span> <span class="k">def</span> <span class="n">onRequesterConnected</span><span class="o">(</span><span class="n">link</span><span class="k">:</span> <span class="kt">DSLink</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="o">(</span><span class="s">"Requester connected"</span><span class="o">)</span>
+  <span class="o">}</span>
+
+  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nc">DSLinkFactory</span><span class="o">.</span><span class="n">start</span><span class="o">(</span><span class="n">args</span><span class="o">,</span> <span class="nc">Main</span><span class="o">)</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+<pre class="highlight python"><code><span class="k">class</span> <span class="nc">RequesterDSLink</span><span class="p">(</span><span class="n">dslink</span><span class="o">.</span><span class="n">DSLink</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># self.requester is the Requester class.</span>
+        <span class="k">pass</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="n">RequesterDSLink</span><span class="p">(</span><span class="n">dslink</span><span class="o">.</span><span class="n">Configuration</span><span class="p">(</span><span class="s">"RequesterDSLink"</span><span class="p">,</span> <span class="n">requester</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">responder</span><span class="o">=</span><span class="bp">False</span><span class="p">))</span>
 </code></pre>
 
 <p>Each link can be a Responder or a Requester (or both). At this time we&rsquo;re
@@ -1103,24 +1043,14 @@ query the broker for nodes.</p>
       <span class="n">await</span> <span class="n">requester</span><span class="o">.</span><span class="na">getRemoteNode</span><span class="o">(</span><span class="s">'/downstream/Example'</span><span class="o">);</span>
 <span class="n">iterateChildren</span><span class="o">(</span><span class="n">exampleNode</span><span class="o">);</span>
 </code></pre>
-<pre class="highlight plaintext"><code>function iterateChildren(nd) {
-  console.log('Node: ' + nd.remotePath);
-  var keys = Object.keys(nd.children);
-  if (keys.length &gt; 0) {
-    keys.forEach(function(nodeName) {
-      var path = nd.remotePath + '/' + nodeName;
-      requester.getRemoteNode(path).then(function(node) {
-        iterateChildren(node);
-      });
-    });
-  }
-}
-
-// Query initial node and pass it to our recursive function.
-requester.getRemoteNode('/downstream/Example')
-  .then(function(exampleNode) {
-    iterateChildren(exampleNode);  
-  });
+<pre class="highlight scala"><code><span class="k">def</span> <span class="n">iterateChildren</span><span class="o">(</span><span class="n">node</span><span class="k">:</span> <span class="kt">Node</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+  <span class="n">println</span><span class="o">(</span><span class="n">s</span><span class="s">"Node: ${node.getPath}"</span><span class="o">)</span>
+  <span class="k">val</span> <span class="n">children</span> <span class="k">=</span> <span class="nc">Option</span><span class="o">(</span><span class="n">node</span><span class="o">.</span><span class="n">getChildren</span><span class="o">)</span> <span class="n">map</span> <span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">asScala</span><span class="o">)</span> <span class="n">getOrElse</span> <span class="o">(</span><span class="nc">Map</span><span class="o">.</span><span class="n">empty</span><span class="o">)</span>
+  <span class="n">children</span> <span class="n">foreach</span> <span class="o">{</span>
+    <span class="k">case</span> <span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="n">child</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="c1">// ...
+</span>      <span class="n">iterateChildren</span><span class="o">(</span><span class="n">child</span><span class="o">)</span>
+  <span class="o">}</span>
+<span class="o">}</span>
 </code></pre>
 <pre class="highlight javascript"><code><span class="kd">function</span> <span class="nx">iterateChildren</span><span class="p">(</span><span class="nx">nd</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Node: '</span> <span class="o">+</span> <span class="nx">nd</span><span class="p">.</span><span class="nx">remotePath</span><span class="p">);</span>
@@ -1140,6 +1070,14 @@ requester.getRemoteNode('/downstream/Example')
   <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">exampleNode</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">iterateChildren</span><span class="p">(</span><span class="nx">exampleNode</span><span class="p">);</span>  
   <span class="p">});</span>
+</code></pre>
+<pre class="highlight python"><code><span class="k">def</span> <span class="nf">recurse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">listresponse</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">child_name</span> <span class="ow">in</span> <span class="n">listresponse</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+        <span class="n">child</span> <span class="o">=</span> <span class="n">listresponse</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="n">child_name</span><span class="p">]</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">requester</span><span class="o">.</span><span class="nb">list</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">recurse</span><span class="p">)</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">requester</span><span class="o">.</span><span class="nb">list</span><span class="p">(</span><span class="s">"/"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">recurse</span><span class="p">)</span>
 </code></pre>
 
 <p>With the requester, we can now query a node from the broker and get a listing
@@ -1171,15 +1109,12 @@ file on the system.</p>
   <span class="n">print</span><span class="o">(</span><span class="s">'</span><span class="se">\t</span><span class="s">Changes: </span><span class="si">${update.changes}</span><span class="s">'</span><span class="o">);</span>
 <span class="o">}</span>
 </code></pre>
-<pre class="highlight plaintext"><code>// Replace console.log('Node: ' + nd.remotePath) in
-// iterateChildren with:
-requester.list(nd.remotePath).on("data", listUpdates);
-
-// a new function that is globally defined
-function listUpdates(update) {
-  console.log('Node - ' + update.node.name);
-  console.log('\tChanges: ' + update.changes);
-}
+<pre class="highlight scala"><code><span class="k">val</span> <span class="n">request</span> <span class="k">=</span> <span class="nc">ListRequest</span><span class="o">(</span><span class="s">"...path..."</span><span class="o">)</span>
+<span class="n">requester</span><span class="o">.</span><span class="n">list</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Handler</span><span class="o">[</span><span class="kt">ListResponse</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">handle</span><span class="o">(</span><span class="n">event</span><span class="k">:</span> <span class="kt">ListResponse</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="c1">//...
+</span>  <span class="o">}</span>
+<span class="o">})</span>
 </code></pre>
 <pre class="highlight javascript"><code><span class="c1">// Replace console.log('Node: ' + nd.remotePath) in</span>
 <span class="c1">// iterateChildren with:</span>
@@ -1190,6 +1125,13 @@ function listUpdates(update) {
   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Node - '</span> <span class="o">+</span> <span class="nx">update</span><span class="p">.</span><span class="nx">node</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'\tChanges: '</span> <span class="o">+</span> <span class="nx">update</span><span class="p">.</span><span class="nx">changes</span><span class="p">);</span>
 <span class="p">}</span>
+</code></pre>
+<pre class="highlight python"><code><span class="k">def</span> <span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">listresponse</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">listresponse</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">listresponse</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">requester</span><span class="o">.</span><span class="nb">list</span><span class="p">(</span><span class="s">"/path/to/node"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="nb">list</span><span class="p">)</span>
 </code></pre>
 
 <p>Iterating over children is great when we initialize our connection, however
@@ -1220,17 +1162,11 @@ custom numbers and observe the output from the Requester link we&rsquo;ve create
   <span class="n">print</span><span class="o">(</span><span class="s">'Name: </span><span class="si">$name</span><span class="s"> ValueUpdate: </span><span class="si">${update.value}</span><span class="s">'</span><span class="o">);</span>
 <span class="o">}</span>
 </code></pre>
-<pre class="highlight plaintext"><code>// Replace requester.list(nd.remotePath).on("data", listUpdates)
-// in iterateChildren with:
-if (nd.getConfig('$type') === 'int') {
-  requester.subscribe(nd.remotePath,
-    function(update) { subscribeUpdates(update, nd.name); });
-}
-
-// a new function that is globally defined
-function subscribeUpdates(update, name) {
-  console.log('Name: ' + name + ' ValueUpdate: ' + update.value);
-}
+<pre class="highlight scala"><code><span class="n">requester</span><span class="o">.</span><span class="n">subscribe</span><span class="o">(</span><span class="s">"...path..."</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Handler</span><span class="o">[</span><span class="kt">SubscriptionValue</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">handle</span><span class="o">(</span><span class="n">event</span><span class="k">:</span> <span class="kt">SubscriptionValue</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="n">println</span><span class="o">(</span><span class="n">s</span><span class="s">"Update received: path=${event.getPath}, value=${event.getValue}"</span><span class="o">)</span>
+  <span class="o">}</span>
+<span class="o">})</span>
 </code></pre>
 <pre class="highlight javascript"><code><span class="c1">// Replace requester.list(nd.remotePath).on("data", listUpdates)</span>
 <span class="c1">// in iterateChildren with:</span>
@@ -1243,6 +1179,12 @@ function subscribeUpdates(update, name) {
 <span class="kd">function</span> <span class="nx">subscribeUpdates</span><span class="p">(</span><span class="nx">update</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Name: '</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">' ValueUpdate: '</span> <span class="o">+</span> <span class="nx">update</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
 <span class="p">}</span>
+</code></pre>
+<pre class="highlight python"><code><span class="c"># data is (value, updated_time)</span>
+<span class="k">def</span> <span class="nf">value_updates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"Value updated to </span><span class="si">%</span><span class="s">s at </span><span class="si">%</span><span class="s">s"</span> <span class="o">%</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">requester</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="s">"/path/to/node"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_updates</span><span class="p">)</span>
 </code></pre>
 
 <p>When listing nodes, we see the changes in a node&rsquo;s configuration including
@@ -1289,8 +1231,7 @@ s.setAttribute('data-timestamp', +new Date());
           <div class="lang-selector">
                 <a href="#" data-language-name="dart">Dart</a>
                 <a href="#" data-language-name="java">Java</a>
-                <a href="#" data-language-name="plaintext">Node.js</a>
-                <a href="#" data-language-name="javascript">Javascript</a>
+                <a href="#" data-language-name="javascript">JavaScript</a>
                 <a href="#" data-language-name="python">Python</a>
                 <a href="#" data-language-name="ruby">Ruby</a>
                 <a href="#" data-language-name="c">C</a>
