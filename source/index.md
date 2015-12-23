@@ -119,6 +119,11 @@ setup(
 import dslink
 ```
 
+```csharp
+Clone the SDK's source code, and make a release build with Visual Studio or MonoDevelop. The SDK will be pushed to
+the NuGet repositories soon.
+```
+
 By using the Git repository, we ensure that we have the most up-to-date version
 of the DSLink SDK. In the future, the SDK may be made available through common
 package managers for each language.
@@ -227,6 +232,22 @@ if __name__ == "__main__":
     ExampleDSLink(dslink.Configuration("example", responder=True))
 ```
 
+```csharp
+using System;
+using DSLink;
+
+class ExampleDSLink : DSLinkContainer {
+    public ExampleDSLink() : base(new Configuration("example", responder: true, brokerUrl: "http://broker.url/conn")){
+        Console.WriteLine("Starting DSLink...");
+    }
+
+    private static void Main() {
+        new ExampleDSLink();
+        Console.ReadLine(); // Keep the link running.
+    }
+}
+```
+
 In order to create any type of connection (Responder or Requester), we first
 need to establish a link to the DSA Broker. In this example we will only
 establish the bare minimum link. There are a number of configuration options
@@ -286,6 +307,13 @@ val num = Random.nextInt(50)
 import random
 
 my_num = random.randint(0, 50)
+```
+
+```csharp
+using System;
+
+Random random = new Random();
+random.Next(0, 50);
 ```
 
 Before we add the new, let's create a value that we can pass, and send updates
@@ -356,6 +384,13 @@ def get_default_nodes(self, super_root):
 
     # Return the super root
     return super_root
+```
+
+```csharp
+var myNumNode = Responder.SuperRoot.CreateChild("MyNum")
+    .SetType("int")
+    .SetValue(myNum)
+    .BuildNode();
 ```
 
 Next we add our node to the Link. In this case we pass the node name, `/MyNum`
@@ -436,6 +471,15 @@ def update(self):
     self.call_later(1, self.update)
 ```
 
+```csharp
+using System.Threading;
+
+var timer = new Timer(i =>
+{
+    myNumNode.Value.Set(random.Next(0, 50));
+}, null, 1, 1000);
+```
+
 A node is of limited value if it only provides the initial request and nothing
 further. We want to provide updates to the value as things change. For our
 demonstration, we will setup a timer which updates our number once ever five
@@ -483,6 +527,12 @@ def run = {
 my_node = self.responder.get_super_root().get("/MyNum")
 if my_node.is_subscribed():
     my_node.set_value(random.randint(0, 50))
+```
+
+```csharp
+if (myNumNode.Subscribed) {
+    myNumNode.Value.Set(random.Next(0, 50));
+}
 ```
 
 In our simple example, we only want to update a value if there is someone
@@ -684,6 +734,26 @@ def addnum(self, parameters):
     return [[]] # Return empty columns
 ```
 
+```csharp
+public ExampleDSLink() : base(/* Configuration */) {
+    var myNum = Responder.SuperRoot.CreateChild("MyNum")
+        .SetDisplayName("My Number")
+        .SetType("int")
+        .SetValue(0)
+        .BuildNode();
+    
+    var addNum = Responder.SuperRoot.CreateChild("SetNum")
+        .SetDisplayName("SetNumber")
+        .AddParameter(new Parameter("Number", "int"))
+        .SetAction(new Action(Permission.Write, parameters =>
+        {
+            myNum.Value.Set(parameters["Number"].Get());
+            return new List<dynamic>();
+        }))
+        .BuildNode();
+}
+```
+
 Sometimes we may wish to allow our Link to respond to an action. That is, we
 may want to allow a user to send a command to our link so it can perform
 some type of function. That function may be to execute a command on the system,
@@ -738,6 +808,10 @@ link.init();
 # The Python SDK initializes itself when implementing the class.
 ```
 
+```csharp
+// Will be filled in
+```
+
 > Call save on the link.
 
 ```dart
@@ -756,6 +830,10 @@ link.save();
 
 ```python
 # The Python SDK saves state automatically.
+```
+
+```csharp
+// Will be filled in
 ```
 
 We can now add as many values to our link as we like. And every 5 seconds, a
@@ -811,6 +889,10 @@ superRoot.getChildren.values.asScala foreach { child =>
 root_node = self.responder.get_super_root()
 ```
 
+```csharp
+var node = Responder.SuperRoot;
+```
+
 > Update for loop to iterate over the children of the root node.
 
 ```dart
@@ -841,6 +923,13 @@ for (Node child : superRoot.getChildren().values()) {
 ```python
 for child_name in root_node.children:
     child = root_node.children[child_name]
+```
+
+```csharp
+foreach (var pair in Responder.SuperRoot.Children) {
+    // pair.Key is child name
+    // pair.Value is child Node
+}
 ```
 
 After we've restarted the link, you may notice a slight problem. Any values that
@@ -942,6 +1031,11 @@ my_num.add_child(add_num)
 super_root.add_child(my_num)
 ```
 
+```csharp
+var addNum = myNum.CreateChild("AddNum")
+    // other factory information.
+```
+
 > Update location our action adds to.
 
 ```dart
@@ -996,6 +1090,10 @@ override def onResponderInitialized(link: DSLink) = {
 
     log.info("Initialized")
 }
+```
+
+```csharp
+// Done automatically.
 ```
 
 As the number of nodes grows, having a series of nodes all at the top level
