@@ -140,6 +140,21 @@ file.
 <pre class="highlight csharp"><code><span class="n">Clone</span> <span class="n">the</span> <span class="n">SDK</span><span class="err">'</span><span class="n">s</span> <span class="n">source</span> <span class="n">code</span><span class="p">,</span> <span class="n">and</span> <span class="n">make</span> <span class="n">a</span> <span class="n">release</span> <span class="n">build</span> <span class="n">with</span> <span class="n">Visual</span> <span class="n">Studio</span> <span class="n">or</span> <span class="n">MonoDevelop</span><span class="p">.</span> <span class="n">The</span> <span class="n">SDK</span> <span class="n">will</span> <span class="n">be</span> <span class="n">pushed</span> <span class="n">to</span>
 <span class="n">the</span> <span class="n">NuGet</span> <span class="n">repositories</span> <span class="n">soon</span><span class="p">.</span>
 </code></pre>
+<pre class="highlight c"><code><span class="cp"># For CMake build configurations
+</span><span class="n">include</span><span class="p">(</span><span class="n">ExternalProject</span><span class="p">)</span>
+
+<span class="n">ExternalProject_Add</span><span class="p">(</span><span class="n">dslink</span>
+        <span class="n">PREFIX</span> <span class="n">dslink</span>
+        <span class="n">GIT_REPOSITORY</span> <span class="s">"https://github.com/IOT-DSA/sdk-dslink-c.git"</span>
+        <span class="n">CMAKE_ARGS</span> <span class="o">-</span><span class="n">DCMAKE_BUILD_TYPE</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">CMAKE_BUILD_TYPE</span><span class="p">}</span>
+        <span class="o">-</span><span class="n">DCMAKE_C_COMPILER</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">CMAKE_C_COMPILER</span><span class="p">}</span>
+        <span class="o">-</span><span class="n">DCMAKE_C_FLAGS</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">CMAKE_C_FLAGS</span><span class="p">}</span>
+        <span class="o">-</span><span class="n">DCMAKE_INSTALL_PREFIX</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">CMAKE_CURRENT_BINARY_DIR</span><span class="p">}</span><span class="o">/</span><span class="n">dslink</span>
+<span class="p">)</span>
+
+<span class="n">set</span><span class="p">(</span><span class="n">DSLINK_DIR</span> <span class="s">"${CMAKE_CURRENT_BINARY_DIR}/dslink"</span><span class="p">)</span>
+<span class="n">include_directories</span><span class="p">(</span><span class="s">"${DSLINK_DIR}/include"</span><span class="p">)</span>
+</code></pre>
 
 <p>By using the Git repository, we ensure that we have the most up-to-date version
 of the DSLink SDK. In the future, the SDK may be made available through common
@@ -254,6 +269,31 @@ own.</p>
 </span>    <span class="p">}</span>
 <span class="p">}</span>
 </code></pre>
+<pre class="highlight c"><code><span class="cp">#include &lt;dslink/dslink.h&gt;
+</span>
+<span class="kt">void</span> <span class="nf">init</span><span class="p">(</span><span class="n">DSLink</span> <span class="o">*</span><span class="n">link</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// ...
+</span><span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">connected</span><span class="p">(</span><span class="n">DSLink</span> <span class="o">*</span><span class="n">link</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// ...
+</span><span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">disconnected</span><span class="p">(</span><span class="n">DSLink</span> <span class="o">*</span><span class="n">link</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// ...
+</span><span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Any callback can be NULL
+</span>    <span class="n">DSLinkCallbacks</span> <span class="n">cbs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">init</span><span class="p">,</span>
+        <span class="n">connected</span><span class="p">,</span>
+        <span class="n">disconnected</span>
+    <span class="p">};</span>
+
+    <span class="k">return</span> <span class="n">dslink_init</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="s">"C-Resp"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">cbs</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
 
 <p>In order to create any type of connection (Responder or Requester), we first
 need to establish a link to the DSA Broker. In this example we will only
@@ -311,6 +351,10 @@ permission to access.</p>
 
 <span class="n">Random</span> <span class="n">random</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">Random</span><span class="p">();</span>
 <span class="n">random</span><span class="p">.</span><span class="nf">Next</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">50</span><span class="p">);</span>
+</code></pre>
+<pre class="highlight plaintext"><code>#include &lt;stdlib.h&gt;
+
+int x = rand();
 </code></pre>
 
 <p>Before we add the new, let&rsquo;s create a value that we can pass, and send updates
@@ -378,6 +422,33 @@ for. In this case we&rsquo;ll just generate a random number between 0 and 50.</p
     <span class="p">.</span><span class="nf">SetType</span><span class="p">(</span><span class="s">"int"</span><span class="p">)</span>
     <span class="p">.</span><span class="nf">SetValue</span><span class="p">(</span><span class="n">myNum</span><span class="p">)</span>
     <span class="p">.</span><span class="nf">BuildNode</span><span class="p">();</span>
+</code></pre>
+<pre class="highlight c"><code><span class="cp">#define LOG_TAG "main"
+#include &lt;dslink/log.h&gt;
+</span>
+<span class="c1">// Inside your init handler
+</span><span class="n">DSNode</span> <span class="o">*</span><span class="n">rng</span> <span class="o">=</span> <span class="n">dslink_node_create</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s">"rng"</span><span class="p">,</span> <span class="s">"node"</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">rng</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">log_warn</span><span class="p">(</span><span class="s">"Failed to create the rng node</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">dslink_node_set_meta</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="s">"$type"</span><span class="p">,</span> <span class="n">json_string</span><span class="p">(</span><span class="s">"number"</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">log_warn</span><span class="p">(</span><span class="s">"Failed to set the type on the rng</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="n">dslink_node_tree_free</span><span class="p">(</span><span class="n">link</span><span class="p">,</span> <span class="n">rng</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">dslink_node_set_value</span><span class="p">(</span><span class="n">link</span><span class="p">,</span> <span class="n">rng</span><span class="p">,</span> <span class="n">json_integer</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">log_warn</span><span class="p">(</span><span class="s">"Failed to set the value on the rng</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="n">dslink_node_tree_free</span><span class="p">(</span><span class="n">link</span><span class="p">,</span> <span class="n">rng</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">dslink_node_add_child</span><span class="p">(</span><span class="n">link</span><span class="p">,</span> <span class="n">rng</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">log_warn</span><span class="p">(</span><span class="s">"Failed to add the rng node to the root</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="n">dslink_node_tree_free</span><span class="p">(</span><span class="n">link</span><span class="p">,</span> <span class="n">rng</span><span class="p">);</span>
+<span class="p">}</span>
 </code></pre>
 
 <p>Next we add our node to the Link. In this case we pass the node name, <code class="prettyprint">/MyNum</code>
@@ -454,6 +525,23 @@ directly with link itself.</p>
     <span class="n">myNumNode</span><span class="p">.</span><span class="n">Value</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="n">random</span><span class="p">.</span><span class="nf">Next</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">50</span><span class="p">));</span>
 <span class="p">},</span> <span class="k">null</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">1000</span><span class="p">);</span>
 </code></pre>
+<pre class="highlight c"><code><span class="k">static</span>
+<span class="kt">void</span> <span class="nf">gen_number</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">data</span><span class="p">,</span> <span class="n">EventLoop</span> <span class="o">*</span><span class="n">loop</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">DSLink</span> <span class="o">*</span><span class="n">link</span> <span class="o">=</span> <span class="p">((</span><span class="kt">void</span> <span class="o">**</span><span class="p">)</span> <span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="n">DSNode</span> <span class="o">*</span><span class="n">node</span> <span class="o">=</span> <span class="p">((</span><span class="kt">void</span> <span class="o">**</span><span class="p">)</span> <span class="n">data</span><span class="p">)[</span><span class="mi">1</span><span class="p">];</span>
+    <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="n">rand</span><span class="p">();</span>
+
+    <span class="n">dslink_node_set_value</span><span class="p">(</span><span class="n">link</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">json_integer</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
+    <span class="n">dslink_event_loop_schedd</span><span class="p">(</span><span class="n">loop</span><span class="p">,</span> <span class="n">gen_number</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="mi">1000</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// init handler
+// ...
+</span><span class="kt">void</span> <span class="o">**</span><span class="n">a</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">link</span><span class="p">;</span>
+<span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">rng</span><span class="p">;</span>
+<span class="n">dslink_event_loop_schedd</span><span class="p">(</span><span class="o">&amp;</span><span class="n">link</span><span class="o">-&gt;</span><span class="n">loop</span><span class="p">,</span> <span class="n">gen_number</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="mi">1000</span><span class="p">);</span>
+</code></pre>
 
 <p>A node is of limited value if it only provides the initial request and nothing
 further. We want to provide updates to the value as things change. For our
@@ -497,6 +585,12 @@ seconds.</p>
 </code></pre>
 <pre class="highlight csharp"><code><span class="k">if</span> <span class="p">(</span><span class="n">myNumNode</span><span class="p">.</span><span class="n">Subscribed</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">myNumNode</span><span class="p">.</span><span class="n">Value</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="n">random</span><span class="p">.</span><span class="nf">Next</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">50</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre>
+<pre class="highlight c"><code><span class="k">if</span> <span class="p">(</span><span class="n">dslink_map_contains</span><span class="p">(</span><span class="n">link</span><span class="o">-&gt;</span><span class="n">responder</span><span class="o">-&gt;</span><span class="n">value_path_subs</span><span class="p">,</span>
+                         <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">path</span><span class="p">))</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="n">rand</span><span class="p">();</span>
+    <span class="n">dslink_node_set_value</span><span class="p">(</span><span class="n">link</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">json_integer</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
 <span class="p">}</span>
 </code></pre>
 
@@ -702,6 +796,46 @@ its next subscription request.
         <span class="p">.</span><span class="nf">BuildNode</span><span class="p">();</span>
 <span class="p">}</span>
 </code></pre>
+<pre class="highlight c"><code><span class="kt">void</span> <span class="nf">update_num</span><span class="p">(</span><span class="n">DSLink</span> <span class="err">\</span><span class="o">*</span><span class="n">link</span><span class="p">,</span> <span class="n">DSNode</span> <span class="err">\</span><span class="o">*</span><span class="n">node</span><span class="p">,</span>
+                <span class="n">json_t</span> <span class="err">\</span><span class="o">*</span><span class="n">rid</span><span class="p">,</span> <span class="n">json_t</span> <span class="err">\</span><span class="o">*</span><span class="n">params</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Close the invocation stream
+</span>    <span class="n">json_t</span> <span class="err">\</span><span class="o">*</span><span class="n">top</span> <span class="o">=</span> <span class="n">json_object</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">top</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">json_t</span> <span class="err">\</span><span class="o">*</span><span class="n">resps</span> <span class="o">=</span> <span class="n">json_array</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">resps</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">json_delete</span><span class="p">(</span><span class="n">top</span><span class="p">);</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">json_object_set_new_nocheck</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s">"responses"</span><span class="p">,</span> <span class="n">resps</span><span class="p">);</span>
+
+    <span class="n">json_t</span> <span class="err">\</span><span class="o">*</span><span class="n">resp</span> <span class="o">=</span> <span class="n">json_object</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">resp</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">json_delete</span><span class="p">(</span><span class="n">top</span><span class="p">);</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">json_array_append_new</span><span class="p">(</span><span class="n">resps</span><span class="p">,</span> <span class="n">resp</span><span class="p">);</span>
+
+    <span class="n">json_object_set_nocheck</span><span class="p">(</span><span class="n">resp</span><span class="p">,</span> <span class="s">"rid"</span><span class="p">,</span> <span class="n">rid</span><span class="p">);</span>
+    <span class="n">json_object_set_new_nocheck</span><span class="p">(</span><span class="n">resp</span><span class="p">,</span> <span class="s">"stream"</span><span class="p">,</span> <span class="n">json_string</span><span class="p">(</span><span class="s">"closed"</span><span class="p">));</span>
+    <span class="n">dslink_ws_send_obj</span><span class="p">(</span><span class="n">link</span><span class="o">-&gt;</span><span class="err">\</span><span class="n">_ws</span><span class="p">,</span> <span class="n">top</span><span class="p">);</span>
+    <span class="n">json_delete</span><span class="p">(</span><span class="n">top</span><span class="p">);</span>
+
+    <span class="c1">// Generate a new value
+</span>    <span class="n">node</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">parent</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="n">rand</span><span class="p">();</span>
+    <span class="n">dslink_node_set_value</span><span class="p">(</span><span class="n">link</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">json_integer</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="c1">// In your init handler
+// Warning: there isn't any error handling in this code snippet!
+</span><span class="n">DSNode</span> <span class="o">*</span><span class="n">update</span> <span class="o">=</span> <span class="n">dslink_node_create</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="s">"UpdateNum"</span><span class="p">,</span> <span class="s">"node"</span><span class="p">);</span>
+<span class="n">update</span><span class="o">-&gt;</span><span class="n">on_invocation</span> <span class="o">=</span> <span class="n">update_num</span><span class="p">;</span>
+<span class="n">dslink_node_set_meta</span><span class="p">(</span><span class="n">update</span><span class="p">,</span> <span class="s">"$name"</span><span class="p">,</span> <span class="n">json_string</span><span class="p">(</span><span class="s">"Update Number"</span><span class="p">));</span>
+<span class="n">dslink_node_set_meta</span><span class="p">(</span><span class="n">update</span><span class="p">,</span> <span class="s">"$invokable"</span><span class="p">,</span> <span class="n">json_string</span><span class="p">(</span><span class="s">"read"</span><span class="p">));</span>
+<span class="n">dslink_node_add_child</span><span class="p">(</span><span class="n">link</span><span class="p">,</span> <span class="n">update</span><span class="p">);</span>
+</code></pre>
 
 <p>Sometimes we may wish to allow our Link to respond to an action. That is, we
 may want to allow a user to send a command to our link so it can perform
@@ -765,6 +899,8 @@ The SDK&rsquo;s contain some helper classes which make the creation of a node ea
 </code></pre>
 <pre class="highlight csharp"><code><span class="c1">// Will be filled in
 </span></code></pre>
+<pre class="highlight c"><code><span class="c1">// Will be filled in
+</span></code></pre>
 
 <p>We can now add as many values to our link as we like. And every 5 seconds, a
 new number is generated for each of these nodes. However if we stop our link,
@@ -812,6 +948,8 @@ reconnects to our broker</p>
 </code></pre>
 <pre class="highlight csharp"><code><span class="n">var</span> <span class="n">node</span> <span class="p">=</span> <span class="n">Responder</span><span class="p">.</span><span class="n">SuperRoot</span><span class="p">;</span>
 </code></pre>
+<pre class="highlight c"><code><span class="n">DSNode</span> <span class="o">*</span><span class="n">node</span> <span class="o">=</span> <span class="n">link</span><span class="o">-&gt;</span><span class="n">responder</span><span class="o">-&gt;</span><span class="n">super_root</span><span class="p">;</span>
+</code></pre>
 
 <blockquote>
 <p>Update for loop to iterate over the children of the root node.</p>
@@ -842,6 +980,14 @@ reconnects to our broker</p>
     <span class="c1">// pair.Key is child name
 </span>    <span class="c1">// pair.Value is child Node
 </span><span class="p">}</span>
+</code></pre>
+<pre class="highlight c"><code><span class="n">Map</span> <span class="o">*</span><span class="n">children</span> <span class="o">=</span> <span class="n">root</span><span class="o">-&gt;</span><span class="n">children</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">children</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">MapEntry</span> <span class="err">\</span><span class="o">*</span><span class="n">entry</span> <span class="o">=</span> <span class="p">(</span><span class="n">MapEntry</span> <span class="err">\</span><span class="o">*</span><span class="p">)</span> <span class="n">children</span><span class="o">-&gt;</span><span class="n">list</span><span class="p">.</span><span class="n">head</span><span class="p">;</span>
+         <span class="n">entry</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">;</span> <span class="n">entry</span> <span class="o">=</span> <span class="n">entry</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">DSNode</span> <span class="err">\</span><span class="o">*</span><span class="n">node</span> <span class="o">=</span> <span class="n">entry</span><span class="o">-&gt;</span><span class="n">value</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 </code></pre>
 
 <p>After we&rsquo;ve restarted the link, you may notice a slight problem. Any values that
@@ -937,6 +1083,25 @@ we can iterate over the children nodes to update each of those values.</p>
 <pre class="highlight csharp"><code><span class="n">var</span> <span class="n">addNum</span> <span class="p">=</span> <span class="n">myNum</span><span class="p">.</span><span class="nf">CreateChild</span><span class="p">(</span><span class="s">"AddNum"</span><span class="p">)</span>
     <span class="c1">// other factory information.
 </span></code></pre>
+<pre class="highlight c"><code><span class="n">DSNode</span> <span class="o">*</span><span class="n">numbers</span> <span class="o">=</span> <span class="n">dslink_node_create</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s">"numbers"</span><span class="p">,</span> <span class="s">"node"</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">numbers</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">log_warn</span><span class="p">(</span><span class="s">"Failed to create the numbers node</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">dslink_node_set_value</span><span class="p">(</span><span class="n">link</span><span class="p">,</span> <span class="n">numbers</span><span class="p">,</span> <span class="n">json_integer</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">log_warn</span><span class="p">(</span><span class="s">"Failed to set the value on the numbers</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="n">dslink_node_tree_free</span><span class="p">(</span><span class="n">link</span><span class="p">,</span> <span class="n">numbers</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">dslink_node_add_child</span><span class="p">(</span><span class="n">link</span><span class="p">,</span> <span class="n">numbers</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">log_warn</span><span class="p">(</span><span class="s">"Failed to add the numbers node to the root</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="n">dslink_node_tree_free</span><span class="p">(</span><span class="n">link</span><span class="p">,</span> <span class="n">numbers</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// Add RNG here with numbers as the parent
+</span></code></pre>
 
 <blockquote>
 <p>Update location our action adds to.</p>
@@ -990,6 +1155,9 @@ we can iterate over the children nodes to update each of those values.</p>
 <span class="o">}</span>
 </code></pre>
 <pre class="highlight csharp"><code><span class="c1">// Done automatically.
+</span></code></pre>
+<pre class="highlight c"><code><span class="n">DSNode</span> <span class="o">*</span><span class="n">rng</span> <span class="o">=</span> <span class="c1">//...
+// Add action to rng node as previously shown.
 </span></code></pre>
 
 <p>As the number of nodes grows, having a series of nodes all at the top level
