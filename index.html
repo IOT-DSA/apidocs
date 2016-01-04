@@ -796,21 +796,21 @@ its next subscription request.
         <span class="p">.</span><span class="nf">BuildNode</span><span class="p">();</span>
 <span class="p">}</span>
 </code></pre>
-<pre class="highlight c"><code><span class="kt">void</span> <span class="nf">update_num</span><span class="p">(</span><span class="n">DSLink</span> <span class="err">\</span><span class="o">*</span><span class="n">link</span><span class="p">,</span> <span class="n">DSNode</span> <span class="err">\</span><span class="o">*</span><span class="n">node</span><span class="p">,</span>
-                <span class="n">json_t</span> <span class="err">\</span><span class="o">*</span><span class="n">rid</span><span class="p">,</span> <span class="n">json_t</span> <span class="err">\</span><span class="o">*</span><span class="n">params</span><span class="p">)</span> <span class="p">{</span>
+<pre class="highlight c"><code><span class="kt">void</span> <span class="nf">update_num</span><span class="p">(</span><span class="n">DSLink</span> <span class="o">*</span><span class="n">link</span><span class="p">,</span> <span class="n">DSNode</span> <span class="o">*</span><span class="n">node</span><span class="p">,</span>
+                <span class="n">json_t</span> <span class="o">*</span><span class="n">rid</span><span class="p">,</span> <span class="n">json_t</span> <span class="o">*</span><span class="n">params</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// Close the invocation stream
-</span>    <span class="n">json_t</span> <span class="err">\</span><span class="o">*</span><span class="n">top</span> <span class="o">=</span> <span class="n">json_object</span><span class="p">();</span>
+</span>    <span class="n">json_t</span> <span class="o">*</span><span class="n">top</span> <span class="o">=</span> <span class="n">json_object</span><span class="p">();</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">top</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span><span class="p">;</span>
     <span class="p">}</span>
-    <span class="n">json_t</span> <span class="err">\</span><span class="o">*</span><span class="n">resps</span> <span class="o">=</span> <span class="n">json_array</span><span class="p">();</span>
+    <span class="n">json_t</span> <span class="o">*</span><span class="n">resps</span> <span class="o">=</span> <span class="n">json_array</span><span class="p">();</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">resps</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">json_delete</span><span class="p">(</span><span class="n">top</span><span class="p">);</span>
         <span class="k">return</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="n">json_object_set_new_nocheck</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s">"responses"</span><span class="p">,</span> <span class="n">resps</span><span class="p">);</span>
 
-    <span class="n">json_t</span> <span class="err">\</span><span class="o">*</span><span class="n">resp</span> <span class="o">=</span> <span class="n">json_object</span><span class="p">();</span>
+    <span class="n">json_t</span> <span class="o">*</span><span class="n">resp</span> <span class="o">=</span> <span class="n">json_object</span><span class="p">();</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">resp</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">json_delete</span><span class="p">(</span><span class="n">top</span><span class="p">);</span>
         <span class="k">return</span><span class="p">;</span>
@@ -819,7 +819,7 @@ its next subscription request.
 
     <span class="n">json_object_set_nocheck</span><span class="p">(</span><span class="n">resp</span><span class="p">,</span> <span class="s">"rid"</span><span class="p">,</span> <span class="n">rid</span><span class="p">);</span>
     <span class="n">json_object_set_new_nocheck</span><span class="p">(</span><span class="n">resp</span><span class="p">,</span> <span class="s">"stream"</span><span class="p">,</span> <span class="n">json_string</span><span class="p">(</span><span class="s">"closed"</span><span class="p">));</span>
-    <span class="n">dslink_ws_send_obj</span><span class="p">(</span><span class="n">link</span><span class="o">-&gt;</span><span class="err">\</span><span class="n">_ws</span><span class="p">,</span> <span class="n">top</span><span class="p">);</span>
+    <span class="n">dslink_ws_send_obj</span><span class="p">(</span><span class="n">link</span><span class="o">-&gt;</span><span class="n">_ws</span><span class="p">,</span> <span class="n">top</span><span class="p">);</span>
     <span class="n">json_delete</span><span class="p">(</span><span class="n">top</span><span class="p">);</span>
 
     <span class="c1">// Generate a new value
@@ -983,9 +983,9 @@ reconnects to our broker</p>
 </code></pre>
 <pre class="highlight c"><code><span class="n">Map</span> <span class="o">*</span><span class="n">children</span> <span class="o">=</span> <span class="n">root</span><span class="o">-&gt;</span><span class="n">children</span><span class="p">;</span>
 <span class="k">if</span> <span class="p">(</span><span class="n">children</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="p">(</span><span class="n">MapEntry</span> <span class="err">\</span><span class="o">*</span><span class="n">entry</span> <span class="o">=</span> <span class="p">(</span><span class="n">MapEntry</span> <span class="err">\</span><span class="o">*</span><span class="p">)</span> <span class="n">children</span><span class="o">-&gt;</span><span class="n">list</span><span class="p">.</span><span class="n">head</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">MapEntry</span> <span class="o">*</span><span class="n">entry</span> <span class="o">=</span> <span class="p">(</span><span class="n">MapEntry</span> <span class="o">*</span><span class="p">)</span> <span class="n">children</span><span class="o">-&gt;</span><span class="n">list</span><span class="p">.</span><span class="n">head</span><span class="p">;</span>
          <span class="n">entry</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">;</span> <span class="n">entry</span> <span class="o">=</span> <span class="n">entry</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">DSNode</span> <span class="err">\</span><span class="o">*</span><span class="n">node</span> <span class="o">=</span> <span class="n">entry</span><span class="o">-&gt;</span><span class="n">value</span><span class="p">;</span>
+        <span class="n">DSNode</span> <span class="o">*</span><span class="n">node</span> <span class="o">=</span> <span class="n">entry</span><span class="o">-&gt;</span><span class="n">value</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre>
