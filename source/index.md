@@ -124,6 +124,23 @@ Clone the SDK's source code, and make a release build with Visual Studio or Mono
 the NuGet repositories soon.
 ```
 
+```c
+# For CMake build configurations
+include(ExternalProject)
+
+ExternalProject_Add(dslink
+        PREFIX dslink
+        GIT_REPOSITORY "https://github.com/IOT-DSA/sdk-dslink-c.git"
+        CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+        -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+        -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
+        -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/dslink
+)
+
+set(DSLINK_DIR "${CMAKE_CURRENT_BINARY_DIR}/dslink")
+include_directories("${DSLINK_DIR}/include")
+```
+
 By using the Git repository, we ensure that we have the most up-to-date version
 of the DSLink SDK. In the future, the SDK may be made available through common
 package managers for each language.
@@ -248,6 +265,33 @@ class ExampleDSLink : DSLinkContainer {
 }
 ```
 
+```c
+#include <dslink/dslink.h>
+
+void init(DSLink *link) {
+    // ...
+}
+
+void connected(DSLink *link) {
+    // ...
+}
+
+void disconnected(DSLink *link) {
+    // ...
+}
+
+int main(int argc, char **argv) {
+    // Any callback can be NULL
+    DSLinkCallbacks cbs = {
+        init,
+        connected,
+        disconnected
+    };
+
+    return dslink_init(argc, argv, "C-Resp", 0, 1, &cbs);
+}
+```
+
 In order to create any type of connection (Responder or Requester), we first
 need to establish a link to the DSA Broker. In this example we will only
 establish the bare minimum link. There are a number of configuration options
@@ -314,6 +358,12 @@ using System;
 
 Random random = new Random();
 random.Next(0, 50);
+```
+
+```
+#include <stdlib.h>
+
+int x = rand();
 ```
 
 Before we add the new, let's create a value that we can pass, and send updates
@@ -391,6 +441,35 @@ var myNumNode = Responder.SuperRoot.CreateChild("MyNum")
     .SetType("int")
     .SetValue(myNum)
     .BuildNode();
+```
+
+```c
+#define LOG_TAG "main"
+#include <dslink/log.h>
+
+// Inside your init handler
+DSNode *rng = dslink_node_create(root, "rng", "node");
+if (!rng) {
+    log_warn("Failed to create the rng node\n");
+    return;
+}
+
+if (dslink_node_set_meta(num, "$type", json_string("number")) != 0) {
+    log_warn("Failed to set the type on the rng\n");
+    dslink_node_tree_free(link, rng);
+    return;
+}
+
+if (dslink_node_set_value(link, rng, json_integer(0)) != 0) {
+    log_warn("Failed to set the value on the rng\n");
+    dslink_node_tree_free(link, rng);
+    return;
+}
+
+if (dslink_node_add_child(link, rng) != 0) {
+    log_warn("Failed to add the rng node to the root\n");
+    dslink_node_tree_free(link, rng);
+}
 ```
 
 Next we add our node to the Link. In this case we pass the node name, `/MyNum`
@@ -480,6 +559,25 @@ var timer = new Timer(i =>
 }, null, 1, 1000);
 ```
 
+```c
+static
+void gen_number(void *data, EventLoop *loop) {
+    DSLink *link = ((void **) data)[0];
+    DSNode *node = ((void **) data)[1];
+    int x = rand();
+
+    dslink_node_set_value(link, node, json_integer(x));
+    dslink_event_loop_schedd(loop, gen_number, data, 1000);
+}
+
+// init handler
+// ...
+void **a = malloc(sizeof(void *) * 2);
+a[0] = link;
+a[1] = rng;
+dslink_event_loop_schedd(&link->loop, gen_number, a, 1000);
+```
+
 A node is of limited value if it only provides the initial request and nothing
 further. We want to provide updates to the value as things change. For our
 demonstration, we will setup a timer which updates our number once ever five
@@ -532,6 +630,14 @@ if my_node.is_subscribed():
 ```csharp
 if (myNumNode.Subscribed) {
     myNumNode.Value.Set(random.Next(0, 50));
+}
+```
+
+```c
+if (dslink_map_contains(link->responder->value_path_subs,
+                         (void *) node->path)) {
+    int x = rand();
+    dslink_node_set_value(link, node, json_integer(x));
 }
 ```
 
@@ -741,7 +847,7 @@ public ExampleDSLink() : base(/* Configuration */) {
         .SetType("int")
         .SetValue(0)
         .BuildNode();
-    
+
     var addNum = Responder.SuperRoot.CreateChild("SetNum")
         .SetDisplayName("SetNumber")
         .AddParameter(new Parameter("Number", "int"))
@@ -752,6 +858,48 @@ public ExampleDSLink() : base(/* Configuration */) {
         }))
         .BuildNode();
 }
+```
+
+```c
+void update_num(DSLink \*link, DSNode \*node,
+                json_t \*rid, json_t \*params) {
+    // Close the invocation stream
+    json_t \*top = json_object();
+    if (!top) {
+        return;
+    }
+    json_t \*resps = json_array();
+    if (!resps) {
+        json_delete(top);
+        return;
+    }
+    json_object_set_new_nocheck(top, "responses", resps);
+
+    json_t \*resp = json_object();
+    if (!resp) {
+        json_delete(top);
+        return;
+    }
+    json_array_append_new(resps, resp);
+
+    json_object_set_nocheck(resp, "rid", rid);
+    json_object_set_new_nocheck(resp, "stream", json_string("closed"));
+    dslink_ws_send_obj(link->\_ws, top);
+    json_delete(top);
+
+    // Generate a new value
+    node = node->parent;
+    int x = rand();
+    dslink_node_set_value(link, node, json_integer(x));
+}
+
+// In your init handler
+// Warning: there isn't any error handling in this code snippet!
+DSNode *update = dslink_node_create(rng, "UpdateNum", "node");
+update->on_invocation = update_num;
+dslink_node_set_meta(update, "$name", json_string("Update Number"));
+dslink_node_set_meta(update, "$invokable", json_string("read"));
+dslink_node_add_child(link, update);
 ```
 
 Sometimes we may wish to allow our Link to respond to an action. That is, we
@@ -836,6 +984,10 @@ link.save();
 // Will be filled in
 ```
 
+```c
+// Will be filled in
+```
+
 We can now add as many values to our link as we like. And every 5 seconds, a
 new number is generated for each of these nodes. However if we stop our link,
 and restart it, we'll find that all of the additional nodes we created no longer
@@ -893,6 +1045,10 @@ root_node = self.responder.get_super_root()
 var node = Responder.SuperRoot;
 ```
 
+```c
+DSNode *node = link->responder->super_root;
+```
+
 > Update for loop to iterate over the children of the root node.
 
 ```dart
@@ -929,6 +1085,16 @@ for child_name in root_node.children:
 foreach (var pair in Responder.SuperRoot.Children) {
     // pair.Key is child name
     // pair.Value is child Node
+}
+```
+
+```c
+Map *children = root->children;
+if (children) {
+    for (MapEntry \*entry = (MapEntry \*) children->list.head;
+         entry != NULL; entry = entry->next) {
+        DSNode \*node = entry->value;
+    }
 }
 ```
 
@@ -1036,6 +1202,27 @@ var addNum = myNum.CreateChild("AddNum")
     // other factory information.
 ```
 
+```c
+DSNode *numbers = dslink_node_create(root, "numbers", "node");
+if (!numbers) {
+    log_warn("Failed to create the numbers node\n");
+    return;
+}
+
+if (dslink_node_set_value(link, numbers, json_integer(0)) != 0) {
+    log_warn("Failed to set the value on the numbers\n");
+    dslink_node_tree_free(link, numbers);
+    return;
+}
+
+if (dslink_node_add_child(link, numbers) != 0) {
+    log_warn("Failed to add the numbers node to the root\n");
+    dslink_node_tree_free(link, numbers);
+}
+
+// Add RNG here with numbers as the parent
+```
+
 > Update location our action adds to.
 
 ```dart
@@ -1094,6 +1281,11 @@ override def onResponderInitialized(link: DSLink) = {
 
 ```csharp
 // Done automatically.
+```
+
+```c
+DSNode *rng = //...
+// Add action to rng node as previously shown.
 ```
 
 As the number of nodes grows, having a series of nodes all at the top level
