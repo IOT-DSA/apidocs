@@ -861,21 +861,21 @@ public ExampleDSLink() : base(/* Configuration */) {
 ```
 
 ```c
-void update_num(DSLink \*link, DSNode \*node,
-                json_t \*rid, json_t \*params) {
+void update_num(DSLink *link, DSNode *node,
+                json_t *rid, json_t *params) {
     // Close the invocation stream
-    json_t \*top = json_object();
+    json_t *top = json_object();
     if (!top) {
         return;
     }
-    json_t \*resps = json_array();
+    json_t *resps = json_array();
     if (!resps) {
         json_delete(top);
         return;
     }
     json_object_set_new_nocheck(top, "responses", resps);
 
-    json_t \*resp = json_object();
+    json_t *resp = json_object();
     if (!resp) {
         json_delete(top);
         return;
@@ -884,7 +884,7 @@ void update_num(DSLink \*link, DSNode \*node,
 
     json_object_set_nocheck(resp, "rid", rid);
     json_object_set_new_nocheck(resp, "stream", json_string("closed"));
-    dslink_ws_send_obj(link->\_ws, top);
+    dslink_ws_send_obj(link->_ws, top);
     json_delete(top);
 
     // Generate a new value
@@ -1091,9 +1091,9 @@ foreach (var pair in Responder.SuperRoot.Children) {
 ```c
 Map *children = root->children;
 if (children) {
-    for (MapEntry \*entry = (MapEntry \*) children->list.head;
+    for (MapEntry *entry = (MapEntry *) children->list.head;
          entry != NULL; entry = entry->next) {
-        DSNode \*node = entry->value;
+        DSNode *node = entry->value;
     }
 }
 ```
