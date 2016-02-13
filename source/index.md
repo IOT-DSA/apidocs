@@ -679,7 +679,7 @@ link = new DS.LinkProvider('http://127.0.0.1:8080/conn',
         return new DS.SimpleActionNode(path, function(params) {
           var addVal = parseInt(params['value'], 10);
           var ndNum = nodeList.length;
-          nodeList.add(link.addNode('/MyNum' + ndNum, {
+          nodeList.push(link.addNode('/MyNum' + ndNum, {
             $name: 'My node #' + ndNum,
             $type: 'int',
             '?value': addVal
@@ -687,6 +687,7 @@ link = new DS.LinkProvider('http://127.0.0.1:8080/conn',
           // myNode.updateValue(myNum + addVal);
         });
     }
+  }
 });
 ```
 
@@ -701,10 +702,10 @@ nodeList.push(link.addNode('/MyNum',
 
 // Update our timer to provide a new random number for
 // each node not just the initial one.
-setTimeout(function() {
+setInterval(function() {
   nodeList.forEach(function(myNode) {
     if(myNode.value == null) return;
-    if(myNode.ahsSubscriber) {
+    if(myNode.hasSubscriber) {
       myNum = Math.round(Math.random() * 50);
       myNode.updateValue(myNum);
     }
