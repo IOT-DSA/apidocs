@@ -360,7 +360,7 @@ Random random = new Random();
 random.Next(0, 50);
 ```
 
-```
+```c
 #include <stdlib.h>
 
 int x = rand();

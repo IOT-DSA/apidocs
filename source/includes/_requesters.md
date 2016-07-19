@@ -24,6 +24,19 @@ await link.connect();
 var requester = link.requester;
 ```
 
+```java
+public class MyLink extends DSLinkHandler {
+    @Override
+    public boolean isRequester() {
+        return true;
+    }
+
+    public static void main(String[] args) {
+        DSLinkFactory.start(args, new MyLink());
+    }
+}
+```
+
 ```js
 // node.js
 // var link = new DS.LinkProvider(process.argv.slice(2),
@@ -96,6 +109,10 @@ iterateChildren(RemoteNode nd) async {
 var exampleNode =
       await requester.getRemoteNode('/downstream/Example');
 iterateChildren(exampleNode);
+```
+
+```java
+// This is not available right now for the Java SDK.
 ```
 
 ```scala
@@ -202,6 +219,27 @@ def list(self, listresponse):
 self.requester.list("/path/to/node", self.list)
 ```
 
+```java
+// Initial Request
+link.getRequester().list(new ListRequest("/downstream/Example"), new Handler<ListResponse>() {
+    @Override
+    public void handle(ListResponse event) {
+        iterateChildren(event.getNode());
+    }
+});
+
+public void iterateChildren(Node node) {
+    System.out.println("Node: " + node.getPath());
+    Map<String, Node> children = node.getChildren();
+    if (children == null) {
+        return;
+    }
+    for (Node child : children.values()) {
+        iterateChildren(child);
+    }
+}
+```
+
 Iterating over children is great when we initialize our connection, however
 it won't report any changes to those nodes, such as if a new child node is
 added, removed or modified. The list method on the Requester takes the full
@@ -231,6 +269,15 @@ if (nd.getConfig(r'$type') == 'int') {
 void subscribeUpdates(ValueUpdate update, String name) {
   print('Name: $name ValueUpdate: ${update.value}');
 }
+```
+
+```java
+link.getRequester().subscribe("/downstream/Example/someValue", new Handler<SubscriptionValue>() {
+    @Override
+    public void handle(SubscriptionValue event) {
+        System.out.println("Value updated to: " + event.getValue());
+    }
+});
 ```
 
 ```scala
