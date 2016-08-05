@@ -84,12 +84,30 @@ if __name__ == "__main__":
     RequesterDSLink(dslink.Configuration("RequesterDSLink", requester=True, responder=False))
 ```
 
+```csharp
+using System;
+using DSLink;
+
+class ExampleDSLink : DSLinkContainer {
+    public ExampleDSLink() : base(new Configuration("example", requester: true, brokerUrl: "http://broker.url/conn")){
+        Console.WriteLine("Starting DSLink...");
+    }
+
+    private static void Main() {
+        new ExampleDSLink();
+        Console.ReadLine(); // Keep the link running.
+    }
+}
+```
+
 Each link can be a Responder or a Requester (or both). At this time we're
 only interested in creating a requester so we initialize our link specifically
 for the requester.
 
 After the link connects, we can the access the requester directly in order to
 query the broker for nodes.
+
+
 
 ## Query Nodes
 
@@ -157,6 +175,19 @@ def recurse(self, listresponse):
 self.requester.list("/", self.recurse)
 ```
 
+```csharp
+public void Recurse(ListResponse response)
+{
+    foreach (var kp in response.Node)
+    {
+        Console.WriteLine(kp.Key);
+        Requester.List(kp.Value.Path, Recurse);
+    }
+}
+
+Requester.List("/", Recurse);
+```
+
 With the requester, we can now query a node from the broker and get a listing
 of the nodes and recursively poll their children. For this sample we are going
 to query the broker for the nodes of the Responder link we created previously.
@@ -217,6 +248,15 @@ def list(self, listresponse):
         print(child)
 
 self.requester.list("/path/to/node", self.list)
+```
+
+```csharp
+public void List(ListResponse response)
+{
+    Console.WriteLine(response.Node.Name);
+}
+
+Requester.List("/", List);
 ```
 
 ```java
@@ -308,6 +348,15 @@ def value_updates(self, data):
     print("Value updated to %s at %s" % (data[0], data[1]))
 
 self.requester.subscribe("/path/to/node", self.value_updates)
+```
+
+```csharp
+public void SubscriptionUpdate(SubscriptionUpdate update)
+{
+    Console.WriteLine(update.Value);
+}
+
+Requester.Subscribe("/path/to/node", SubscriptionUpdate);
 ```
 
 When listing nodes, we see the changes in a node's configuration including

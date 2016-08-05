@@ -958,7 +958,7 @@ link.init();
 ```
 
 ```csharp
-// Will be filled in
+// The C# SDK initializes itself when implementing the class.
 ```
 
 > Call save on the link.
@@ -982,7 +982,7 @@ link.save();
 ```
 
 ```csharp
-// Will be filled in
+DSLinkContainer.SaveNodes();
 ```
 
 ```c
