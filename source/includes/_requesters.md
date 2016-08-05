@@ -107,8 +107,6 @@ for the requester.
 After the link connects, we can the access the requester directly in order to
 query the broker for nodes.
 
-
-
 ## Query Nodes
 
 > Recursively poll nodes and children.
