@@ -5,6 +5,7 @@ language_tabs:
   - dart: Dart
   - java: Java
   - javascript: JavaScript
+  - typescript: TypeScript
   - python: Python
   - ruby: Ruby
   - c: C
@@ -98,13 +99,20 @@ require 'dslink'
 // DS is a globally accessed variable
 
 // NODE
-// package.json
-"dependencies": {
-  "dslink": "IOT-DSA/sdk-dslink-javascript#artifacts"
-}
+// $ npm install --save dslink
 
 // index.js
 var DS = require('dslink');
+```
+
+```typescript
+// $ npm install --save dslink
+
+// latest type definitions found at
+// https://raw.githubusercontent.com/IOT-DSA/sdk-dslink-javascript/artifacts/dist/dslink.node.d.ts
+// depends on node.d.ts from DefinitelyTyped
+
+import DS = require('dslink');
 ```
 
 ```python
@@ -181,6 +189,12 @@ var link = new DS.LinkProvider(process.argv.slice(2), 'Example-');
 // browser
 var link =
   new DS.LinkProvider('http://127.0.0.1:8080/conn', 'Example-');
+
+link.connect();
+```
+
+```typescript
+let link: DS.LinkProvider = new DS.LinkProvider(process.argv.slice(2), 'Example-');
 
 link.connect();
 ```
@@ -331,6 +345,10 @@ var myNum = numGen.nextInt(50);
 var myNum = Math.round(Math.random() * 50);
 ```
 
+```typescript
+let myNum: number = Math.round(Math.random() * 50);
+```
+
 ```java
 // Add this variable into your Main class.
 private static final Random RANDOM = new Random();
@@ -385,6 +403,14 @@ var myNode = link.addNode('/MyNum',
 var myNode = link.addNode('/MyNum', {
   '$name': 'My Number',
   '$type': 'int',
+  '?value': myNum
+});
+```
+
+```typescript
+let myNode: DS.SimpleNode = link.addNode('/MyNum', {
+  $name: 'My Number',
+  $type: 'int',
   '?value': myNum
 });
 ```
@@ -504,6 +530,13 @@ setInterval(function() {
 }, 1000 * 5);
 ```
 
+```typescript
+setInterval(() => {
+  myNum = Math.round(Math.random() * 50);
+  myNode.updateValue(myNum);
+}, 1000 * 5);
+```
+
 ```java
 // In your Main class
 @Override
@@ -588,13 +621,19 @@ seconds.
 > Add this to the timer function.
 
 ```dart
-if(myNode.hasSubscriber) {
+if (myNode.hasSubscriber) {
   // To be filled in soon
 }
 ```
 
 ```js
-if(myNode.hasSubscriber) {
+if (myNode.hasSubscriber) {
+  // To be filled in soon
+}
+```
+
+```typescript
+if (myNode.hasSubscriber) {
   // To be filled in soon
 }
 ```
@@ -704,6 +743,69 @@ nodeList.push(link.addNode('/MyNum',
 // each node not just the initial one.
 setInterval(function() {
   nodeList.forEach(function(myNode) {
+    if(myNode.value == null) return;
+    if(myNode.hasSubscriber) {
+      myNum = Math.round(Math.random() * 50);
+      myNode.updateValue(myNum);
+    }
+  });
+}, 5 * 1000);
+```
+
+```typescript
+// Our new constructor in which we pass both our default node for
+// adding a value, and our profile, or action on that node.
+// Store all nodes we create to reference later.
+let nodeList: DS.SimpleNode[] = [];
+
+// Following replaces previous link initialization.
+// Again, for node.js, replace the URL with process.argv.slice(2)
+link = new DS.LinkProvider(process.argv.slice(2), 'Example-', {
+  defaultNodes: {
+    AddNum: {
+      $name: 'Add number',
+      $is: 'addnum',
+      $invokable: 'write',
+      $params: [
+        {
+          name: 'value',
+          type: 'int'
+        }
+      ]
+    }
+  },
+  profiles: {
+    addnum(path) {
+      return new DS.SimpleActionNode(path, params => {
+        var addVal = parseInt(params['value'], 10);
+        var ndNum = nodeList.length;
+        
+        nodeList.push(link.addNode('/MyNum' + ndNum, {
+          $name: 'My node #' + ndNum,
+          $type: 'int',
+          '?value': addVal
+        }));
+        
+        // myNode.updateValue(myNum + addVal);
+      });
+    }
+  }
+});
+```
+
+```typescript
+// Add our initial node to our node list instead of a
+// single variable
+nodeList.push(link.addNode('/MyNum', {
+  $name: 'My Number',
+  $type: 'int',
+  '?value': myNum
+}));
+
+// Update our timer to provide a new random number for
+// each node not just the initial one.
+setInterval(() => {
+  nodeList.forEach(myNode => {
     if(myNode.value == null) return;
     if(myNode.hasSubscriber) {
       myNum = Math.round(Math.random() * 50);
@@ -945,6 +1047,12 @@ link.init();
 link.init();
 ```
 
+```typescript
+// after the link = new LinkProvider(..)
+// and before link.connect();
+link.init();
+```
+
 ```java
 // All the nodes are automatically reinitialized again on startup.
 ```
@@ -969,6 +1077,11 @@ link.save();
 ```
 
 ```js
+// Add outside of the for loop inside setInterval.
+link.save();
+```
+
+```typescript
 // Add outside of the for loop inside setInterval.
 link.save();
 ```
@@ -1021,6 +1134,11 @@ var rootNode = ~link; // Shortcut for link.getNode('/');
 var rootNode = link.getNode('/');
 ```
 
+```typescript
+// At the top of our setInterval callback.
+let rootNode = link.getNode('/');
+```
+
 ```java
 // Retrieves the super root of the responder.
 Node superRoot = link.getNodeManager().getSuperRoot();
@@ -1066,6 +1184,15 @@ for(var nodeName in rootNode.children.keys) {
 /// is the node identifier and the value is the node itself.
 Object.keys(rootNode.children).forEach(function(nodeName) {
   var myNode = rootNode.children[nodeName];
+  // ... Existing checking for subscriber and updating value
+})
+```
+
+```typescript
+/// rootNode.children returns an object where the key
+/// is the node identifier and the value is the node itself.
+Object.keys(rootNode.children).forEach(nodeName => {
+  const myNode: DS.SimpleNode = rootNode.children[nodeName];
   // ... Existing checking for subscriber and updating value
 })
 ```
@@ -1124,6 +1251,19 @@ defaultNodes: {
 ```
 
 ```js
+/// Change the default nodes from our constructor.
+/// The rest of the constructor stays the same.
+defaultNodes: {
+  CustomNumbers: {
+    $name: 'Custom Numbers',
+    AddNum: {
+      // ... Previous information still here.
+    }
+  }
+},
+```
+
+```typescript
 /// Change the default nodes from our constructor.
 /// The rest of the constructor stays the same.
 defaultNodes: {

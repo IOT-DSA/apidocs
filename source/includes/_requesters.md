@@ -53,6 +53,18 @@ link.connect().then(function() {
 });
 ```
 
+```typescript
+const link: DS.LinkProvider = new DS.LinkProvider(process.argv.slice(2), 'RequesterExample-', {
+  isRequester: true,
+  isResponder: false
+});
+
+link.connect().then(_ => link.onRequesterReady)
+  .then(requester => {
+   // work with requester here  
+  });
+```
+
 ```scala
 object Main extends DSLinkHandler {
 
@@ -163,6 +175,25 @@ requester.getRemoteNode('/downstream/Example')
   });
 ```
 
+```typescript
+function iterateChildren(nd: DS.RemoteNode): void {
+  console.log('Node: ' + nd.remotePath);
+  const keys: string[] = Object.keys(nd.children);
+  
+  if (keys.length > 0) {
+    keys.forEach(nodeName => {
+      requester.getRemoteNode(`${nd.remotePath}/${nodeName}`).then(node => {
+        iterateChildren(node);
+      });
+    });
+  }
+}
+
+// Query initial node and pass it to our recursive function.
+requester.getRemoteNode('/downstream/Example')
+  .then(exampleNode => iterateChildren(exampleNode));
+```
+
 ```python
 def recurse(self, listresponse):
     for child_name in listresponse.node.children:
@@ -234,6 +265,18 @@ requester.list(nd.remotePath).on("data", listUpdates);
 
 // a new function that is globally defined
 function listUpdates(update) {
+  console.log('Node - ' + update.node.name);
+  console.log('\tChanges: ' + update.changes);
+}
+```
+
+```typescript
+// Replace console.log('Node: ' + nd.remotePath) in
+// iterateChildren with:
+requester.list(nd.remotePath).on('data', listUpdates);
+
+// a new function that is globally defined
+function listUpdates(update: DS.ValueUpdate): void {
   console.log('Node - ' + update.node.name);
   console.log('\tChanges: ' + update.changes);
 }
@@ -336,6 +379,20 @@ if (nd.getConfig('$type') === 'int') {
 
 // a new function that is globally defined
 function subscribeUpdates(update, name) {
+  console.log('Name: ' + name + ' ValueUpdate: ' + update.value);
+}
+```
+
+```typescript
+// Replace requester.list(nd.remotePath).on("data", listUpdates)
+// in iterateChildren with:
+if (nd.getConfig('$type') === 'int') {
+  requester.subscribe(nd.remotePath,
+    update => subscribeUpdates(update, nd.name));
+}
+
+// a new function that is globally defined
+function subscribeUpdates(update: DS.ValueUpdate, name: string): void {
   console.log('Name: ' + name + ' ValueUpdate: ' + update.value);
 }
 ```
